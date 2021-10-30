@@ -9,14 +9,12 @@
 #include "Player/Player.h"
 #include "Input/Keyboard.h"
 
-unsigned int g_MainShader;
-
 class Application
 {
 private:
 	Window m_Window;
 	Keyboard m_Keyboard;
-	World m_World;
+	World* m_World;
 	Player m_Player;
 
 	void handleInput();

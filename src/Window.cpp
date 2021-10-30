@@ -25,6 +25,7 @@ void Window::initGlfw()
 		std::cout << "Failed to initialize GLFW! Program will exit.\n";
 		std::exit(-1);
 	}
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);

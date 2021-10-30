@@ -5,10 +5,12 @@
 
 ChunkSection::ChunkSection()
 {
+	m_Blocks = new Block[4096];
 }
 
 ChunkSection::~ChunkSection()
 {
+	delete[] m_Blocks;
 }
 
 void ChunkSection::setBlock(Vector3i loc, Block block)
@@ -24,6 +26,12 @@ void ChunkSection::setBlock(Vector3i loc, Block block)
 	index += loc.m_Z * 16;
 	index += loc.m_Y * (16 * 16);
 
+	if (index >= 4096)
+	{
+		std::cout << "Block index out of range!\n";
+		return;
+	}
+
 	m_Blocks[index] = block;
 
 	m_NeedsUpdate = true;
@@ -31,16 +39,22 @@ void ChunkSection::setBlock(Vector3i loc, Block block)
 
 Block ChunkSection::getBlock(Vector3i loc)
 {
-	if (loc.m_X > 15 || loc.m_Y > 15 || loc.m_Z > 15)
+	if (loc.m_X > 15 || loc.m_Y > 15 || loc.m_Z > 15 || loc.m_X < 0 || loc.m_Y < 0 || loc.m_Z < 0)
 	{
 		std::cout << "Block index out of range!\n";
-		return;
+		return Block{};
 	}
 	int index{};
 
 	index += loc.m_X;
 	index += loc.m_Z * 16;
 	index += loc.m_Y * (16 * 16);
+
+	if (index >= 4096 || index < 0)
+	{
+		std::cout << "Block index out of range!\n";
+		return Block{};
+	}
 
 	return m_Blocks[index];
 }

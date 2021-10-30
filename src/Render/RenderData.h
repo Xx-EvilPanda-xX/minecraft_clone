@@ -9,6 +9,7 @@ struct RenderData
 	unsigned int tbo;
 
 	unsigned int ebo;
+	int indexCount;
 
 	unsigned int shader;
 

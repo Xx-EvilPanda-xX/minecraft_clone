@@ -18,7 +18,7 @@ enum class Face
 class ChunkMesh
 {
 private:
-	RenderData m_Objects;
+	RenderData m_RenderData;
 	std::vector<float> m_Vertices;
 	std::vector<float> m_TexCoords;
 	std::vector<int> m_Indices;
@@ -39,13 +39,17 @@ public:
 
 	void toBuffers();
 
+	void enableAttribs();
+
+	void disableAttribs();
+
 	const std::vector<float>& getVertices();
 
 	const std::vector<float>& getTexCoords();
 
 	const std::vector<int>& getIndices();
 
-	const RenderData& getObjects();
+	const RenderData& getRenderData();
 };
 
 #endif

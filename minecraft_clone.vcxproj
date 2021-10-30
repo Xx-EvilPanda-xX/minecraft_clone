@@ -53,6 +53,10 @@
     <ClInclude Include="src\World\ChunkSection.h" />
     <ClInclude Include="src\World\World.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\frag.glsl" />
+    <None Include="assets\shaders\vert.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

@@ -6,9 +6,8 @@
 static constexpr int g_WorldWidth{ 10 };
 static constexpr int g_WorldHeight{ 10 };
 
-World::World(TerrainGenerator worldGen) : m_WorldGen{ worldGen }, m_Shader{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" } }
+World::World(TerrainGenerator worldGen, Shader shader) : m_WorldGen{ worldGen }, m_Shader{ shader }
 {
-
 }
 
 World::~World()

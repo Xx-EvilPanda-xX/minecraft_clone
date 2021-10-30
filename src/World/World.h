@@ -15,7 +15,7 @@ private:
 	Shader m_Shader;
 
 public:
-	World(TerrainGenerator worldGen);
+	World(TerrainGenerator worldGen, Shader shader);
 
 	~World();
 

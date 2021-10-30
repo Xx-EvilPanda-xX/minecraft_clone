@@ -39,7 +39,7 @@ void Chunk::buildMesh()
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
 		if (m_Sections[i]->isFull()) {
-			continue;
+			//continue;
 		}
 
 		for (int x{}; x < 16; ++x)
@@ -88,6 +88,7 @@ void Chunk::buildMesh()
 			}
 		}
 	}
+	m_Mesh.toBuffers();
 }
 
 int Chunk::getCurrentSectionIndex()

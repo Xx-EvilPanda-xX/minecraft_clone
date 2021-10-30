@@ -111,4 +111,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

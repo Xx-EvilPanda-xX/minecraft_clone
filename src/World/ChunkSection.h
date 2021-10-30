@@ -7,7 +7,7 @@
 class ChunkSection
 {
 private:
-	Block m_Blocks[4096];
+	Block* m_Blocks;
 	bool m_NeedsUpdate;
 	bool m_Full;
 
