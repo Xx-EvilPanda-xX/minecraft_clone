@@ -3,7 +3,7 @@
 #include "../Math/Vector3i.h"
 #include "Block.h"
 
-ChunkSection::ChunkSection()
+ChunkSection::ChunkSection() : m_Full{ false }, m_NeedsUpdate{ true }
 {
 	m_Blocks = new Block[4096];
 }
@@ -15,20 +15,15 @@ ChunkSection::~ChunkSection()
 
 void ChunkSection::setBlock(Vector3i loc, Block block)
 {
-	if (loc.m_X > 15 || loc.m_Y > 15 || loc.m_Z > 15)
-	{
-		std::cout << "Block index out of range!\n";
-		return;
-	}
 	int index{};
 
-	index += loc.m_X;
-	index += loc.m_Z * 16;
-	index += loc.m_Y * (16 * 16);
+	index += loc.x;
+	index += loc.z * 16;
+	index += loc.y * (16 * 16);
 
-	if (index >= 4096)
+	if (index >= 4096 || index < 0)
 	{
-		std::cout << "Block index out of range!\n";
+		std::cout << "Block index out of range! " << index << "\n";
 		return;
 	}
 
@@ -39,39 +34,35 @@ void ChunkSection::setBlock(Vector3i loc, Block block)
 
 Block ChunkSection::getBlock(Vector3i loc)
 {
-	if (loc.m_X > 15 || loc.m_Y > 15 || loc.m_Z > 15 || loc.m_X < 0 || loc.m_Y < 0 || loc.m_Z < 0)
-	{
-		std::cout << "Block index out of range!\n";
-		return Block{};
-	}
 	int index{};
 
-	index += loc.m_X;
-	index += loc.m_Z * 16;
-	index += loc.m_Y * (16 * 16);
+	index += loc.x;
+	index += loc.z * 16;
+	index += loc.y * (16 * 16);
 
 	if (index >= 4096 || index < 0)
 	{
-		std::cout << "Block index out of range!\n";
-		return Block{};
+		std::cout << "Block index out of range! " << index << "\n";
+		return Block{ BlockType::Air };
 	}
 
 	return m_Blocks[index];
 }
 
-bool ChunkSection::isFull()
+bool ChunkSection::isEmpty()
 {
 	if (m_NeedsUpdate)
 	{
 		for (int i{}; i < 4096; ++i)
 		{
-			if (m_Blocks->getType() == BlockType::Air)
+			if (m_Blocks[i].getType() != BlockType::Air)
 			{
 				m_NeedsUpdate = false;
 				m_Full = false;
 				return m_Full;
 			}
 		}
+		m_NeedsUpdate = false;
 		m_Full = true;
 	}
 

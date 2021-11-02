@@ -4,8 +4,8 @@
 class Vector2i
 {
 public:
-	int m_X;
-	int m_Y;
+	int x;
+	int y;
 
 	Vector2i(int x, int y);
 

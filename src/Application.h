@@ -8,6 +8,7 @@
 #include "World/World.h"
 #include "Player/Player.h"
 #include "Input/Keyboard.h"
+#include "World/ChunkManager.h"
 
 class Application
 {

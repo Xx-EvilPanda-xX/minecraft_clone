@@ -29,7 +29,7 @@ void ChunkMesh::addFace(Vector3i loc, Face face)
 									   0.0, 0.0, 0.0 };
 		
 
-		m_Indices = std::vector<int>{ 1, 2, 3, 4, 2, 3 };
+		m_Indices = std::vector<int>{ 1, 2, 3, 0, 2, 3 };
 		m_TempHasAddedFace = true;
 	}
 }
@@ -76,7 +76,13 @@ void ChunkMesh::storeBuffer(int index, int size, int buffer, std::vector<float>&
 	glBindVertexArray(m_RenderData.vao);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
+	float* dataArray{ new float[data.size()]{} };
+	for (int i{}; i < data.size(); ++i)
+	{
+		dataArray[i] = static_cast<float>(data[i]);
+	}
+
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), dataArray, GL_STATIC_DRAW);
 	glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -86,8 +92,14 @@ void ChunkMesh::storeBuffer(int index, int size, int buffer, std::vector<float>&
 void ChunkMesh::storeIndices(std::vector<int>& data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RenderData.ebo);
+
+	int* dataArray{ new int[data.size()]{} };
+	for (int i{}; i < data.size(); ++i)
+	{
+		dataArray[i] = static_cast<float>(data[i]);
+	}
 	
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), &data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), dataArray, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 

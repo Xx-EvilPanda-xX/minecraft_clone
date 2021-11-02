@@ -21,7 +21,8 @@ ChunkSection* TerrainGenerator::genSection(Vector2i loc, int section)
 		{
 			for (int z{}; z < 16; ++z)
 			{
-				if (y < 64)
+				int chunkY = loc.y + (section * 16);
+				if (chunkY < 64)
 					chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Grass });
 				else
 					chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Air });

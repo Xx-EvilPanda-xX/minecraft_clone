@@ -20,7 +20,7 @@ public:
 
 	Block getBlock(Vector3i loc);
 
-	bool isFull();
+	bool isEmpty();
 };
 
 #endif
