@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 #Custom excludes
 include/
+glad.c
