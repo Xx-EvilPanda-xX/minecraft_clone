@@ -2,7 +2,7 @@
 #define TERRAIN_GENERATOR_H
 
 #include "../World/ChunkSection.h"
-#include "../Math/Vector2i.h"
+#include <glm/vec2.hpp>
 
 class TerrainGenerator
 {
@@ -11,7 +11,7 @@ public:
 
 	~TerrainGenerator();
 
-	ChunkSection* genSection(Vector2i loc, int section);
+	ChunkSection* genSection(glm::vec2  loc, int section);
 };
 
 #endif

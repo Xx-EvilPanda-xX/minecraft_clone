@@ -14,7 +14,7 @@ ChunkMesh::~ChunkMesh()
 {
 }
 
-void ChunkMesh::addFace(Vector3i loc, Face face)
+void ChunkMesh::addFace(glm::vec3 loc, Face face)
 {
 	if (!m_TempHasAddedFace)
 	{

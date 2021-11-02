@@ -16,7 +16,6 @@ private:
 	Window m_Window;
 	Keyboard m_Keyboard;
 	World* m_World;
-	Player m_Player;
 
 	void handleInput();
 

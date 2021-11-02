@@ -1,6 +1,6 @@
 #include "World.h"
 #include "Chunk.h"
-#include "../Math/Vector2i.h"
+#include <glm/vec2.hpp>
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
 
@@ -21,11 +21,11 @@ void World::generate()
 	{
 		for (int j{}; i < g_WorldHeight; ++i)
 		{
-			Chunk* chunk = new Chunk(Vector2i{ i, j });
+			Chunk* chunk = new Chunk(glm::vec2 { i, j });
 
 			for (int k{}; k < g_ChunkCap; ++k)
 			{
-				chunk->addSection(m_WorldGen.genSection(Vector2i{ i, j }, k));
+				chunk->addSection(m_WorldGen.genSection(glm::vec2 { i, j }, k));
 			}
 
 			m_Chunks.push_back(chunk);

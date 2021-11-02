@@ -19,13 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="glad.c" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Gen\TerrainGenerator.cpp" />
-    <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\Input\Keyboard.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Math\Vector2i.cpp" />
     <ClCompile Include="src\Math\Vector3i.cpp" />
+    <ClCompile Include="src\Player\Camera.cpp" />
     <ClCompile Include="src\Player\Player.cpp" />
     <ClCompile Include="src\Render\Renderer.cpp" />
     <ClCompile Include="src\Render\Shader.cpp" />
@@ -43,6 +44,7 @@
     <ClInclude Include="src\Input\Keyboard.h" />
     <ClInclude Include="src\Math\Vector2i.h" />
     <ClInclude Include="src\Math\Vector3i.h" />
+    <ClInclude Include="src\Player\Camera.h" />
     <ClInclude Include="src\Player\Player.h" />
     <ClInclude Include="src\Render\RenderData.h" />
     <ClInclude Include="src\Render\Renderer.h" />

@@ -2,7 +2,7 @@
 #define CHUNK_MESH_H
 
 #include <vector>
-#include "../Math/Vector3i.h"
+#include <glm/vec3.hpp>
 #include "../Render/RenderData.h"
 
 enum class Face
@@ -35,7 +35,7 @@ public:
 
 	~ChunkMesh();
 
-	void addFace(Vector3i loc, Face face);
+	void addFace(glm::vec3 loc, Face face);
 
 	void toBuffers();
 

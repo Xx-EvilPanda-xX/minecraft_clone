@@ -2,7 +2,7 @@
 #define CHUNK_SECTION_H
 
 #include "Block.h"
-#include "../Math/Vector3i.h"
+#include <glm/vec3.hpp>
 
 class ChunkSection
 {
@@ -16,9 +16,9 @@ public:
 
 	~ChunkSection();
 
-	void setBlock(Vector3i loc, Block block);
+	void setBlock(glm::vec3 loc, Block block);
 
-	Block getBlock(Vector3i loc);
+	Block getBlock(glm::vec3 loc);
 
 	bool isEmpty();
 };

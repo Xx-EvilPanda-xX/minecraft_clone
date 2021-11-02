@@ -1,6 +1,6 @@
 #include <iostream>
 #include "ChunkSection.h"
-#include "../Math/Vector3i.h"
+#include <glm/vec3.hpp>
 #include "Block.h"
 
 ChunkSection::ChunkSection() : m_Full{ false }, m_NeedsUpdate{ true }
@@ -13,7 +13,7 @@ ChunkSection::~ChunkSection()
 	delete[] m_Blocks;
 }
 
-void ChunkSection::setBlock(Vector3i loc, Block block)
+void ChunkSection::setBlock(glm::vec3 loc, Block block)
 {
 	int index{};
 
@@ -32,7 +32,7 @@ void ChunkSection::setBlock(Vector3i loc, Block block)
 	m_NeedsUpdate = true;
 }
 
-Block ChunkSection::getBlock(Vector3i loc)
+Block ChunkSection::getBlock(glm::vec3 loc)
 {
 	int index{};
 
