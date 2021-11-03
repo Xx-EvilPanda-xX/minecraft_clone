@@ -5,10 +5,7 @@ Keyboard::Keyboard(GLFWwindow* win)
 	this->m_Win = win;
 }
 
-Keyboard::Keyboard()
-{
-
-}
+Keyboard::Keyboard() = default;
 
 Keyboard::~Keyboard()
 {

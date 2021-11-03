@@ -1,17 +1,15 @@
 #include "TerrainGenerator.h"
 #include "../World/ChunkSection.h"
-#include <glm/vec2.hpp>
+#include "../Math/Vector2i.h"
 #include "../World/Block.h"
 
-TerrainGenerator::TerrainGenerator()
-{
-}
+TerrainGenerator::TerrainGenerator() = default;
 
 TerrainGenerator::~TerrainGenerator()
 {
 }
 
-ChunkSection* TerrainGenerator::genSection(glm::vec2  loc, int section)
+ChunkSection* TerrainGenerator::genSection(Vector2i loc, int section)
 {
 	ChunkSection* chunkSection = new ChunkSection();
 
@@ -23,9 +21,9 @@ ChunkSection* TerrainGenerator::genSection(glm::vec2  loc, int section)
 			{
 				int chunkY = loc.y + (section * 16);
 				if (chunkY < 64)
-					chunkSection->setBlock(glm::vec3{ x, y, z }, Block{ BlockType::Grass });
+					chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Grass });
 				else
-					chunkSection->setBlock(glm::vec3{ x, y, z }, Block{ BlockType::Air });
+					chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Air });
 			}
 		}
 	}

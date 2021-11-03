@@ -4,7 +4,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Input/Keyboard.h"
+#include "Input/Mouse.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
 
 class Window
 {
@@ -32,6 +36,10 @@ public:
 	int getHeight();
 
 	const char* getTitle();
+
+	Keyboard& getKeyboard();
+
+	Mouse& getMouse();
 };
 
 #endif

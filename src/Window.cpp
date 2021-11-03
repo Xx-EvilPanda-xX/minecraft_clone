@@ -1,21 +1,22 @@
 #include <iostream>
 #include "Window.h"
 
+Keyboard g_Keyboard;
+Mouse g_Mouse;
+
 Window::Window(int width, int height, const char* title) : m_Width{ width }, m_Height{ height }, m_Title{ title }
 {
 	initGlfw();
 	createWindow();
 	loadGL();
+
+	g_Keyboard = Keyboard{ m_Window };
 }
 
-Window::Window()
-{
-
-}
+Window::Window() = default;
 
 Window::~Window()
 {
-
 }
 
 void Window::initGlfw()
@@ -45,6 +46,7 @@ void Window::createWindow()
 	glfwMakeContextCurrent(m_Window);
 
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(m_Window, mouse_move_callback);
 }
 
 void Window::loadGL()
@@ -76,7 +78,23 @@ const char* Window::getTitle()
 	return m_Title;
 }
 
+Keyboard& Window::getKeyboard()
+{
+	return g_Keyboard;
+}
+
+Mouse& Window::getMouse()
+{
+	return g_Mouse;
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+}
+
+void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	g_Mouse.setX(static_cast<float>(xpos));
+	g_Mouse.setY(static_cast<float>(ypos));
 }

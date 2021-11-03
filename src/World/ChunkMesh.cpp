@@ -2,7 +2,7 @@
 #include "ChunkMesh.h"
 #include "Chunk.h"
 
-ChunkMesh::ChunkMesh()
+ChunkMesh::ChunkMesh(Vector2i pos) : m_Pos{ pos }
 {
 	hasValidObjects = false;
 	m_TempHasAddedFace = false;
@@ -14,7 +14,7 @@ ChunkMesh::~ChunkMesh()
 {
 }
 
-void ChunkMesh::addFace(glm::vec3 loc, Face face)
+void ChunkMesh::addFace(Vector3i loc, Face face)
 {
 	if (!m_TempHasAddedFace)
 	{
@@ -34,13 +34,13 @@ void ChunkMesh::addFace(glm::vec3 loc, Face face)
 	}
 }
 
-void ChunkMesh::enableAttribs()
+void ChunkMesh::enableAttribs() const
 {
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 }
 
-void ChunkMesh::disableAttribs()
+void ChunkMesh::disableAttribs() const
 {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -79,7 +79,7 @@ void ChunkMesh::storeBuffer(int index, int size, int buffer, std::vector<float>&
 	float* dataArray{ new float[data.size()]{} };
 	for (int i{}; i < data.size(); ++i)
 	{
-		dataArray[i] = static_cast<float>(data[i]);
+		dataArray[i] = data[i];
 	}
 
 	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), dataArray, GL_STATIC_DRAW);
@@ -96,32 +96,37 @@ void ChunkMesh::storeIndices(std::vector<int>& data)
 	int* dataArray{ new int[data.size()]{} };
 	for (int i{}; i < data.size(); ++i)
 	{
-		dataArray[i] = static_cast<float>(data[i]);
+		dataArray[i] = data[i];
 	}
 	
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), dataArray, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	m_RenderData.indexCount = data.size();
+	m_RenderData.indexCount = static_cast<int>(data.size());
 }
 
-const std::vector<float>& ChunkMesh::getVertices()
+const std::vector<float>& ChunkMesh::getVertices() const
 {
 	return m_Vertices;
 }
 
-const std::vector<float>& ChunkMesh::getTexCoords()
+const std::vector<float>& ChunkMesh::getTexCoords() const
 {
 	return m_TexCoords;
 }
 
-const std::vector<int>& ChunkMesh::getIndices()
+const std::vector<int>& ChunkMesh::getIndices() const
 {
 	return m_Indices;
 }
 
-const RenderData& ChunkMesh::getRenderData()
+const RenderData& ChunkMesh::getRenderData() const
 {
 	return m_RenderData;
+}
+
+Vector2i ChunkMesh::getPostion() const
+{
+	return m_Pos;
 }

@@ -2,7 +2,7 @@
 #define CHUNK_MANAGER_H
 
 #include "Block.h"
-#include <glm/vec3.hpp>
+#include "../Math/Vector3i.h"
 
 class World;
 
@@ -14,11 +14,13 @@ private:
 public:
 	ChunkManager(World* world);
 
+	ChunkManager();
+
 	~ChunkManager();
 
-	void setWorldBlock(glm::vec3 loc, Block block);
+	void setWorldBlock(Vector3i loc, Block block);
 
-	Block getWorldBlock(glm::vec3 loc);
+	Block getWorldBlock(Vector3i loc);
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "ChunkSection.h"
 #include "ChunkMesh.h"
-#include <glm/vec2.hpp>
+#include "../Math/Vector2i.h"
 #include "ChunkManager.h"
 
 extern constexpr int g_ChunkCap{ 16 };
@@ -15,10 +15,10 @@ private:
 	ChunkMesh m_Mesh;
 	int m_CurrentSectionIndex;
 	bool m_Complete;
-	glm::vec2 m_Location;
+	Vector2i m_Location;
 
 public:
-	Chunk(glm::vec2 loc);
+	Chunk(Vector2i loc);
 
 	~Chunk();
 
@@ -32,7 +32,7 @@ public:
 
 	bool isComplete();
 
-	glm::vec2  getLocation();
+	Vector2i getLocation();
 
 	ChunkSection* getSection(int index);
 };

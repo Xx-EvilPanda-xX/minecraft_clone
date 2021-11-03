@@ -2,7 +2,8 @@
 #define CHUNK_MESH_H
 
 #include <vector>
-#include <glm/vec3.hpp>
+#include "../Math/Vector3i.h"
+#include "../Math/Vector2i.h"
 #include "../Render/RenderData.h"
 
 enum class Face
@@ -26,30 +27,34 @@ private:
 	//temporary
 	bool m_TempHasAddedFace;
 
+	Vector2i m_Pos;
+
 	void storeBuffer(int index, int size, int buffer, std::vector<float>& data);
 
 	void storeIndices(std::vector<int>& data);
 
 public:
-	ChunkMesh();
+	ChunkMesh(Vector2i pos);
 
 	~ChunkMesh();
 
-	void addFace(glm::vec3 loc, Face face);
+	void addFace(Vector3i loc, Face face);
 
 	void toBuffers();
 
-	void enableAttribs();
+	void enableAttribs() const;
 
-	void disableAttribs();
+	void disableAttribs() const;
 
-	const std::vector<float>& getVertices();
+	const std::vector<float>& getVertices() const;
 
-	const std::vector<float>& getTexCoords();
+	const std::vector<float>& getTexCoords() const;
 
-	const std::vector<int>& getIndices();
+	const std::vector<int>& getIndices() const;
 
-	const RenderData& getRenderData();
+	const RenderData& getRenderData() const;
+
+	Vector2i getPostion() const;
 };
 
 #endif

@@ -1,24 +1,26 @@
 #include <cmath>
 #include "ChunkManager.h"
 #include "Block.h"
-#include <glm/vec3.hpp>
-#include <glm/vec2.hpp>
+#include "../Math/Vector3i.h"
+#include "../Math/Vector2i.h"
 #include "World.h"
 
 ChunkManager::ChunkManager(World* world) : m_World{ world }
 {
 }
 
+ChunkManager::ChunkManager() = default;
+
 ChunkManager::~ChunkManager()
 {
 }
 
-void ChunkManager::setWorldBlock(glm::vec3 loc, Block block)
+void ChunkManager::setWorldBlock(Vector3i loc, Block block)
 {
 	int chunkIndex{};
 	int sectionIndex{};
 
-	glm::vec3 sectionLocal{ loc.x, loc.y, loc.z };
+	Vector3i sectionLocal{ loc.x, loc.y, loc.z };
 
 	while (sectionLocal.x > 15 || sectionLocal.x < -15)
 	{
@@ -42,7 +44,7 @@ void ChunkManager::setWorldBlock(glm::vec3 loc, Block block)
 	sectionLocal.y = std::abs(sectionLocal.y);
 	sectionLocal.z = std::abs(sectionLocal.z);
 
-	glm::vec2  chunkLocation{ loc.x - sectionLocal.x, loc.z - sectionLocal.z };
+	Vector2i chunkLocation{ loc.x - sectionLocal.x, loc.z - sectionLocal.z };
 	for (int i{}; i < m_World->getChunks().size(); ++i)
 	{
 		if (m_World->getChunks()[i]->getLocation().x == chunkLocation.x && m_World->getChunks()[i]->getLocation().y == chunkLocation.y)
@@ -58,15 +60,15 @@ void ChunkManager::setWorldBlock(glm::vec3 loc, Block block)
 		std::cout << "Chunk at " << chunkLocation.x << ", " << chunkLocation.y << "does not exist!";
 	}
 
-	m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(glm::vec3{ sectionLocal.x, sectionLocal.y, sectionLocal.z }, block);
+	m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(Vector3i{ sectionLocal.x, sectionLocal.y, sectionLocal.z }, block);
 }
 
-Block ChunkManager::getWorldBlock(glm::vec3 loc)
+Block ChunkManager::getWorldBlock(Vector3i loc)
 {
 	int chunkIndex{};
 	int sectionIndex{};
 
-	glm::vec3 sectionLocal{ loc.x, loc.y, loc.z };
+	Vector3i sectionLocal{ loc.x, loc.y, loc.z };
 
 	while (sectionLocal.x > 15 || sectionLocal.x < -15)
 	{
@@ -90,7 +92,7 @@ Block ChunkManager::getWorldBlock(glm::vec3 loc)
 	sectionLocal.y = std::abs(sectionLocal.y);
 	sectionLocal.z = std::abs(sectionLocal.z);
 
-	glm::vec2  chunkLocation{ loc.x - sectionLocal.x, loc.z - sectionLocal.z };
+	Vector2i chunkLocation{ loc.x - sectionLocal.x, loc.z - sectionLocal.z };
 	for (int i{}; i < m_World->getChunks().size(); ++i)
 	{
 		if (m_World->getChunks()[i]->getLocation().x == chunkLocation.x && m_World->getChunks()[i]->getLocation().y == chunkLocation.y)
@@ -106,5 +108,5 @@ Block ChunkManager::getWorldBlock(glm::vec3 loc)
 		std::cout << "Chunk at " << chunkLocation.x << ", " << chunkLocation.y << "does not exist!";
 	}
 
-	return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(glm::vec3{ sectionLocal.x, sectionLocal.y, sectionLocal.z } );
+	return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(Vector3i{ sectionLocal.x, sectionLocal.y, sectionLocal.z } );
 }

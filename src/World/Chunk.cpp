@@ -2,7 +2,7 @@
 #include "Chunk.h"
 #include "ChunkManager.h"
 
-Chunk::Chunk(glm::vec2  loc) : m_Location{ loc }
+Chunk::Chunk(Vector2i loc) : m_Location{ loc }, m_Mesh{ loc }
 {
 
 	for (int i{}; i < g_ChunkCap; ++i)
@@ -53,41 +53,42 @@ void Chunk::buildMesh(ChunkManager& manager)
 			{
 				for (int z{}; z < 16; ++z)
 				{
-					if (manager.getWorldBlock(glm::vec3{ x, y, z }).getType() == BlockType::Air)
+					if (manager.getWorldBlock(Vector3i{ x, y, z }).getType() == BlockType::Air)
 					{
 						continue;
 					}
 					else
 					{
-						if (manager.getWorldBlock(glm::vec3{ x + 1, y, z }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x + 1, y, z }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(glm::vec3{ x, (i * 16) + y, z }, Face::North);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::North);
 						}
 
-						if (manager.getWorldBlock(glm::vec3{ x, y + 1, z }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x, y + 1, z }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(glm::vec3{ x, (i * 16) + y, z }, Face::Up);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::Up);
 						}
 
-						if (manager.getWorldBlock(glm::vec3{ x, y, z + 1 }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x, y, z + 1 }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(glm::vec3{ x, (i * 16) + y, z }, Face::West);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::West);
 						}
 
-						if (manager.getWorldBlock(glm::vec3{ x - 1, y, z }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x - 1, y, z }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(glm::vec3{ x, (i * 16) + y, z }, Face::South);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::South);
 						}
 
-						if (manager.getWorldBlock(glm::vec3{ x, y - 1, z }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x, y - 1, z }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(glm::vec3{ x, (i * 16) + y, z }, Face::Down);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::Down);
 						}
 
-						if (manager.getWorldBlock(glm::vec3{ x, y, z - 1 }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x, y, z - 1 }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(glm::vec3{ x, (i * 16) + y, z }, Face::East);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::East);
 						}
+						m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::Up);
 					}
 				}
 			}
@@ -112,9 +113,9 @@ bool Chunk::isComplete()
 	return m_Complete;
 }
 
-glm::vec2  Chunk::getLocation()
+Vector2i Chunk::getLocation()
 {
-	return m_Location;
+	return m_Location; 
 }
 
 ChunkSection* Chunk::getSection(int index)

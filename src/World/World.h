@@ -20,9 +20,11 @@ private:
 public:
 	World(TerrainGenerator worldGen, Shader shader);
 
+	World();
+
 	~World();
 
-	void worldRender();
+	void worldRender(Camera& camera);
 
 	void generate();
 

@@ -1,10 +1,11 @@
 #include <iostream>
 #include "Application.h"
+#include "Constants.h"
 
 int main()
 {
 	Application app{};
-	app.init(1280, 720, "Minecraft!");
+	app.init(constants::windowWidth, constants::windowHeight, "Minecraft!");
 	app.runMainLoop();
 }
 

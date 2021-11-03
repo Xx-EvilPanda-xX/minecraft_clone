@@ -9,13 +9,17 @@
 #include "Player/Player.h"
 #include "Input/Keyboard.h"
 #include "World/ChunkManager.h"
+#include "Player/Camera.h"
 
 class Application
 {
 private:
 	Window m_Window;
-	Keyboard m_Keyboard;
 	World* m_World;
+	Camera m_Camera;
+
+	float m_Dt;
+	float m_LastFrame;
 
 	void handleInput();
 

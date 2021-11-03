@@ -1,6 +1,6 @@
 #include "World.h"
 #include "Chunk.h"
-#include <glm/vec2.hpp>
+#include "../Math/Vector2i.h"
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
 
@@ -10,6 +10,8 @@ static constexpr int g_WorldHeight{ 10 };
 World::World(TerrainGenerator worldGen, Shader shader) : m_WorldGen{ worldGen }, m_Shader{ shader }, m_Manager{ this }
 {
 }
+
+World::World() = default;
 
 World::~World()
 {
@@ -21,11 +23,11 @@ void World::generate()
 	{
 		for (int j{}; i < g_WorldHeight; ++i)
 		{
-			Chunk* chunk = new Chunk(glm::vec2 { i, j });
+			Chunk* chunk = new Chunk(Vector2i{ i, j });
 
 			for (int k{}; k < g_ChunkCap; ++k)
 			{
-				chunk->addSection(m_WorldGen.genSection(glm::vec2 { i, j }, k));
+				chunk->addSection(m_WorldGen.genSection(Vector2i{ i, j }, k));
 			}
 
 			m_Chunks.push_back(chunk);
@@ -33,7 +35,7 @@ void World::generate()
 	}
 }
 
-void World::worldRender()
+void World::worldRender(Camera& camera)
 {
 	static int meshPtr{};
 
@@ -45,7 +47,7 @@ void World::worldRender()
 	
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
-		Renderer::drawMesh(m_Shader, m_Chunks[i]->getMesh());
+		Renderer::drawMesh(m_Shader, camera, m_Chunks[i]->getMesh());
 	}
 }
 

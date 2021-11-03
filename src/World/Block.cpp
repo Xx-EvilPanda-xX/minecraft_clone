@@ -9,9 +9,7 @@ Block::Block()
 	m_Type = BlockType::Air;
 }
 
-Block::~Block()
-{
-}
+Block::~Block() = default;
 
 BlockType Block::getType()
 {
