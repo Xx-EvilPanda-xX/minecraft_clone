@@ -120,7 +120,7 @@ const RenderData& ChunkMesh::getRenderData() const
 	return m_RenderData;
 }
 
-Vector2i ChunkMesh::getPostion() const
+const Vector2i& ChunkMesh::getPostion() const
 {
 	return m_Pos;
 }

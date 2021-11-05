@@ -20,7 +20,7 @@ public:
 
 	~Block();
 
-	BlockType getType();
+	BlockType getType() const;
 };
 
 #endif

@@ -8,34 +8,34 @@ Mouse::~Mouse()
 
 float Mouse::getXOffset()
 {
-	if (usedX)
+	if (m_UsedX)
 	{
 		return 0.0f;
 	}
 
-	usedX = true;
+	m_UsedX = true;
 	return m_xOffset;
 }
 
 float Mouse::getYOffset()
 {
-	if (usedY)
+	if (m_UsedY)
 	{
 		return 0.0f;
 	}
 
-	usedY = true;
+	m_UsedY = true;
 	return m_yOffset;
 }
 
 void Mouse::setXOffset(float x)
 {
 	m_xOffset = x;
-	usedX = false;
+	m_UsedX = false;
 }
 
 void Mouse::setYOffset(float y)
 {
 	m_yOffset = -y;
-	usedY = false;
+	m_UsedY = false;
 }

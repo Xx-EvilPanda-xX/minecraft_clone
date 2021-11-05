@@ -14,7 +14,7 @@ public:
 
 	~Keyboard();
 
-	bool isKeyDown(int key);
+	bool isKeyDown(int key) const;
 };
 
 #endif

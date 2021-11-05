@@ -27,15 +27,15 @@ public:
 
 	void buildMesh(ChunkManager& manager);
 
-	int getCurrentSectionIndex();
+	int getCurrentSectionIndex() const;
 
-	ChunkMesh& getMesh();
+	const ChunkMesh& getMesh() const;
 
-	bool isComplete();
+	bool isComplete() const;
 
-	Vector2i getLocation();
+	const Vector2i& getLocation() const;
 
-	ChunkSection* getSection(int index);
+	ChunkSection* getSection(int index) const;
 };
 
 #endif

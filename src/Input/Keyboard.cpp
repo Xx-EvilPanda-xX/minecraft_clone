@@ -12,7 +12,7 @@ Keyboard::~Keyboard()
 
 }
 
-bool Keyboard::isKeyDown(int key)
+bool Keyboard::isKeyDown(int key) const
 {
 	return glfwGetKey(m_Win, key) == GLFW_PRESS;
 }

@@ -13,14 +13,13 @@ Camera::~Camera()
 {
 }
 
-glm::mat4 Camera::getProjectionMat()
+glm::mat4 Camera::getProjectionMat() const
 {
 	return glm::perspective(glm::radians(m_Fov), static_cast<float>(constants::windowWidth) / static_cast<float>(constants::windowHeight), 0.1f, 1000.0f);
 }
 
-glm::mat4 Camera::getViewMat()
+glm::mat4 Camera::getViewMat() const
 {
-	calculateVecs();
 	return glm::lookAt(m_Location, m_Location + m_Front, m_Up);
 }
 
@@ -48,6 +47,8 @@ void Camera::handleMouse(glm::vec2 offset, float dt)
 	{
 		m_Yaw = 360.0f;
 	}
+
+	calculateVecs();
 }
 
 void Camera::handleKeyboard(Direction dir, float velocity, float dt)
@@ -79,6 +80,8 @@ void Camera::handleKeyboard(Direction dir, float velocity, float dt)
 		m_Location -= glm::vec3(m_Front.x, 0.0f, m_Front.z) * velocity;
 		break;
 	}
+
+	calculateVecs();
 }
 
 void Camera::calculateVecs()

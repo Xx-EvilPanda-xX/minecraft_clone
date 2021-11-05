@@ -11,7 +11,7 @@ Block::Block()
 
 Block::~Block() = default;
 
-BlockType Block::getType()
+BlockType Block::getType() const
 {
 	return m_Type;
 }

@@ -53,7 +53,7 @@ public:
 
 	const RenderData& getRenderData() const;
 
-	Vector2i getPostion() const;
+	const Vector2i& getPostion() const;
 };
 
 #endif

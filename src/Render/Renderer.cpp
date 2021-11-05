@@ -5,7 +5,7 @@
 
 namespace Renderer
 {
-	void drawMesh(Camera& camera, ChunkMesh& mesh)
+	void drawMesh(const Camera& camera, const ChunkMesh& mesh)
 	{
 		mesh.getRenderData().shader.bind();
 
@@ -23,7 +23,7 @@ namespace Renderer
 		mesh.getRenderData().shader.unbind();
 	}
 
-	static void prepare(Camera& camera, ChunkMesh& mesh)
+	static void prepare(const Camera& camera, const ChunkMesh& mesh)
 	{
 		glm::mat4 model(1.0f);
 		glm::vec3 chunkPostion{ static_cast<float>(mesh.getPostion().x), 0.0f, static_cast<float>(mesh.getPostion().y) };

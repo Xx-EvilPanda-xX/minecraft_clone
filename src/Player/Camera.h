@@ -39,9 +39,9 @@ public:
 
 	~Camera();
 
-	glm::mat4 getProjectionMat();
+	glm::mat4 getProjectionMat() const;
 
-	glm::mat4 getViewMat();
+	glm::mat4 getViewMat() const;
 
 	void handleMouse(glm::vec2 offset, float dt);
 

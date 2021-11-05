@@ -55,44 +55,35 @@ void Application::handleInput()
 	Mouse& mouse{ m_Window.getMouse() };
 
 	if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
-	{
 		glfwSetWindowShouldClose(m_Window.getWindow(), true);
-	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
 		m_Camera.handleKeyboard(Direction::Forward, 2.5, m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-		{
 			m_Camera.handleKeyboard(Direction::Forward, 5.0f, m_Dt);
-		}
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_A))
-	{
 		m_Camera.handleKeyboard(Direction::Left, 2.5, m_Dt);
-	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_S))
-	{
 		m_Camera.handleKeyboard(Direction::Back, 2.5, m_Dt);
-	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_D))
-	{
 		m_Camera.handleKeyboard(Direction::Right, 2.5, m_Dt);
-	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
-	{
 		m_Camera.handleKeyboard(Direction::Up, 2.5, m_Dt);
-	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
-	{
 		m_Camera.handleKeyboard(Direction::Down, 2.5, m_Dt);
-	}
+
+	if (keyboard.isKeyDown(GLFW_KEY_C))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	else
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() }, m_Dt);
 }

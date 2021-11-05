@@ -7,8 +7,8 @@ private:
 	float m_xOffset;
 	float m_yOffset;
 
-	bool usedX;
-	bool usedY;
+	bool m_UsedX;
+	bool m_UsedY;
 
 public:
 
@@ -18,7 +18,7 @@ public:
 
 	float getXOffset();
 
-	float getYOffset();
+	float getYOffset() ;
 
 	void setXOffset(float x);
 

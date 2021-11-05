@@ -97,27 +97,27 @@ void Chunk::buildMesh(ChunkManager& manager)
 	
 }
 
-int Chunk::getCurrentSectionIndex()
+int Chunk::getCurrentSectionIndex() const
 {
 	return m_CurrentSectionIndex;
 }
 
-ChunkMesh& Chunk::getMesh()
+const ChunkMesh& Chunk::getMesh() const
 {
 	return m_Mesh;
 }
 
-bool Chunk::isComplete()
+bool Chunk::isComplete() const
 {
 	return m_Complete;
 }
 
-Vector2i Chunk::getLocation()
+const Vector2i& Chunk::getLocation() const
 {
 	return m_Location; 
 }
 
-ChunkSection* Chunk::getSection(int index)
+ChunkSection* Chunk::getSection(int index) const
 {
 	return m_Sections[index];
 }
