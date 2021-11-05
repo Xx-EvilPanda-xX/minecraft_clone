@@ -28,7 +28,7 @@ public:
 
 	void generate();
 
-	std::vector<Chunk*> getChunks();
+	std::vector<Chunk*>& getChunks();
 };
 
 #endif

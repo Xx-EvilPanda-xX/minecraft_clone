@@ -53,7 +53,7 @@ void World::worldRender(Camera& camera)
 	}
 }
 
-std::vector<Chunk*> World::getChunks()
+std::vector<Chunk*>& World::getChunks()
 {
 	return m_Chunks;
 }
