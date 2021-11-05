@@ -47,6 +47,8 @@ void Window::createWindow()
 
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(m_Window, mouse_move_callback);
+
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Window::loadGL()
@@ -95,6 +97,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	g_Mouse.setX(static_cast<float>(xpos));
-	g_Mouse.setY(static_cast<float>(ypos));
+	g_Mouse.setXOffset(static_cast<float>(xpos));
+	g_Mouse.setYOffset(static_cast<float>(ypos));
 }

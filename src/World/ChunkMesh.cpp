@@ -2,12 +2,22 @@
 #include "ChunkMesh.h"
 #include "Chunk.h"
 
-ChunkMesh::ChunkMesh(Vector2i pos) : m_Pos{ pos }
+ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader) : m_Pos{ pos }, m_RenderData{ 0, 0, 0, 0, 0, shader }
 {
 	hasValidObjects = false;
-	m_TempHasAddedFace = false;
 
-	m_RenderData = RenderData{};
+	m_Vertices = std::vector<float>{ -0.5, -0.5, 5.0,
+									   0.5, 0.5, 5.0,
+									   0.5, -0.5, 5.0,
+									   -0.5, 0.5, 5.0 };
+
+	m_TexCoords = std::vector<float>{ 0.0, 0.0, 0.0,
+								   0.0, 0.0, 0.0,
+								   0.0, 0.0, 0.0,
+								   0.0, 0.0, 0.0 };
+
+
+	m_Indices = std::vector<int>{ 1, 2, 3, 0, 2, 3 };
 }
 
 ChunkMesh::~ChunkMesh()
@@ -16,22 +26,6 @@ ChunkMesh::~ChunkMesh()
 
 void ChunkMesh::addFace(Vector3i loc, Face face)
 {
-	if (!m_TempHasAddedFace)
-	{
-		m_Vertices = std::vector<float>{ -0.5, -0.5, 0.0,
-									   0.5, 0.5, 0.0,
-									   0.5, -0.5, 0.0,
-									   -0.5, 0.5, 0.0 };
-
-		m_TexCoords = std::vector<float>{ 0.0, 0.0, 0.0,
-									   0.0, 0.0, 0.0,
-									   0.0, 0.0, 0.0,
-									   0.0, 0.0, 0.0 };
-		
-
-		m_Indices = std::vector<int>{ 1, 2, 3, 0, 2, 3 };
-		m_TempHasAddedFace = true;
-	}
 }
 
 void ChunkMesh::enableAttribs() const

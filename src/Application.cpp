@@ -6,7 +6,7 @@
 
 #include "Application.h"
 
-Application::Application() : m_Camera{ glm::vec3{ 0.0f, 0.0f, -5.0f }, 0.0f, 0.0f, 45.0f }
+Application::Application() : m_Camera{ glm::vec3{ 0.0f, 0.0f, -5.0f }, 0.0f, 0.0f, 97.0f }
 {
 
 }
@@ -29,13 +29,14 @@ void Application::runMainLoop()
 
 	while (!glfwWindowShouldClose(m_Window.getWindow()))
 	{
+		glfwSetCursorPos(m_Window.getWindow(), 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		handleInput();
 
-		std::cout << "Yaw: " << m_Camera.getYaw() << "\n";
-		std::cout << "Pitch: " << m_Camera.getPitch() << "\n";
-		std::cout << "Postion: " << m_Camera.getLocation().x << ", " << m_Camera.getLocation().y << ", " << m_Camera.getLocation().z << "\n";
+		//std::cout << "Yaw: " << m_Camera.getYaw() << "\n";
+		//std::cout << "Pitch: " << m_Camera.getPitch() << "\n";
+		//std::cout << "Postion: " << m_Camera.getLocation().x << ", " << m_Camera.getLocation().y << ", " << m_Camera.getLocation().z << "\n";
 
 		m_World->worldRender(m_Camera);
 
@@ -60,35 +61,38 @@ void Application::handleInput()
 
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
-		m_Camera.handleKeyboard(Direction::Forward, 1.0, m_Dt);
+		m_Camera.handleKeyboard(Direction::Forward, 2.5, m_Dt);
+
+		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
+		{
+			m_Camera.handleKeyboard(Direction::Forward, 5.0f, m_Dt);
+		}
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_A))
 	{
-		m_Camera.handleKeyboard(Direction::Left, 1.0, m_Dt);
+		m_Camera.handleKeyboard(Direction::Left, 2.5, m_Dt);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_S))
 	{
-		m_Camera.handleKeyboard(Direction::Back, 1.0, m_Dt);
+		m_Camera.handleKeyboard(Direction::Back, 2.5, m_Dt);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_D))
 	{
-		m_Camera.handleKeyboard(Direction::Right, 1.0, m_Dt);
+		m_Camera.handleKeyboard(Direction::Right, 2.5, m_Dt);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
 	{
-		m_Camera.handleKeyboard(Direction::Up, 1.0, m_Dt);
+		m_Camera.handleKeyboard(Direction::Up, 2.5, m_Dt);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
 	{
-		m_Camera.handleKeyboard(Direction::Down, 1.0, m_Dt);
+		m_Camera.handleKeyboard(Direction::Down, 2.5, m_Dt);
 	}
 
-
-	mouse.update();
-	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() });
+	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() }, m_Dt);
 }

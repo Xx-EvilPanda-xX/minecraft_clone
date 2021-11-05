@@ -23,7 +23,6 @@ void ChunkSection::setBlock(Vector3i loc, Block block)
 
 	if (index >= 4096 || index < 0)
 	{
-		std::cout << "Block index out of range! " << index << "\n";
 		return;
 	}
 
@@ -42,7 +41,6 @@ Block ChunkSection::getBlock(Vector3i loc)
 
 	if (index >= 4096 || index < 0)
 	{
-		std::cout << "Block index out of range! " << index << "\n";
 		return Block{ BlockType::Air };
 	}
 

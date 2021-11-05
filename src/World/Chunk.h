@@ -5,6 +5,7 @@
 #include "ChunkMesh.h"
 #include "../Math/Vector2i.h"
 #include "ChunkManager.h"
+#include "../Render/Shader.h"
 
 extern constexpr int g_ChunkCap{ 16 };
 
@@ -18,7 +19,7 @@ private:
 	Vector2i m_Location;
 
 public:
-	Chunk(Vector2i loc);
+	Chunk(Vector2i loc, Shader& shader);
 
 	~Chunk();
 

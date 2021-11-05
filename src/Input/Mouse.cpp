@@ -6,30 +6,36 @@ Mouse::~Mouse()
 {
 }
 
-void Mouse::update()
-{
-	m_xOffset = m_xPos - m_LastxPos;
-	m_yOffset = m_yPos - m_LastyPos;
-}
-
 float Mouse::getXOffset()
 {
+	if (usedX)
+	{
+		return 0.0f;
+	}
+
+	usedX = true;
 	return m_xOffset;
 }
 
 float Mouse::getYOffset()
 {
+	if (usedY)
+	{
+		return 0.0f;
+	}
+
+	usedY = true;
 	return m_yOffset;
 }
 
-void Mouse::setX(float x)
+void Mouse::setXOffset(float x)
 {
-	m_LastxPos = m_xPos;
-	m_xPos = x;
+	m_xOffset = x;
+	usedX = false;
 }
 
-void Mouse::setY(float y)
+void Mouse::setYOffset(float y)
 {
-	m_LastyPos = m_yPos;
-	m_yPos = y;
+	m_yOffset = -y;
+	usedY = false;
 }

@@ -2,7 +2,7 @@
 #include "Chunk.h"
 #include "ChunkManager.h"
 
-Chunk::Chunk(Vector2i loc) : m_Location{ loc }, m_Mesh{ loc }
+Chunk::Chunk(Vector2i loc, Shader& shader) : m_Location{ loc }, m_Mesh{ loc, shader }
 {
 
 	for (int i{}; i < g_ChunkCap; ++i)
@@ -88,7 +88,6 @@ void Chunk::buildMesh(ChunkManager& manager)
 						{
 							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::East);
 						}
-						m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::Up);
 					}
 				}
 			}

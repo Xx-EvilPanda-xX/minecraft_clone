@@ -24,10 +24,10 @@ glm::mat4 Camera::getViewMat()
 	return glm::lookAt(m_Location, m_Location + m_Front, m_Up);
 }
 
-void Camera::handleMouse(glm::vec2 offset)
+void Camera::handleMouse(glm::vec2 offset, float dt)
 {
-	m_Yaw += offset.x * constants::mouse_sensitivity;
-	m_Pitch += offset.y * constants::mouse_sensitivity;
+	m_Yaw += offset.x * constants::mouse_sensitivity * dt;
+	m_Pitch += offset.y * constants::mouse_sensitivity * dt;
 
 	if (m_Pitch > 89.0f)
 	{

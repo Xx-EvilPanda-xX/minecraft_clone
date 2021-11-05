@@ -7,9 +7,9 @@
 
 namespace Renderer
 {
-	void drawMesh(Shader& shader, Camera& camera, ChunkMesh& mesh);
+	void drawMesh(Camera& camera, ChunkMesh& mesh);
 
-	static void prepare(Shader& shader, Camera& camera, ChunkMesh& mesh);
+	static void prepare(Camera& camera, ChunkMesh& mesh);
 }
 
 #endif

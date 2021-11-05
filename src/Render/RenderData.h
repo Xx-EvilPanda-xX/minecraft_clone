@@ -1,6 +1,8 @@
 #ifndef RENDER_DATA_H
 #define RENDER_DATA_H
 
+#include "Shader.h"
+
 struct RenderData
 {
 	unsigned int vao;
@@ -11,7 +13,7 @@ struct RenderData
 	unsigned int ebo;
 	int indexCount;
 
-	unsigned int shader;
+	Shader& shader;
 
 	//unsigned int texture;
 };

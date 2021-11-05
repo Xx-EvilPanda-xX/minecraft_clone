@@ -5,6 +5,7 @@
 #include "../Math/Vector3i.h"
 #include "../Math/Vector2i.h"
 #include "../Render/RenderData.h"
+#include "../Render/Shader.h"
 
 enum class Face
 {
@@ -24,8 +25,6 @@ private:
 	std::vector<float> m_TexCoords;
 	std::vector<int> m_Indices;
 	bool hasValidObjects;
-	//temporary
-	bool m_TempHasAddedFace;
 
 	Vector2i m_Pos;
 
@@ -34,7 +33,7 @@ private:
 	void storeIndices(std::vector<int>& data);
 
 public:
-	ChunkMesh(Vector2i pos);
+	ChunkMesh(Vector2i pos, Shader& shader);
 
 	~ChunkMesh();
 
