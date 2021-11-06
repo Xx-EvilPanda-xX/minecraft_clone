@@ -6,6 +6,7 @@
 #include "../Math/Vector2i.h"
 #include "../Render/RenderData.h"
 #include "../Render/Shader.h"
+#include "../World/Block.h"
 
 enum class Face
 {
@@ -32,12 +33,16 @@ private:
 
 	void storeIndices(std::vector<int>& data);
 
+	size_t pushNewVertices(Vector3i loc);
+
+	size_t pushNewTexCoords(Block& block);
+
 public:
 	ChunkMesh(Vector2i pos, Shader& shader);
 
 	~ChunkMesh();
 
-	void addFace(Vector3i loc, Face face);
+	void addFace(Vector3i loc, Block& block, Face face);
 
 	void toBuffers();
 

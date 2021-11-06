@@ -21,7 +21,7 @@ void ChunkManager::setWorldBlock(Vector3i loc, Block block)
 	int chunkIndex{};
 	int sectionIndex{};
 
-	Vector3i sectionLocal{ loc.x < 0 ? 16 - (loc.x % 16) : loc.x % 16, loc.y < 0 ? 16 - (loc.y % 16) : loc.y % 16, loc.z < 0 ? 16 - (loc.z % 16) : loc.z % 16 };
+	Vector3i sectionLocal{ loc.x < 0 ? 16 + (loc.x % 16) : loc.x % 16, loc.y < 0 ? 16 + (loc.y % 16) : loc.y % 16, loc.z < 0 ? 16 + (loc.z % 16) : loc.z % 16 };
 
 	Vector2i chunkLocation{ loc.x - sectionLocal.x, loc.z - sectionLocal.z };
 	for (int i{}; i < m_World->getChunks().size(); ++i)
@@ -47,7 +47,7 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 	int chunkIndex{};
 	int sectionIndex{};
 
-	Vector3i sectionLocal{ loc.x < 0 ? 16 - (loc.x % 16) : loc.x % 16, loc.y < 0 ? 16 - (loc.y % 16) : loc.y % 16, loc.z < 0 ? 16 - (loc.z % 16) : loc.z % 16 };
+	Vector3i sectionLocal{ loc.x < 0 ? 16 + (loc.x % 16) : loc.x % 16, loc.y < 0 ? 16 + (loc.y % 16) : loc.y % 16, loc.z < 0 ? 16 + (loc.z % 16) : loc.z % 16 };
 
 	Vector2i chunkLocation{ loc.x - sectionLocal.x, loc.z - sectionLocal.z };
 	for (int i{}; i < m_World->getChunks().size(); ++i)

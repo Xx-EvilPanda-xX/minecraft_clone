@@ -74,10 +74,10 @@ void Camera::handleKeyboard(Direction dir, float velocity, float dt)
 		break;
 
 	case Direction::Forward:
-		m_Location += glm::vec3(m_Front.x, 0.0f, m_Front.z) * velocity;
+		m_Location += glm::normalize(glm::vec3(m_Front.x, 0.0f, m_Front.z)) * velocity;
 		break;
 	case Direction::Back:
-		m_Location -= glm::vec3(m_Front.x, 0.0f, m_Front.z) * velocity;
+		m_Location -= glm::normalize(glm::vec3(m_Front.x, 0.0f, m_Front.z)) * velocity;
 		break;
 	}
 

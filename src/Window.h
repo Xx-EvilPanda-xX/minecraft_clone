@@ -40,6 +40,8 @@ public:
 	Keyboard& getKeyboard();
 
 	Mouse& getMouse();
+
+	void setTitle(const char* title);
 };
 
 #endif

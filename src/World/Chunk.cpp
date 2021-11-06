@@ -53,7 +53,8 @@ void Chunk::buildMesh(ChunkManager& manager)
 			{
 				for (int z{}; z < 16; ++z)
 				{
-					if (manager.getWorldBlock(Vector3i{ x, y, z }).getType() == BlockType::Air)
+					Block currentBlock{ manager.getWorldBlock(Vector3i{ x, y, z }) };
+					if (currentBlock.getType() == BlockType::Air)
 					{
 						continue;
 					}
@@ -61,32 +62,32 @@ void Chunk::buildMesh(ChunkManager& manager)
 					{
 						if (manager.getWorldBlock(Vector3i{ x + 1, y, z }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::North);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::North);
 						}
 
 						if (manager.getWorldBlock(Vector3i{ x, y + 1, z }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::Up);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::Up);
 						}
 
 						if (manager.getWorldBlock(Vector3i{ x, y, z + 1 }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::West);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::West);
 						}
 
 						if (manager.getWorldBlock(Vector3i{ x - 1, y, z }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::South);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::South);
 						}
 
 						if (manager.getWorldBlock(Vector3i{ x, y - 1, z }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::Down);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::Down);
 						}
 
 						if (manager.getWorldBlock(Vector3i{ x, y, z - 1 }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, Face::East);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::East);
 						}
 					}
 				}

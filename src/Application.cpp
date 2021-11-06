@@ -3,6 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <chrono>
+#include <ctime>
+#include <windows.h>
 
 #include "Application.h"
 
@@ -32,6 +35,7 @@ void Application::runMainLoop()
 		glfwSetCursorPos(m_Window.getWindow(), 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		updateFPS();
 		handleInput();
 
 		//std::cout << "Yaw: " << m_Camera.getYaw() << "\n";
@@ -43,6 +47,32 @@ void Application::runMainLoop()
 		glfwSwapBuffers(m_Window.getWindow());
 		glfwPollEvents();
 	}
+}
+
+void Application::updateFPS()
+{
+	++frames;
+	if (getCurrentTimeMillis() > (time + 1000))
+	{
+		std::string title("Minecraft! | FPS: ");
+		std::string fps(std::to_string(frames));
+		m_Window.setTitle((title + fps).c_str());
+	
+		time = getCurrentTimeMillis();
+		frames = 0;
+	}
+}
+
+long Application::getCurrentTimeMillis()
+{
+	static const long magic = 116444736000000000;
+	SYSTEMTIME st;
+	GetSystemTime(&st);
+	FILETIME ft;
+	SystemTimeToFileTime(&st, &ft);
+	long time;
+	memcpy(&time, &ft, sizeof(time));
+	return (time - magic) / 10000;
 }
 
 void Application::handleInput()
@@ -62,7 +92,7 @@ void Application::handleInput()
 		m_Camera.handleKeyboard(Direction::Forward, 2.5, m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-			m_Camera.handleKeyboard(Direction::Forward, 5.0f, m_Dt);
+			m_Camera.handleKeyboard(Direction::Forward, 20.0f, m_Dt);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_A))
@@ -75,15 +105,28 @@ void Application::handleInput()
 		m_Camera.handleKeyboard(Direction::Right, 2.5, m_Dt);
 
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
+	{
 		m_Camera.handleKeyboard(Direction::Up, 2.5, m_Dt);
 
+		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
+			m_Camera.handleKeyboard(Direction::Up, 20.0f, m_Dt);
+	}
+
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
+	{
 		m_Camera.handleKeyboard(Direction::Down, 2.5, m_Dt);
+
+		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
+			m_Camera.handleKeyboard(Direction::Down, 20.0f, m_Dt);
+	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_C))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	if (keyboard.isKeyDown(GLFW_KEY_F))
+		std::cout << "XYZ: " << m_Camera.getLocation().x << ", " << m_Camera.getLocation().y << ", " << m_Camera.getLocation().z << "\n";
 
 	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() }, m_Dt);
 }

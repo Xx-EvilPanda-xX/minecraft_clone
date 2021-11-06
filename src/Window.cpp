@@ -90,6 +90,12 @@ Mouse& Window::getMouse()
 	return g_Mouse;
 }
 
+void Window::setTitle(const char* title)
+{
+	m_Title = title;
+	glfwSetWindowTitle(m_Window, m_Title);
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
