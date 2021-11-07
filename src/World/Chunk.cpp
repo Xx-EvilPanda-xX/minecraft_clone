@@ -53,39 +53,39 @@ void Chunk::buildMesh(ChunkManager& manager)
 			{
 				for (int z{}; z < 16; ++z)
 				{
-					Block currentBlock{ manager.getWorldBlock(Vector3i{ x, y, z }) };
+					Block currentBlock{ manager.getWorldBlock(Vector3i{ x, (i * 16) + y, z }) };
 					if (currentBlock.getType() == BlockType::Air)
 					{
 						continue;
 					}
 					else
 					{
-						if (manager.getWorldBlock(Vector3i{ x + 1, y, z }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x + 1, (i * 16) + y, z }).getType() == BlockType::Air)
 						{
 							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::North);
 						}
 
-						if (manager.getWorldBlock(Vector3i{ x, y + 1, z }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x, (i * 16) + y + 1, z }).getType() == BlockType::Air)
 						{
 							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::Up);
 						}
 
-						if (manager.getWorldBlock(Vector3i{ x, y, z + 1 }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x, (i * 16) + y, z + 1 }).getType() == BlockType::Air)
 						{
 							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::West);
 						}
 
-						if (manager.getWorldBlock(Vector3i{ x - 1, y, z }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x - 1, (i * 16) + y, z }).getType() == BlockType::Air)
 						{
 							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::South);
 						}
 
-						if (manager.getWorldBlock(Vector3i{ x, y - 1, z }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x, (i * 16) + y - 1, z }).getType() == BlockType::Air)
 						{
 							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::Down);
 						}
 
-						if (manager.getWorldBlock(Vector3i{ x, y, z - 1 }).getType() == BlockType::Air)
+						if (manager.getWorldBlock(Vector3i{ x, (i * 16) + y, z - 1 }).getType() == BlockType::Air)
 						{
 							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::East);
 						}

@@ -37,6 +37,12 @@ private:
 
 	size_t pushNewTexCoords(Block& block);
 
+	ChunkMesh& pushVertexFloat(float f);
+
+	ChunkMesh& pushTexFloat(float f);
+
+	ChunkMesh& pushInt(int i);
+
 public:
 	ChunkMesh(Vector2i pos, Shader& shader);
 

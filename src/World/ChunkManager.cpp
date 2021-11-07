@@ -22,22 +22,33 @@ void ChunkManager::setWorldBlock(Vector3i loc, Block block)
 	int sectionIndex{};
 
 	Vector3i sectionLocal{ loc.x < 0 ? 16 + (loc.x % 16) : loc.x % 16, loc.y < 0 ? 16 + (loc.y % 16) : loc.y % 16, loc.z < 0 ? 16 + (loc.z % 16) : loc.z % 16 };
+	Vector2i chunkLocation;
 
-	Vector2i chunkLocation{ loc.x - sectionLocal.x, loc.z - sectionLocal.z };
+	if (loc.x != 0)
+		chunkLocation.x = (loc.x / 16) + (loc.x > 0 ? 1 : -1);
+
+	if (loc.z != 0)
+		chunkLocation.y = (loc.z / 16) + (loc.z > 0 ? 1 : -1);
+
+	bool foundChunk{ false };
+
 	for (int i{}; i < m_World->getChunks().size(); ++i)
 	{
 		if (m_World->getChunks()[i]->getLocation() == chunkLocation)
 		{
 			chunkIndex = i;
+			foundChunk = true;
 			break;
 		}
 	}
+
+	if (!foundChunk)
+		return;
+
 	sectionIndex = loc.y / 16;
 
-	if (chunkIndex > m_World->getChunks().size())
-	{
-		std::cout << "Chunk at " << chunkLocation.x << ", " << chunkLocation.y << "does not exist!";
-	}
+	if (sectionIndex > 15)
+		return;
 
 	m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(sectionLocal, block);
 }
@@ -48,22 +59,33 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 	int sectionIndex{};
 
 	Vector3i sectionLocal{ loc.x < 0 ? 16 + (loc.x % 16) : loc.x % 16, loc.y < 0 ? 16 + (loc.y % 16) : loc.y % 16, loc.z < 0 ? 16 + (loc.z % 16) : loc.z % 16 };
+	Vector2i chunkLocation{};
 
-	Vector2i chunkLocation{ loc.x - sectionLocal.x, loc.z - sectionLocal.z };
+	if (loc.x != 0)
+		chunkLocation.x = (loc.x / 16) + (loc.x > 0 ? 1 : -1);
+
+	if (loc.z != 0)
+		chunkLocation.y = (loc.z / 16) + (loc.z > 0 ? 1 : -1);
+
+	bool foundChunk{ false };
+
 	for (int i{}; i < m_World->getChunks().size(); ++i)
 	{
 		if (m_World->getChunks()[i]->getLocation() == chunkLocation)
 		{
 			chunkIndex = i;
+			foundChunk = true;
 			break;
 		}
 	}
+
+	if (!foundChunk)
+		return Block{};
+
 	sectionIndex = loc.y / 16;
 
-	if (chunkIndex > m_World->getChunks().size())
-	{
-		std::cout << "Chunk at " << chunkLocation.x << ", " << chunkLocation.y << "does not exist!";
-	}
+	if (sectionIndex > 15)
+		return Block{};
 
 	return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal);
 }

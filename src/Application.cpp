@@ -63,14 +63,14 @@ void Application::updateFPS()
 	}
 }
 
-long Application::getCurrentTimeMillis()
+__int64 Application::getCurrentTimeMillis()
 {
-	static const long magic = 116444736000000000;
+	static const __int64 magic = 116444736000000000;
 	SYSTEMTIME st;
 	GetSystemTime(&st);
 	FILETIME ft;
 	SystemTimeToFileTime(&st, &ft);
-	long time;
+	__int64 time;
 	memcpy(&time, &ft, sizeof(time));
 	return (time - magic) / 10000;
 }

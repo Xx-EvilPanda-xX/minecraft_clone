@@ -34,32 +34,40 @@ void ChunkMesh::addFace(Vector3i loc, Block& block, Face face)
 	int s = pushNewVertices(loc);
 	pushNewTexCoords(block);
 
+	int s0{ s + 0 };
+	int s1{ s + 1 };
+	int s2{ s + 2 };
+	int s3{ s + 3 };
+	int s4{ s + 4 };
+	int s5{ s + 5 };
+	int s6{ s + 6 };
+	int s7{ s + 7 };
+
 	switch (face)
 	{
 	case Face::Up:
-		m_Indices.insert(m_Indices.begin() + m_Indices.size(), { s + 5, s + 6, s + 7, s + 2, s + 6, s + 5 });
+		pushInt(s5).pushInt(s6).pushInt(s7).pushInt(s2).pushInt(s6).pushInt(s5);
 		break;
 
 	case Face::Down:
-		m_Indices.insert(m_Indices.begin() + m_Indices.size(), { s + 1, s + 3, s + 4, s + 0, s + 3, s + 1 });
+		pushInt(s1).pushInt(s3).pushInt(s4).pushInt(s0).pushInt(s3).pushInt(s1);
 		break;
 
 	case Face::North:
-		m_Indices.insert(m_Indices.begin() + m_Indices.size(), { s + 4, s + 5, s + 7, s + 1, s + 5, s + 4 });
+		pushInt(s4).pushInt(s5).pushInt(s7).pushInt(s1).pushInt(s5).pushInt(s4);
 		break;
 
 	case Face::South:
-		m_Indices.insert(m_Indices.begin() + m_Indices.size(), { s + 2, s + 3, s + 6, s + 0, s + 3, s + 2 });
+		pushInt(s2).pushInt(s3).pushInt(s6).pushInt(s0).pushInt(s3).pushInt(s2);
 		break;
 
 	case Face::East:
-		m_Indices.insert(m_Indices.begin() + m_Indices.size(), { s + 4, s + 6, s + 7, s + 3, s + 6, s + 4 });
+		pushInt(s4).pushInt(s6).pushInt(s7).pushInt(s3).pushInt(s6).pushInt(s4);
 		break;
 
 	case Face::West:
-		m_Indices.insert(m_Indices.begin() + m_Indices.size(), { s + 1, s + 2, s + 5, s + 0, s + 2, s + 1 });
+		pushInt(s1).pushInt(s2).pushInt(s5).pushInt(s0).pushInt(s2).pushInt(s1);
 		break;
-
 	}
 }
 
@@ -68,14 +76,14 @@ size_t ChunkMesh::pushNewVertices(Vector3i loc)
 	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
 	size_t size{ m_Vertices.size() };
 
-	m_Vertices.insert(m_Vertices.begin() + m_Vertices.size(), { floats.x, floats.y, floats.z });
-	m_Vertices.insert(m_Vertices.begin() + m_Vertices.size(), { floats.x + 1.0f, floats.y, floats.z });
-	m_Vertices.insert(m_Vertices.begin() + m_Vertices.size(), { floats.x, floats.y + 1.0f, floats.z });
-	m_Vertices.insert(m_Vertices.begin() + m_Vertices.size(), { floats.x, floats.y, floats.z + 1.0f });
-	m_Vertices.insert(m_Vertices.begin() + m_Vertices.size(), { floats.x + 1.0f, floats.y, floats.z + 1.0f });
-	m_Vertices.insert(m_Vertices.begin() + m_Vertices.size(), { floats.x + 1.0f, floats.y + 1.0f, floats.z });
-	m_Vertices.insert(m_Vertices.begin() + m_Vertices.size(), { floats.x, floats.y + 1.0f, floats.z + 1.0f });
-	m_Vertices.insert(m_Vertices.begin() + m_Vertices.size(), { floats.x + 1.0f, floats.y + 1.0f, floats.z + 1.0f });
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z);
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z);
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z);
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f);
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f);
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z);
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f);
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f);
 
 	return size;
 }
@@ -84,16 +92,34 @@ size_t ChunkMesh::pushNewTexCoords(Block& block)
 {
 	size_t size{ m_TexCoords.size() };
 
-	m_TexCoords.insert(m_TexCoords.begin() + m_TexCoords.size(), { 0.0f, 0.0f, 0.0f });
-	m_TexCoords.insert(m_TexCoords.begin() + m_TexCoords.size(), { 0.0f, 0.0f, 0.0f });
-	m_TexCoords.insert(m_TexCoords.begin() + m_TexCoords.size(), { 0.0f, 0.0f, 0.0f });
-	m_TexCoords.insert(m_TexCoords.begin() + m_TexCoords.size(), { 0.0f, 0.0f, 0.0f });
-	m_TexCoords.insert(m_TexCoords.begin() + m_TexCoords.size(), { 0.0f, 0.0f, 0.0f });
-	m_TexCoords.insert(m_TexCoords.begin() + m_TexCoords.size(), { 0.0f, 0.0f, 0.0f });
-	m_TexCoords.insert(m_TexCoords.begin() + m_TexCoords.size(), { 0.0f, 0.0f, 0.0f });
-	m_TexCoords.insert(m_TexCoords.begin() + m_TexCoords.size(), { 0.0f, 0.0f, 0.0f });
+	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
+	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
+	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
+	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
+	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
+	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
+	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
+	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
 
 	return size;
+}
+
+ChunkMesh& ChunkMesh::pushVertexFloat(float f)
+{
+	m_Vertices.push_back(f);
+	return *this;
+}
+
+ChunkMesh& ChunkMesh::pushTexFloat(float f)
+{
+	m_TexCoords.push_back(f);
+	return *this;
+}
+
+ChunkMesh& ChunkMesh::pushInt(int i)
+{
+	m_Indices.push_back(i);
+	return *this;
 }
 
 void ChunkMesh::enableAttribs() const
