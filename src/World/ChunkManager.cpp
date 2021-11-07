@@ -25,13 +25,13 @@ void ChunkManager::setWorldBlock(Vector3i loc, Block block)
 	int sectionIndex{};
 
 	Vector3i sectionLocal{ loc.x < 0 ? 16 + (loc.x % 16) : loc.x % 16, loc.y < 0 ? 16 + (loc.y % 16) : loc.y % 16, loc.z < 0 ? 16 + (loc.z % 16) : loc.z % 16 };
-	Vector2i chunkLocation;
+	Vector2i chunkLocation{ loc.x / 16, loc.z / 16 };
 
-	if (loc.x != 0)
-		chunkLocation.x = (loc.x / 16) + (loc.x > 0 ? 1 : -1);
+	if (loc.x < 0)
+		--chunkLocation.x;
 
-	if (loc.z != 0)
-		chunkLocation.y = (loc.z / 16) + (loc.z > 0 ? 1 : -1);
+	if (loc.z < 0)
+		--chunkLocation.y;
 
 	bool foundChunk{ false };
 

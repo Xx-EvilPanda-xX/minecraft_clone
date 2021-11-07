@@ -16,6 +16,7 @@ private:
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
 	ChunkManager m_Manager;
+	int shouldGen;
 
 public:
 	World(TerrainGenerator worldGen, Shader shader);

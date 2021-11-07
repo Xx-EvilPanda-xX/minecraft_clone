@@ -33,7 +33,7 @@ public:
 
 	bool isComplete() const;
 
-	const Vector2i& getLocation() const;
+	const Vector2i getLocation() const;
 
 	ChunkSection* getSection(int index) const;
 };

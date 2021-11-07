@@ -5,24 +5,6 @@
 ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader) : m_Pos{ pos }, m_RenderData{ 0, 0, 0, 0, 0, shader }
 {
 	hasValidObjects = false;
-	/*
-	m_Vertices = std::vector<float>{ -0.5, -0.5, 0.0,
-									   0.5, 0.5, 0.0,
-									   0.5, -0.5, 0.0,
-									   -0.5, 0.5, 0.0 };
-
-	m_TexCoords = std::vector<float>{ 0.0, 0.0, 0.0,
-								   0.0, 0.0, 0.0,
-								   0.0, 0.0, 0.0, 
-								   0.0, 0.0, 0.0 };
-
-
-	m_Indices = std::vector<int>{ 1, 2, 3, 0, 2, 3 };
-	*/
-
-	//m_Vertices = std::vector<float>;
-	//m_TexCoords = std::vector<float>;
-	//m_Indices = std::vector<int>;
 }
 
 ChunkMesh::~ChunkMesh()

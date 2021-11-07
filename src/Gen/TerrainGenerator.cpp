@@ -18,10 +18,11 @@ ChunkSection* TerrainGenerator::genSection(int section)
 		{
 			for (int z{}; z < 16; ++z)
 			{
-				if (y % 3 == 0)
+				if (y < 5)
 					chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Grass });
 				else
 					chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Air });
+				//chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Grass });
 			}
 		}
 	}
