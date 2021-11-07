@@ -33,22 +33,32 @@ private:
 
 	void storeIndices(std::vector<int>& data);
 
-	size_t pushNewVertices(Vector3i loc);
-
-	size_t pushNewTexCoords(Block& block);
-
 	ChunkMesh& pushVertexFloat(float f);
 
 	ChunkMesh& pushTexFloat(float f);
 
 	ChunkMesh& pushInt(int i);
 
+	void pushUp(Vector3i loc);
+
+	void pushDown(Vector3i loc);
+
+	void pushNorth(Vector3i loc);
+
+	void pushSouth(Vector3i loc);
+
+	void pushEast(Vector3i loc);
+
+	void pushWest(Vector3i loc);
+
+	void pushNewIndices(int size);
+
 public:
 	ChunkMesh(Vector2i pos, Shader& shader);
 
 	~ChunkMesh();
 
-	void addFace(Vector3i loc, Block& block, Face face);
+	void addFace(Vector3i loc, Block block, Face face);
 
 	void toBuffers();
 

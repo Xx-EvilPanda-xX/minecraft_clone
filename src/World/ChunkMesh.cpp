@@ -29,79 +29,134 @@ ChunkMesh::~ChunkMesh()
 {
 }
 
-void ChunkMesh::addFace(Vector3i loc, Block& block, Face face)
+void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 {
-	int s = pushNewVertices(loc);
-	pushNewTexCoords(block);
-
-	int s0{ s + 0 };
-	int s1{ s + 1 };
-	int s2{ s + 2 };
-	int s3{ s + 3 };
-	int s4{ s + 4 };
-	int s5{ s + 5 };
-	int s6{ s + 6 };
-	int s7{ s + 7 };
-
 	switch (face)
 	{
 	case Face::Up:
-		pushInt(s5).pushInt(s6).pushInt(s7).pushInt(s2).pushInt(s6).pushInt(s5);
+		pushUp(loc);
 		break;
 
 	case Face::Down:
-		pushInt(s1).pushInt(s3).pushInt(s4).pushInt(s0).pushInt(s3).pushInt(s1);
+		pushDown(loc);
 		break;
 
 	case Face::North:
-		pushInt(s4).pushInt(s5).pushInt(s7).pushInt(s1).pushInt(s5).pushInt(s4);
+		pushNorth(loc);
 		break;
 
 	case Face::South:
-		pushInt(s2).pushInt(s3).pushInt(s6).pushInt(s0).pushInt(s3).pushInt(s2);
+		pushSouth(loc);
 		break;
 
 	case Face::East:
-		pushInt(s4).pushInt(s6).pushInt(s7).pushInt(s3).pushInt(s6).pushInt(s4);
+		pushEast(loc);
 		break;
 
 	case Face::West:
-		pushInt(s1).pushInt(s2).pushInt(s5).pushInt(s0).pushInt(s2).pushInt(s1);
+		pushWest(loc);
 		break;
 	}
 }
 
-size_t ChunkMesh::pushNewVertices(Vector3i loc)
+void ChunkMesh::pushUp(Vector3i loc)
 {
+	int size{ static_cast<int>(m_Vertices.size()) / 3 };
 	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
-	size_t size{ m_Vertices.size() };
 
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z);
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z);
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z);
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f);
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f);
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z);
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f);
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f);
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //2
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //5
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //6
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
 
-	return size;
+	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+
+	pushNewIndices(size);
 }
 
-size_t ChunkMesh::pushNewTexCoords(Block& block)
+void ChunkMesh::pushDown(Vector3i loc)
 {
-	size_t size{ m_TexCoords.size() };
+	int size{ static_cast<int>(m_Vertices.size()) / 3 };
+	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
 
-	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
-	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
-	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
-	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
-	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
-	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
-	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
-	pushVertexFloat(0.0f).pushVertexFloat(0.0f).pushVertexFloat(0.0f);
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //3
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
 
-	return size;
+	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+
+	pushNewIndices(size);
+}
+
+void ChunkMesh::pushNorth(Vector3i loc)
+{
+	int size{ static_cast<int>(m_Vertices.size()) / 3 };
+	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
+
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //5
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
+
+	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+
+	pushNewIndices(size);
+}
+
+void ChunkMesh::pushSouth(Vector3i loc)
+{
+	int size{ static_cast<int>(m_Vertices.size()) / 3 };
+	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
+
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //2
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //3
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //6
+
+	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+
+	pushNewIndices(size);
+}
+
+void ChunkMesh::pushEast(Vector3i loc)
+{
+	int size{ static_cast<int>(m_Vertices.size()) / 3 };
+	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
+
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //3
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //6
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
+
+	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+
+	pushNewIndices(size);
+}
+
+void ChunkMesh::pushWest(Vector3i loc)
+{
+	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
+	int size{ static_cast<int>(m_Vertices.size()) / 3 };
+
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //2
+	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //5
+
+	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+	
+	pushNewIndices(size);
+}
+
+void ChunkMesh::pushNewIndices(int size)
+{
+	int s0{ size + 0 };
+	int s1{ size + 1 };
+	int s2{ size + 2 };
+	int s3{ size + 3 };
+
+	pushInt(s1).pushInt(s2).pushInt(s3).pushInt(s0).pushInt(s2).pushInt(s1);
 }
 
 ChunkMesh& ChunkMesh::pushVertexFloat(float f)

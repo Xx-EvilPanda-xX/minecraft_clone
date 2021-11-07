@@ -72,7 +72,7 @@ void Chunk::buildMesh(ChunkManager& manager)
 
 						if (manager.getWorldBlock(Vector3i{ x, (i * 16) + y, z + 1 }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::West);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::East);
 						}
 
 						if (manager.getWorldBlock(Vector3i{ x - 1, (i * 16) + y, z }).getType() == BlockType::Air)
@@ -87,13 +87,20 @@ void Chunk::buildMesh(ChunkManager& manager)
 
 						if (manager.getWorldBlock(Vector3i{ x, (i * 16) + y, z - 1 }).getType() == BlockType::Air)
 						{
-							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::East);
+							m_Mesh.addFace(Vector3i{ x, (i * 16) + y, z }, currentBlock, Face::West);
 						}
 					}
 				}
 			}
 		}
 	}
+	
+	//m_Mesh.addFace(Vector3i{ 0, 0, 0 }, Block{ BlockType::Grass }, Face::North);
+	//m_Mesh.addFace(Vector3i{ 0, 0, 0 }, Block{ BlockType::Grass }, Face::South);
+	//m_Mesh.addFace(Vector3i{ 0, 0, 0 }, Block{ BlockType::Grass }, Face::East);
+	//m_Mesh.addFace(Vector3i{ 0, 0, 0 }, Block{ BlockType::Grass }, Face::West);
+	//m_Mesh.addFace(Vector3i{ 0, 0, 0 }, Block{ BlockType::Grass }, Face::Up);
+	//m_Mesh.addFace(Vector3i{ 0, 0, 0 }, Block{ BlockType::Grass }, Face::Down);
 	m_Mesh.toBuffers();
 	
 }

@@ -9,7 +9,7 @@
 
 #include "Application.h"
 
-Application::Application() : m_Camera{ glm::vec3{ 32.0f, 0.0f, 32.0f }, 0.0f, 0.0f, 97.0f }
+Application::Application() : m_Camera{ glm::vec3{ 0.0f, 0.0f, 0.0f }, 0.0f, 0.0f, 97.0f }
 {
 
 }
