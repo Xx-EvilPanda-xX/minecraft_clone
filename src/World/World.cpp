@@ -39,14 +39,22 @@ void World::generate()
 void World::worldRender(Camera& camera)
 {
 	static int meshPtr{};
-	static constexpr int genInterval{ 1 };
+	static int sectionPtr{ 0 };
+	static constexpr int genInterval{ 5 };
 
 	if (meshPtr < m_Chunks.size() && shouldGen == genInterval)
 	{
 		m_Chunks[meshPtr]->buildMesh(m_Manager);
-		++meshPtr;
+		++sectionPtr;
+
+		if (sectionPtr == g_ChunkCap)
+		{
+			++meshPtr;
+			sectionPtr = 0;
+			std::cout << "mesh built\n";
+		}
+
 		shouldGen = 0;
-		std::cout << "mesh built\n";
 	}
 	++shouldGen;
 	

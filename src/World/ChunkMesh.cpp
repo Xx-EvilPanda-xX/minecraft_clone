@@ -2,7 +2,7 @@
 #include "ChunkMesh.h"
 #include "Chunk.h"
 
-ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader) : m_Pos{ pos }, m_RenderData{ 0, 0, 0, 0, 0, shader }
+ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader) : m_Pos{ pos }, m_RenderData{ 0, 0, 0, 0, 0, 0, shader }
 {
 	hasValidObjects = false;
 }
@@ -52,6 +52,7 @@ void ChunkMesh::pushUp(Vector3i loc)
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
 
 	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+	pushLighting(1.0f).pushLighting(1.0f).pushLighting(1.0f).pushLighting(1.0f);
 
 	pushNewIndices(size);
 }
@@ -67,6 +68,7 @@ void ChunkMesh::pushDown(Vector3i loc)
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
 
 	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+	pushLighting(0.6f).pushLighting(0.6f).pushLighting(0.6f).pushLighting(0.6f);
 
 	pushNewIndices(size);
 }
@@ -82,6 +84,7 @@ void ChunkMesh::pushNorth(Vector3i loc)
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
 
 	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+	pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f);
 
 	pushNewIndices(size);
 }
@@ -97,6 +100,7 @@ void ChunkMesh::pushSouth(Vector3i loc)
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //6
 
 	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+	pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f);
 
 	pushNewIndices(size);
 }
@@ -112,6 +116,7 @@ void ChunkMesh::pushEast(Vector3i loc)
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
 
 	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+	pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f);
 
 	pushNewIndices(size);
 }
@@ -127,6 +132,7 @@ void ChunkMesh::pushWest(Vector3i loc)
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //5
 
 	pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f).pushTexFloat(0.0f);
+	pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f);
 	
 	pushNewIndices(size);
 }
@@ -138,7 +144,7 @@ void ChunkMesh::pushNewIndices(int size)
 	int s2{ size + 2 };
 	int s3{ size + 3 };
 
-	pushInt(s1).pushInt(s2).pushInt(s3).pushInt(s0).pushInt(s2).pushInt(s1);
+	pushIndex(s1).pushIndex(s2).pushIndex(s3).pushIndex(s0).pushIndex(s2).pushIndex(s1);
 }
 
 ChunkMesh& ChunkMesh::pushVertexFloat(float f)
@@ -153,7 +159,13 @@ ChunkMesh& ChunkMesh::pushTexFloat(float f)
 	return *this;
 }
 
-ChunkMesh& ChunkMesh::pushInt(int i)
+ChunkMesh& ChunkMesh::pushLighting(float f)
+{
+	m_Lighting.push_back(f);
+	return *this;
+}
+
+ChunkMesh& ChunkMesh::pushIndex(int i)
 {
 	m_Indices.push_back(i);
 	return *this;
@@ -163,12 +175,14 @@ void ChunkMesh::enableAttribs() const
 {
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 }
 
 void ChunkMesh::disableAttribs() const
 {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 }
 
 void ChunkMesh::toBuffers()
@@ -180,6 +194,7 @@ void ChunkMesh::toBuffers()
 		glDeleteBuffers(1, &m_RenderData.vbo);
 		glDeleteBuffers(1, &m_RenderData.tbo);
 		glDeleteBuffers(1, &m_RenderData.ebo);
+		glDeleteBuffers(1, &m_RenderData.lbo);
 	}
 
 	glGenVertexArrays(1, &m_RenderData.vao);
@@ -187,16 +202,18 @@ void ChunkMesh::toBuffers()
 	glGenBuffers(1, &m_RenderData.vbo);
 	glGenBuffers(1, &m_RenderData.tbo);
 	glGenBuffers(1, &m_RenderData.ebo);
+	glGenBuffers(1, &m_RenderData.lbo);
 
-	storeBuffer(0, 3, m_RenderData.vbo, m_Vertices);
-	storeBuffer(1, 2, m_RenderData.tbo, m_TexCoords);
+	storeFloatBuffer(0, 3, m_RenderData.vbo, m_Vertices);
+	storeFloatBuffer(1, 2, m_RenderData.tbo, m_TexCoords);
+	storeFloatBuffer(2, 1, m_RenderData.lbo, m_Lighting);
 
 	storeIndices(m_Indices);
 
 	hasValidObjects = true;
 }
 
-void ChunkMesh::storeBuffer(int index, int size, int buffer, std::vector<float>& data)
+void ChunkMesh::storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data)
 {
 	glBindVertexArray(m_RenderData.vao);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);

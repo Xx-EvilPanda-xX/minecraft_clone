@@ -9,7 +9,7 @@
 
 #include "Application.h"
 
-Application::Application() : m_Camera{ glm::vec3{ 0.0f, 0.0f, 0.0f }, 0.0f, 0.0f, 97.0f }
+Application::Application() : m_Camera{ glm::vec3{ 0.0f, 0.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
 {
 
 }
@@ -27,20 +27,17 @@ void Application::init(int windowWidth, int windowHeight, const char* title)
 void Application::runMainLoop()
 {
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
 
 	m_World->generate();
 
 	while (!glfwWindowShouldClose(m_Window.getWindow()))
 	{
 		glfwSetCursorPos(m_Window.getWindow(), 0.0, 0.0);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		updateFPS();
 		handleInput();
-
-		//std::cout << "Yaw: " << m_Camera.getYaw() << "\n";
-		//std::cout << "Pitch: " << m_Camera.getPitch() << "\n";
-		//std::cout << "Postion: " << m_Camera.getLocation().x << ", " << m_Camera.getLocation().y << ", " << m_Camera.getLocation().z << "\n";
 
 		m_World->worldRender(m_Camera);
 

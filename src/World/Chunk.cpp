@@ -41,64 +41,64 @@ void Chunk::addSection(ChunkSection* section)
 
 void Chunk::buildMesh(ChunkManager& manager)
 {
-	for (int i{}; i < g_ChunkCap; ++i)
+	static int i{};
+
+	for (int x{}; x < 16; ++x)
 	{
-		if (m_Sections[i]->isEmpty()) {
-			continue;
-		}
-
-		for (int x{}; x < 16; ++x)
+		for (int y{}; y < 16; ++y)
 		{
-			for (int y{}; y < 16; ++y)
+			for (int z{}; z < 16; ++z)
 			{
-				for (int z{}; z < 16; ++z)
+				int wX{ (m_Location.x * 16) + x };
+				int wY{ (i * 16) + y };
+				int wZ{ (m_Location.y * 16) + z };
+				Block currentBlock{ manager.getWorldBlock(Vector3i{ wX, wY, wZ }) };
+				if (currentBlock.getType() == BlockType::Air)
 				{
-					int wX{ (m_Location.x * 16) + x };
-					int wY{ (i * 16) + y };
-					int wZ{ (m_Location.y * 16) + z };
-					Block currentBlock{ manager.getWorldBlock(Vector3i{ wX, wY, wX }) };
-					if (currentBlock.getType() == BlockType::Air)
+					continue;
+				}
+				else
+				{
+					if (manager.getWorldBlock(Vector3i{ wX + 1, wY, wZ }).getType() == BlockType::Air)
 					{
-						continue;
+						m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
 					}
-					else
+
+					if (manager.getWorldBlock(Vector3i{ wX, wY + 1, wZ }).getType() == BlockType::Air)
 					{
-						if (manager.getWorldBlock(Vector3i{ wX + 1, wY, wZ }).getType() == BlockType::Air)
-						{
-							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
-						}
+						m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
+					}
 
-						if (manager.getWorldBlock(Vector3i{ wX, wY + 1, wZ }).getType() == BlockType::Air)
-						{
-							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
-						}
+					if (manager.getWorldBlock(Vector3i{ wX, wY, wZ + 1 }).getType() == BlockType::Air)
+					{
+						m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
+					}
 
-						if (manager.getWorldBlock(Vector3i{ wX, wY, wZ + 1 }).getType() == BlockType::Air)
-						{
-							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
-						}
+					if (manager.getWorldBlock(Vector3i{ wX - 1, wY, wZ }).getType() == BlockType::Air)
+					{
+						m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
+					}
 
-						if (manager.getWorldBlock(Vector3i{ wX - 1, wY, wZ }).getType() == BlockType::Air)
-						{
-							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
-						}
+					if (manager.getWorldBlock(Vector3i{ wX, wY - 1, wZ }).getType() == BlockType::Air)
+					{
+						m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
+					}
 
-						if (manager.getWorldBlock(Vector3i{ wX, wY - 1, wZ }).getType() == BlockType::Air)
-						{
-							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
-						}
-
-						if (manager.getWorldBlock(Vector3i{ wX, wY, wZ - 1 }).getType() == BlockType::Air)
-						{
-							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
-						}
+					if (manager.getWorldBlock(Vector3i{ wX, wY, wZ - 1 }).getType() == BlockType::Air)
+					{
+						m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
 					}
 				}
 			}
 		}
 	}
-	
-	m_Mesh.toBuffers();
+	++i;
+
+	if (i == g_ChunkCap)
+	{
+		i = 0;
+		m_Mesh.toBuffers();
+	}
 }
 
 int Chunk::getCurrentSectionIndex() const

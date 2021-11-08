@@ -24,12 +24,13 @@ private:
 	RenderData m_RenderData;
 	std::vector<float> m_Vertices;
 	std::vector<float> m_TexCoords;
+	std::vector<float> m_Lighting;
 	std::vector<int> m_Indices;
 	bool hasValidObjects;
 
 	Vector2i m_Pos;
 
-	void storeBuffer(int index, int size, int buffer, std::vector<float>& data);
+	void storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data);
 
 	void storeIndices(std::vector<int>& data);
 
@@ -37,7 +38,9 @@ private:
 
 	ChunkMesh& pushTexFloat(float f);
 
-	ChunkMesh& pushInt(int i);
+	ChunkMesh& pushLighting(float f);
+
+	ChunkMesh& pushIndex(int i);
 
 	void pushUp(Vector3i loc);
 
