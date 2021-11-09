@@ -9,9 +9,12 @@
 
 #include "Application.h"
 
-Application::Application() : m_Camera{ glm::vec3{ 0.0f, 0.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
+Application::Application() : m_Camera{ glm::vec3{ 0.0f, 32.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
 {
-
+	frames = 0;
+	time = 0;
+	m_LastFrame = 0;
+	m_Dt = 0;
 }
 
 Application::~Application()
@@ -74,7 +77,7 @@ __int64 Application::getCurrentTimeMillis()
 
 void Application::handleInput()
 {
-	float frame = glfwGetTime();
+	float frame = static_cast<float>(glfwGetTime());
 	m_Dt = frame - m_LastFrame;
 	m_LastFrame = frame;
 
@@ -125,5 +128,5 @@ void Application::handleInput()
 	if (keyboard.isKeyDown(GLFW_KEY_F))
 		std::cout << "XYZ: " << m_Camera.getLocation().x << ", " << m_Camera.getLocation().y << ", " << m_Camera.getLocation().z << "\n";
 
-	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() }, m_Dt);
+	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() });
 }

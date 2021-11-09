@@ -43,7 +43,7 @@ public:
 
 	glm::mat4 getViewMat() const;
 
-	void handleMouse(glm::vec2 offset, float dt);
+	void handleMouse(glm::vec2 offset);
 
 	void handleKeyboard(Direction dir, float velocity, float dt);
 

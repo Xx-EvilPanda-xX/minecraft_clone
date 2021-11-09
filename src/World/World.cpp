@@ -1,12 +1,13 @@
 #include "World.h"
 #include <iostream>
+#include <GLFW/glfw3.h>
 #include "Chunk.h"
 #include "../Math/Vector2i.h"
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
 
-static constexpr int g_WorldWidth{ 20 };
-static constexpr int g_WorldHeight{ 20 };
+static constexpr int g_WorldWidth{ 16 };
+static constexpr int g_WorldHeight{ 16 };
 
 World::World(TerrainGenerator worldGen, Shader shader) : m_WorldGen{ worldGen }, m_Shader{ shader }, m_Manager{ this }
 {
@@ -41,6 +42,12 @@ void World::worldRender(Camera& camera)
 	static int meshPtr{};
 	static int sectionPtr{ 0 };
 	static constexpr int genInterval{ 5 };
+	static double start{};
+
+	if (sectionPtr == 0)
+	{
+		start = glfwGetTime();
+	}
 
 	if (meshPtr < m_Chunks.size() && shouldGen == genInterval)
 	{
@@ -49,9 +56,10 @@ void World::worldRender(Camera& camera)
 
 		if (sectionPtr == g_ChunkCap)
 		{
+			std::cout << "Mesh built at " << m_Chunks[meshPtr]->getLocation().x << ", " << m_Chunks[meshPtr]->getLocation().y << " in " << static_cast<long>((glfwGetTime() - start) * 1000) << "ms\n";
+			
 			++meshPtr;
 			sectionPtr = 0;
-			std::cout << "mesh built\n";
 		}
 
 		shouldGen = 0;
