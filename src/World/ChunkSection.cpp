@@ -3,9 +3,9 @@
 #include "../Math/Vector3i.h"
 #include "Block.h"
 
-ChunkSection::ChunkSection() : m_Empty{ false }, m_NeedsUpdate{ true }
+ChunkSection::ChunkSection() : m_Empty{ true }, m_AirBlocks{ 4096 }
 {
-	m_Blocks = new Block[4096];
+	m_Blocks = new Block[4096]{};
 }
 
 ChunkSection::~ChunkSection()
@@ -26,9 +26,17 @@ void ChunkSection::setBlock(Vector3i loc, Block block)
 		return;
 	}
 
-	m_Blocks[index] = block;
+	if (block.getType() == BlockType::Air && m_Blocks[index].getType() != BlockType::Air)
+		++m_AirBlocks;
+	if (block.getType() != BlockType::Air && m_Blocks[index].getType() == BlockType::Air)
+		--m_AirBlocks;
 
-	m_NeedsUpdate = true;
+	if (m_AirBlocks == 4096)
+		m_Empty = true;
+	else
+		m_Empty = false;
+
+	m_Blocks[index] = block;
 }
 
 Block ChunkSection::getBlock(Vector3i loc)
@@ -45,4 +53,9 @@ Block ChunkSection::getBlock(Vector3i loc)
 	}
 
 	return m_Blocks[index];
+}
+
+bool ChunkSection::isEmpty()
+{
+	return m_Empty;
 }

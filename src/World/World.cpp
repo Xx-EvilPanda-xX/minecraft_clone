@@ -15,17 +15,13 @@ World::World(TerrainGenerator worldGen, Shader shader) : m_WorldGen{ worldGen },
 
 World::World() = default;
 
-World::~World()
-{
-}
-
 void World::generate()
 {
 	for (int i{}; i < g_WorldWidth; ++i)
 	{
 		for (int j{}; j < g_WorldHeight; ++j)
 		{
-			Chunk* chunk = new Chunk(Vector2i{ i, j }, m_Shader);
+			Chunk* chunk{ new Chunk(Vector2i{ i, j }, m_Shader) };
 
 			for (int k{}; k < g_ChunkCap; ++k)
 			{
@@ -41,7 +37,7 @@ void World::worldRender(Camera& camera)
 {
 	static int meshPtr{};
 	static int sectionPtr{ 0 };
-	static constexpr int genInterval{ 5 };
+	static constexpr int genInterval{ 1 };
 	static double start{};
 
 	if (sectionPtr == 0)
@@ -49,7 +45,7 @@ void World::worldRender(Camera& camera)
 		start = glfwGetTime();
 	}
 
-	if (meshPtr < m_Chunks.size() && shouldGen == genInterval)
+	if (meshPtr < m_Chunks.size() && shouldGen >= genInterval)
 	{
 		m_Chunks[meshPtr]->buildMesh(m_Manager);
 		++sectionPtr;

@@ -16,8 +16,6 @@ public:
 
 	ChunkManager();
 
-	~ChunkManager();
-
 	void setWorldBlock(Vector3i loc, Block block);
 
 	Block getWorldBlock(Vector3i loc);

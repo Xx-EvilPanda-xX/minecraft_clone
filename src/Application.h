@@ -33,8 +33,6 @@ private:
 public:
 	Application();
 
-	~Application();
-
 	void init(int windowWidth, int windowHeight, const char* title);
 
 	void runMainLoop();

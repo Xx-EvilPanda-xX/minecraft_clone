@@ -11,10 +11,6 @@ TerrainGenerator::TerrainGenerator()
 	die = std::uniform_int_distribution<>{ 16, 18 };
 }
 
-TerrainGenerator::~TerrainGenerator()
-{
-}
-
 ChunkSection* TerrainGenerator::genSection(int section)
 {
 	ChunkSection* chunkSection{ new ChunkSection() };

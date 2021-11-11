@@ -15,10 +15,6 @@ Window::Window(int width, int height, const char* title) : m_Width{ width }, m_H
 
 Window::Window() = default;
 
-Window::~Window()
-{
-}
-
 void Window::initGlfw()
 {
 	if (!glfwInit())

@@ -8,6 +8,7 @@
 #include <windows.h>
 
 #include "Application.h"
+#include "World/ChunkMesh.h"
 
 Application::Application() : m_Camera{ glm::vec3{ 0.0f, 32.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
 {
@@ -17,14 +18,12 @@ Application::Application() : m_Camera{ glm::vec3{ 0.0f, 32.0f, 0.0f }, 0.0f, 0.0
 	m_Dt = 0;
 }
 
-Application::~Application()
-{
-}
-
 void Application::init(int windowWidth, int windowHeight, const char* title)
 {
 	m_Window = Window{ windowWidth, windowHeight, title };
 	m_World = new World{ TerrainGenerator{}, Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" } };
+
+	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas.png");
 }
 
 void Application::runMainLoop()

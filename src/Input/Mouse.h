@@ -14,8 +14,6 @@ public:
 
 	Mouse();
 
-	~Mouse();
-
 	float getXOffset();
 
 	float getYOffset() ;

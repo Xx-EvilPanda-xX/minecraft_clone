@@ -12,10 +12,6 @@ ChunkManager::ChunkManager(World* world) : m_World{ world }
 
 ChunkManager::ChunkManager() = default;
 
-ChunkManager::~ChunkManager()
-{
-}
-
 void ChunkManager::setWorldBlock(Vector3i loc, Block block)
 {
 	if (loc.y < 0 || loc.y > 255)

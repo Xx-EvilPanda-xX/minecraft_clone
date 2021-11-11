@@ -9,8 +9,6 @@ Block::Block()
 	m_Type = BlockType::Air;
 }
 
-Block::~Block() = default;
-
 BlockType Block::getType() const
 {
 	return m_Type;

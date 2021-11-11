@@ -43,6 +43,19 @@ void Chunk::buildMesh(ChunkManager& manager)
 {
 	static int i{};
 
+	if (m_Sections[i]->isEmpty())
+	{
+		++i;
+
+		if (i == g_ChunkCap)
+		{
+			i = 0;
+			m_Mesh.toBuffers();
+		}
+
+		return;
+	}
+
 	for (int x{}; x < 16; ++x)
 	{
 		for (int y{}; y < 16; ++y)
@@ -93,7 +106,7 @@ void Chunk::buildMesh(ChunkManager& manager)
 		}
 	}
 	++i;
-
+	
 	if (i == g_ChunkCap)
 	{
 		i = 0;

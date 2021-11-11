@@ -23,8 +23,6 @@ public:
 
 	World();
 
-	~World();
-
 	void worldRender(Camera& camera);
 
 	void generate();

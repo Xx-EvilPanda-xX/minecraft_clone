@@ -8,7 +8,7 @@ class ChunkSection
 {
 private:
 	Block* m_Blocks;
-	bool m_NeedsUpdate;
+	int m_AirBlocks;
 	bool m_Empty;
 
 public:
@@ -19,6 +19,8 @@ public:
 	void setBlock(Vector3i loc, Block block);
 
 	Block getBlock(Vector3i loc);
+
+	bool isEmpty();
 };
 
 #endif

@@ -13,8 +13,6 @@ private:
 public:
 	TerrainGenerator();
 
-	~TerrainGenerator();
-
 	ChunkSection* genSection(int section);
 };
 

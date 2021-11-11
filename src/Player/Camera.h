@@ -37,8 +37,6 @@ public:
 
 	Camera();
 
-	~Camera();
-
 	glm::mat4 getProjectionMat() const;
 
 	glm::mat4 getViewMat() const;

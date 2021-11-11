@@ -9,10 +9,6 @@ Camera::Camera(glm::vec3 location, float yaw, float pitch, float fov) : m_Locati
 
 Camera::Camera() = default;
 
-Camera::~Camera()
-{
-}
-
 glm::mat4 Camera::getProjectionMat() const
 {
 	return glm::perspective(glm::radians(m_Fov), static_cast<float>(constants::windowWidth) / static_cast<float>(constants::windowHeight), 0.1f, 1000.0f);

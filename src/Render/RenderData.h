@@ -15,7 +15,7 @@ struct RenderData
 
 	Shader& shader;
 
-	//unsigned int texture;
+	unsigned int texture;
 };
 
 #endif

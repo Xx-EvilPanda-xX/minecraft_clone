@@ -6,6 +6,7 @@
 #include "../Math/Vector2i.h"
 #include "../Render/RenderData.h"
 #include "../Render/Shader.h"
+#include "../Render/Texture.h"
 #include "../World/Block.h"
 
 enum class Face
@@ -27,6 +28,8 @@ private:
 	std::vector<float> m_Lighting;
 	std::vector<int> m_Indices;
 	bool hasValidObjects;
+	static Texture s_TexAltas;
+	static BlockType s_AtlasIndices[];
 
 	Vector2i m_Pos;
 
@@ -56,10 +59,14 @@ private:
 
 	void pushNewIndices(int size);
 
+	float* calcTexCoords(BlockType block, Face face);
+
+	float* getTexCoordsFromStartPos(glm::vec2 startPos);
+
 public:
 	ChunkMesh(Vector2i pos, Shader& shader);
 
-	~ChunkMesh();
+	static void createTextureAtlas(const char* path);
 
 	void addFace(Vector3i loc, Block block, Face face);
 

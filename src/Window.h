@@ -27,8 +27,6 @@ public:
 
 	Window();
 
-	~Window();
-
 	GLFWwindow* getWindow();
 
 	int getWidth();

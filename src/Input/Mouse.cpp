@@ -2,10 +2,6 @@
 
 Mouse::Mouse() = default;
 
-Mouse::~Mouse()
-{
-}
-
 float Mouse::getXOffset()
 {
 	if (m_UsedX)
