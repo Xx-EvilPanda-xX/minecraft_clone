@@ -23,7 +23,7 @@ void Application::init(int windowWidth, int windowHeight, const char* title)
 	m_Window = Window{ windowWidth, windowHeight, title };
 	m_World = new World{ TerrainGenerator{}, Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" } };
 
-	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas.png");
+	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas2.png");
 }
 
 void Application::runMainLoop()

@@ -4,8 +4,11 @@ in vec2 passTexCoords;
 out vec4 outColor;
 in float passLighting;
 
-uniform float green;
+uniform sampler2D tex;
 
 void main(){
-    outColor = vec4(0.0, green * passLighting, 0.0, 1.0);
+    vec4 texColor = texture(tex, passTexCoords);
+    vec3 rgb = vec3(texColor);
+    rgb *= passLighting;
+    outColor = vec4(rgb, texColor.a);
 }

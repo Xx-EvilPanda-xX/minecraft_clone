@@ -8,6 +8,7 @@ namespace Renderer
 	void drawMesh(const Camera& camera, const ChunkMesh& mesh)
 	{
 		mesh.getRenderData().shader.bind();
+		glBindTexture(GL_TEXTURE_2D, mesh.getRenderData().texture);
 
 		glBindVertexArray(mesh.getRenderData().vao);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.getRenderData().ebo);
@@ -20,6 +21,7 @@ namespace Renderer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
+		glBindTexture(GL_TEXTURE_2D, 0);
 		mesh.getRenderData().shader.unbind();
 	}
 
@@ -33,8 +35,6 @@ namespace Renderer
 		mesh.getRenderData().shader.setMat4("model", model);
 		mesh.getRenderData().shader.setMat4("view", camera.getViewMat());
 		mesh.getRenderData().shader.setMat4("proj", camera.getProjectionMat());
-
-		mesh.getRenderData().shader.setFloat("green", 1.0);
 	}
 }
 

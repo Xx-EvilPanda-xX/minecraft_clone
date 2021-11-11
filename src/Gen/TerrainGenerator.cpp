@@ -45,7 +45,6 @@ ChunkSection* TerrainGenerator::genSection(int section)
 					chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Grass });
 				else
 					chunkSection->setBlock(Vector3i{ x, y, z }, Block{ BlockType::Air });
-				
 			}
 		}
 	}

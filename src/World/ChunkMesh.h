@@ -63,6 +63,8 @@ private:
 
 	float* getTexCoordsFromStartPos(glm::vec2 startPos);
 
+	void checkTexCoordBounds(glm::vec2& faceStartCoords);
+
 public:
 	ChunkMesh(Vector2i pos, Shader& shader);
 
