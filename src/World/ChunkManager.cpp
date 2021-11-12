@@ -60,7 +60,14 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 	int chunkIndex{};
 	int sectionIndex{};
 
-	Vector3i sectionLocal{ loc.x % 16, loc.y % 16, loc.z % 16 };
+	Vector3i sectionLocal{loc.x % 16, loc.y % 16, loc.z % 16 };
+	if (loc.x < 0 && sectionLocal.x != 0)
+		sectionLocal.x += 16;
+	if (loc.y < 0 && sectionLocal.y != 0)
+		sectionLocal.y += 16;
+	if (loc.z < 0 && sectionLocal.z != 0)
+		sectionLocal.z += 16;
+
 	Vector2i chunkLocation{ loc.x / 16, loc.z / 16 };
 
 	if (loc.x < 0)
@@ -94,5 +101,34 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 
 bool ChunkManager::chunkExsists(Vector3i loc)
 {
+	Vector2i chunkLocation{ loc.x / 16, loc.z / 16 };
+
+	if (loc.x < 0)
+		--chunkLocation.x;
+
+	if (loc.z < 0)
+		--chunkLocation.y;
+
+	for (int i{}; i < m_World->getChunks().size(); ++i)
+	{
+		if (m_World->getChunks()[i]->getLocation() == chunkLocation)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ChunkManager::chunkExsists(Vector2i chunkLoc)
+{
+	for (int i{}; i < m_World->getChunks().size(); ++i)
+	{
+		if (m_World->getChunks()[i]->getLocation() == chunkLoc)
+		{
+			return true;
+		}
+	}
+
 	return false;
 }

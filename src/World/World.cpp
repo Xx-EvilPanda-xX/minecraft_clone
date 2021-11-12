@@ -19,8 +19,8 @@ bool pumiscoot = true;
 
 void World::worldRender(Camera& camera)
 {
-	static int x{ -16 };
-	static int y{ -16 };
+	static int x{ -8 };
+	static int y{ -8 };
 	static bool isGenerating{ true };
 	static int meshPtr{};
 	static int sectionPtr{ 0 };
@@ -52,33 +52,39 @@ void World::worldRender(Camera& camera)
 
 			++x;
 
-			if (x == 0)
+			if (x == 8)
 			{
-				x = -16;
+				x = -8;
 				++y;
 			}
 
-			if (y == 0)
+			if (y == 8)
 				isGenerating = false;
 		}
 	}
 
-	if (meshPtr < m_Chunks.size() && shouldGen >= genInterval)
-	{
-		m_Chunks[meshPtr]->buildMesh(m_Manager);
-		++sectionPtr;
-
-		if (sectionPtr == g_ChunkCap)
+//	if (m_Manager.chunkExsists(Vector2i{ m_Chunks[meshPtr]->getLocation().x + 1, m_Chunks[meshPtr]->getLocation().y + 1 })
+//		&& m_Manager.chunkExsists(Vector2i{ m_Chunks[meshPtr]->getLocation().x - 1, m_Chunks[meshPtr]->getLocation().y - 1 })
+//		&& m_Manager.chunkExsists(Vector2i{ m_Chunks[meshPtr]->getLocation().x + 1, m_Chunks[meshPtr]->getLocation().y - 1 })
+//		&& m_Manager.chunkExsists(Vector2i{ m_Chunks[meshPtr]->getLocation().x - 1, m_Chunks[meshPtr]->getLocation().y + 1 }))
+//	{
+		if (meshPtr < m_Chunks.size() && shouldGen >= genInterval)
 		{
-			std::cout << "Mesh built at " << m_Chunks[meshPtr]->getLocation().x << ", " << m_Chunks[meshPtr]->getLocation().y << " in " << static_cast<long>((glfwGetTime() - start) * 1000) << "ms\n";
-			
-			++meshPtr;
-			sectionPtr = 0;
-		}
+			m_Chunks[meshPtr]->buildMesh(m_Manager);
+			++sectionPtr;
 
-		shouldGen = 0;
-	}
-	++shouldGen;
+			if (sectionPtr == g_ChunkCap)
+			{
+				std::cout << "Mesh built at " << m_Chunks[meshPtr]->getLocation().x << ", " << m_Chunks[meshPtr]->getLocation().y << " in " << static_cast<long>((glfwGetTime() - start) * 1000) << "ms\n";
+
+				++meshPtr;
+				sectionPtr = 0;
+			}
+
+			shouldGen = 0;
+		}
+		++shouldGen;
+//	}
 	
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{

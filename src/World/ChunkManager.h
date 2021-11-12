@@ -3,6 +3,7 @@
 
 #include "Block.h"
 #include "../Math/Vector3i.h"
+#include "../Math/Vector2i.h"
 
 class World;
 
@@ -21,6 +22,8 @@ public:
 	Block getWorldBlock(Vector3i loc);
 
 	bool chunkExsists(Vector3i loc);
+
+	bool chunkExsists(Vector2i chunkLoc);
 };
 
 #endif
