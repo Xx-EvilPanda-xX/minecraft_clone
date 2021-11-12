@@ -15,26 +15,13 @@ World::World(TerrainGenerator worldGen, Shader shader) : m_WorldGen{ worldGen },
 
 World::World() = default;
 
-void World::generate()
-{
-	for (int i{}; i < g_WorldWidth; ++i)
-	{
-		for (int j{}; j < g_WorldHeight; ++j)
-		{
-			Chunk* chunk{ new Chunk(Vector2i{ i, j }, m_Shader) };
-
-			for (int k{}; k < g_ChunkCap; ++k)
-			{
-				chunk->addSection(m_WorldGen.genSection(k));
-			}
-
-			m_Chunks.push_back(chunk);
-		}
-	}
-}
+bool pumiscoot = true;
 
 void World::worldRender(Camera& camera)
 {
+	static int x{ -16 };
+	static int y{ -16 };
+	static bool isGenerating{ true };
 	static int meshPtr{};
 	static int sectionPtr{ 0 };
 	static constexpr int genInterval{ 1 };
@@ -43,6 +30,37 @@ void World::worldRender(Camera& camera)
 	if (sectionPtr == 0)
 	{
 		start = glfwGetTime();
+
+		if (isGenerating)
+		{
+			Chunk* chunk{ new Chunk(Vector2i{ x, y }, m_Shader) };
+
+			int** heightMap{ m_WorldGen.getHeightMap() };
+			for (int k{}; k < g_ChunkCap; ++k)
+			{
+				chunk->addSection(m_WorldGen.genSection(heightMap, k));
+			}
+
+			for (int i{}; i < 16; ++i)
+			{
+				delete[] heightMap[i];
+			}
+
+			delete[] heightMap;
+
+			m_Chunks.push_back(chunk);
+
+			++x;
+
+			if (x == 0)
+			{
+				x = -16;
+				++y;
+			}
+
+			if (y == 0)
+				isGenerating = false;
+		}
 	}
 
 	if (meshPtr < m_Chunks.size() && shouldGen >= genInterval)

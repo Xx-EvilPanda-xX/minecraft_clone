@@ -23,15 +23,16 @@ void Application::init(int windowWidth, int windowHeight, const char* title)
 	m_Window = Window{ windowWidth, windowHeight, title };
 	m_World = new World{ TerrainGenerator{}, Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" } };
 
-	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas2.png");
+	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas.png");
 }
 
 void Application::runMainLoop()
 {
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-
-	m_World->generate();
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 
 	while (!glfwWindowShouldClose(m_Window.getWindow()))
 	{
@@ -62,16 +63,9 @@ void Application::updateFPS()
 	}
 }
 
-__int64 Application::getCurrentTimeMillis()
+long Application::getCurrentTimeMillis()
 {
-	static const __int64 magic = 116444736000000000;
-	SYSTEMTIME st;
-	GetSystemTime(&st);
-	FILETIME ft;
-	SystemTimeToFileTime(&st, &ft);
-	__int64 time;
-	memcpy(&time, &ft, sizeof(time));
-	return (time - magic) / 10000;
+	return static_cast<long>(glfwGetTime() * 1000);
 }
 
 void Application::handleInput()

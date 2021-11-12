@@ -21,14 +21,14 @@ private:
 	float m_Dt;
 	float m_LastFrame;
 
-	__int64 frames;
-	__int64 time;
+	long frames;
+	long time;
 
 	void handleInput();
 
 	void updateFPS();
 
-	__int64 getCurrentTimeMillis();
+	long getCurrentTimeMillis();
 
 public:
 	Application();

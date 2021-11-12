@@ -19,6 +19,8 @@ public:
 	void setWorldBlock(Vector3i loc, Block block);
 
 	Block getWorldBlock(Vector3i loc);
+
+	bool chunkExsists(Vector3i loc);
 };
 
 #endif

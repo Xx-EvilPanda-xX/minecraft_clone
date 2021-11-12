@@ -31,6 +31,8 @@ private:
 	static Texture s_TexAltas;
 	static BlockType s_AtlasIndices[];
 
+	Face currentFace;
+
 	Vector2i m_Pos;
 
 	void storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data);

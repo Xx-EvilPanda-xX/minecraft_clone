@@ -13,7 +13,9 @@ private:
 public:
 	TerrainGenerator();
 
-	ChunkSection* genSection(int section);
+	ChunkSection* genSection(int** heightMap, int section);
+
+	int** getHeightMap();
 };
 
 #endif
