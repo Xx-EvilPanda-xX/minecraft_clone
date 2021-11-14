@@ -27,6 +27,8 @@ public:
 
 	void genPass();
 
+	void destroyPass(Vector2i playerPos);
+
 	void buildPass(int& sectionPtr);
 
 	std::vector<Chunk*>& getChunks();

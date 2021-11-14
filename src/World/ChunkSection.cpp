@@ -11,6 +11,7 @@ ChunkSection::ChunkSection() : m_Empty{ true }, m_AirBlocks{ 4096 }
 ChunkSection::~ChunkSection()
 {
 	delete[] m_Blocks;
+	m_Blocks = nullptr;
 }
 
 void ChunkSection::setBlock(Vector3i loc, Block block)

@@ -146,13 +146,8 @@ void ChunkManager::updateGenQueue(const Camera& player)
 		{
 			Vector2i chunkPos{ x, y };
 			if (!chunkExsists(chunkPos) && !isInGenQueue(chunkPos))
-				m_GenQueue.push_back(chunkPos);
+				m_GenQueue.insert(m_GenQueue.begin(), chunkPos);
 		}
-	}
-
-	if (!chunkExsists(chunkPlayerPos) && !isInGenQueue(chunkPlayerPos))
-	{
-		m_GenQueue.push_back(chunkPlayerPos);
 	}
 }
 
@@ -172,7 +167,7 @@ void ChunkManager::updateBuildQueue()
 				{
 					if (chunkExsists(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }))
 					{
-						m_BuildQueue.push_back(m_World->getChunks()[i]);
+						m_BuildQueue.insert(m_BuildQueue.begin(), m_World->getChunks()[i]);
 					}
 				}
 			}

@@ -1,10 +1,12 @@
 #include "World.h"
 #include <iostream>
+#include <cmath>
 #include <GLFW/glfw3.h>
 #include "Chunk.h"
 #include "../Math/Vector2i.h"
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
+#include "../Constants.h"
 
 World::World(TerrainGenerator worldGen, Shader shader) : m_WorldGen{ worldGen }, m_Shader{ shader }, m_Manager{ this }
 {
@@ -19,6 +21,7 @@ void World::worldRender(const Camera& camera, bool updateQueues)
 	if (sectionPtr == 0)
 	{
 		genPass();
+		destroyPass(Vector2i{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().z) });
 	}
 
 	if (updateQueues)
@@ -61,13 +64,32 @@ void World::genPass()
 	}
 }
 
+void World::destroyPass(Vector2i playerPos)
+{
+	playerPos.x /= 16;
+	playerPos.y /= 16;
+
+	for (int i{}; i < m_Chunks.size(); ++i)
+	{
+		Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
+
+		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance)
+		{
+			std::cout << "Chunk deleted at: " << m_Chunks[i]->getLocation().x << ", " << m_Chunks[i]->getLocation().y << "\n";
+			delete m_Chunks[i];
+			m_Chunks[i] = nullptr;
+			m_Chunks.erase(m_Chunks.begin() + i);
+		}
+	}
+}
+
 void World::buildPass(int& sectionPtr)
 {
-	static int meshPtr{};
-	static constexpr int genInterval{ 1 };
-	static Chunk* currentChunk{ nullptr };
+	static constexpr int genInterval{ 3 };
 
-	if (!m_Manager.getBuildQueue().empty() && sectionPtr == 0)
+	Chunk* currentChunk{ nullptr };
+
+	if (!m_Manager.getBuildQueue().empty())
 		currentChunk = m_Manager.getBuildQueue().back();
 
 	if (currentChunk && shouldGen >= genInterval)
@@ -79,6 +101,9 @@ void World::buildPass(int& sectionPtr)
 		{
 			std::cout << "Mesh built at " << currentChunk->getLocation().x << ", " << currentChunk->getLocation().y << "\n";
 			m_Manager.getBuildQueue().pop_back();
+
+			currentChunk = nullptr;
+
 			sectionPtr = 0;
 		}
 

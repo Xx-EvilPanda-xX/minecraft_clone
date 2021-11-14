@@ -17,10 +17,14 @@ Chunk::Chunk(Vector2i loc, Shader& shader) : m_Location{ loc }, m_Mesh{ Vector2i
 
 Chunk::~Chunk()
 {
-	for (int i{}; i < g_ChunkCap; ++i)
+	for (int i{}; i < m_CurrentSectionIndex; ++i)
 	{
-		delete[] m_Sections[i];
+		delete m_Sections[i];
+		m_Sections[i] = nullptr;
 	}
+
+	if (m_IsBuilt)
+		m_Mesh.clear();
 }
 
 void Chunk::addSection(ChunkSection* section)
@@ -52,6 +56,10 @@ void Chunk::buildMesh(ChunkManager& manager)
 		{
 			i = 0;
 			m_Mesh.toBuffers();
+
+			if (m_IsBuilt)
+				std::cout << "Mesh already built\n";
+
 			m_IsBuilt = true;
 		}
 
@@ -113,6 +121,10 @@ void Chunk::buildMesh(ChunkManager& manager)
 	{
 		i = 0;
 		m_Mesh.toBuffers();
+
+		if (m_IsBuilt)
+			std::cout << "Mesh already built\n";
+
 		m_IsBuilt = true;
 	}
 }

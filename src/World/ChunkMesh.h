@@ -76,6 +76,8 @@ public:
 
 	void toBuffers();
 
+	void clear();
+
 	void enableAttribs() const;
 
 	void disableAttribs() const;

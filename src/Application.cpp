@@ -43,7 +43,7 @@ void Application::runMainLoop()
 		handleInput();
 
 		bool update{ false };
-		if (getCurrentTimeMillis() > (updateQueues + 500))
+		if (getCurrentTimeMillis() > (updateQueues + 100))
 		{
 			updateQueues = getCurrentTimeMillis();
 			update = true;
@@ -89,24 +89,24 @@ void Application::handleInput()
 
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
-		m_Camera.handleKeyboard(Direction::Forward, 20.0f, m_Dt);
+		m_Camera.handleKeyboard(Direction::Forward, 5.0f, m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
 			m_Camera.handleKeyboard(Direction::Forward, 20.0f, m_Dt);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_A))
-		m_Camera.handleKeyboard(Direction::Left, 20.0f, m_Dt);
+		m_Camera.handleKeyboard(Direction::Left, 5.0f, m_Dt);
 	
 	if (keyboard.isKeyDown(GLFW_KEY_S))
-		m_Camera.handleKeyboard(Direction::Back, 20.0f, m_Dt);
+		m_Camera.handleKeyboard(Direction::Back, 5.0f, m_Dt);
 
 	if (keyboard.isKeyDown(GLFW_KEY_D))
-		m_Camera.handleKeyboard(Direction::Right, 20.0f, m_Dt);
+		m_Camera.handleKeyboard(Direction::Right, 5.0f, m_Dt);
 	
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
 	{
-		m_Camera.handleKeyboard(Direction::Up, 2.5, m_Dt);
+		m_Camera.handleKeyboard(Direction::Up, 5.0f, m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
 			m_Camera.handleKeyboard(Direction::Up, 20.0f, m_Dt);
@@ -114,7 +114,7 @@ void Application::handleInput()
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
 	{
-		m_Camera.handleKeyboard(Direction::Down, 2.5, m_Dt);
+		m_Camera.handleKeyboard(Direction::Down, 5.0f, m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
 			m_Camera.handleKeyboard(Direction::Down, 20.0f, m_Dt);
