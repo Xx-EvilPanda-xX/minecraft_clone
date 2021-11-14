@@ -23,9 +23,11 @@ public:
 
 	World();
 
-	void worldRender(Camera& camera);
+	void worldRender(const Camera& camera, bool moved);
 
-	void generate();
+	void genPass();
+
+	void buildPass(int& sectionPtr);
 
 	std::vector<Chunk*>& getChunks();
 };

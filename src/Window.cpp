@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Window.h"
+#include "Constants.h"
 
 Keyboard g_Keyboard;
 Mouse g_Mouse;
@@ -32,7 +33,15 @@ void Window::initGlfw()
 
 void Window::createWindow()
 {
-	m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
+	if (constants::fullscreen)
+	{
+		m_Window = glfwCreateWindow(constants::fullscreenWidth, constants::fullscreenHeight, m_Title, glfwGetPrimaryMonitor(), NULL);
+	}
+	else
+	{
+		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
+	}
+	
 	if (m_Window == NULL)
 	{
 		std::cout << "Failed to create GLFW window! Program will exit.\n";

@@ -10,7 +10,7 @@
 #include "Application.h"
 #include "World/ChunkMesh.h"
 
-Application::Application() : m_Camera{ glm::vec3{ 0.0f, 32.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
+Application::Application() : m_Camera{ glm::vec3{ 0.0f, 96.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
 {
 	frames = 0;
 	time = 0;
@@ -42,7 +42,14 @@ void Application::runMainLoop()
 		updateFPS();
 		handleInput();
 
-		m_World->worldRender(m_Camera);
+		bool update{ false };
+		if (getCurrentTimeMillis() > (updateQueues + 500))
+		{
+			updateQueues = getCurrentTimeMillis();
+			update = true;
+		}
+
+		m_World->worldRender(m_Camera, update);
 
 		glfwSwapBuffers(m_Window.getWindow());
 		glfwPollEvents();
@@ -82,21 +89,21 @@ void Application::handleInput()
 
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
-		m_Camera.handleKeyboard(Direction::Forward, 2.5, m_Dt);
+		m_Camera.handleKeyboard(Direction::Forward, 20.0f, m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
 			m_Camera.handleKeyboard(Direction::Forward, 20.0f, m_Dt);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_A))
-		m_Camera.handleKeyboard(Direction::Left, 2.5, m_Dt);
-
+		m_Camera.handleKeyboard(Direction::Left, 20.0f, m_Dt);
+	
 	if (keyboard.isKeyDown(GLFW_KEY_S))
-		m_Camera.handleKeyboard(Direction::Back, 2.5, m_Dt);
+		m_Camera.handleKeyboard(Direction::Back, 20.0f, m_Dt);
 
 	if (keyboard.isKeyDown(GLFW_KEY_D))
-		m_Camera.handleKeyboard(Direction::Right, 2.5, m_Dt);
-
+		m_Camera.handleKeyboard(Direction::Right, 20.0f, m_Dt);
+	
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
 	{
 		m_Camera.handleKeyboard(Direction::Up, 2.5, m_Dt);

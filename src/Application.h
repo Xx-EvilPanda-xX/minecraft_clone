@@ -24,6 +24,8 @@ private:
 	long frames;
 	long time;
 
+	long updateQueues;
+
 	void handleInput();
 
 	void updateFPS();

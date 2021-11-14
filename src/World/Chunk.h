@@ -16,6 +16,7 @@ private:
 	ChunkMesh m_Mesh;
 	int m_CurrentSectionIndex;
 	bool m_Complete;
+	bool m_IsBuilt;
 	Vector2i m_Location;
 
 public:
@@ -36,6 +37,8 @@ public:
 	const Vector2i getLocation() const;
 
 	ChunkSection* getSection(int index) const;
+
+	bool isBuilt() const;
 };
 
 #endif

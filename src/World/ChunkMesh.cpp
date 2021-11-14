@@ -58,13 +58,7 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 
 float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 {
-	int e{};
-
-	if (block == BlockType::Dirt)
-	{
-		++e;
-	}
-		
+	int e{};		
 
 	float index{};
 	for (int i{}; i < BlockType::NumBlocks; ++i)

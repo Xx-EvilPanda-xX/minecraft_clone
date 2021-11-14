@@ -12,6 +12,7 @@ Chunk::Chunk(Vector2i loc, Shader& shader) : m_Location{ loc }, m_Mesh{ Vector2i
 
 	m_CurrentSectionIndex = 0;
 	m_Complete = false;
+	m_IsBuilt = false;
 }
 
 Chunk::~Chunk()
@@ -51,6 +52,7 @@ void Chunk::buildMesh(ChunkManager& manager)
 		{
 			i = 0;
 			m_Mesh.toBuffers();
+			m_IsBuilt = true;
 		}
 
 		return;
@@ -111,6 +113,7 @@ void Chunk::buildMesh(ChunkManager& manager)
 	{
 		i = 0;
 		m_Mesh.toBuffers();
+		m_IsBuilt = true;
 	}
 }
 
@@ -137,4 +140,9 @@ const Vector2i Chunk::getLocation() const
 ChunkSection* Chunk::getSection(int index) const
 {
 	return m_Sections[index];
+}
+
+bool Chunk::isBuilt() const
+{
+	return m_IsBuilt;
 }
