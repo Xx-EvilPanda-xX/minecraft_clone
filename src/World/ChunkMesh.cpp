@@ -314,11 +314,14 @@ void ChunkMesh::toBuffers()
 	glGenBuffers(1, &m_RenderData.ebo);
 	glGenBuffers(1, &m_RenderData.lbo);
 
-	storeFloatBuffer(0, 3, m_RenderData.vbo, m_Vertices);
-	storeFloatBuffer(1, 2, m_RenderData.tbo, m_TexCoords);
-	storeFloatBuffer(2, 1, m_RenderData.lbo, m_Lighting);
+	if (!m_Vertices.empty())
+	{
+		storeFloatBuffer(0, 3, m_RenderData.vbo, m_Vertices);
+		storeFloatBuffer(1, 2, m_RenderData.tbo, m_TexCoords);
+		storeFloatBuffer(2, 1, m_RenderData.lbo, m_Lighting);
 
-	storeIndices(m_Indices);
+		storeIndices(m_Indices);
+	}
 
 	m_RenderData.texture = s_TexAltas.getId();
 
@@ -330,37 +333,37 @@ void ChunkMesh::storeFloatBuffer(int index, int size, int buffer, const std::vec
 	glBindVertexArray(m_RenderData.vao);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-	//float* dataArray{ new float[data.size()]{} };
-	//for (int i{}; i < data.size(); ++i)
-	//{
-	//	dataArray[i] = data[i];
-	//}
+	float* dataArray{ new float[data.size()]{} };
+	for (int i{}; i < data.size(); ++i)
+	{
+		dataArray[i] = data[i];
+	}
 
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), dataArray, GL_STATIC_DRAW);
 	glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	//delete[] dataArray;
+	delete[] dataArray;
 }
 
 void ChunkMesh::storeIndices(std::vector<int>& data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RenderData.ebo);
 
-	//int* dataArray{ new int[data.size()]{} };
-	//for (int i{}; i < data.size(); ++i)
-	//{
-	//	dataArray[i] = data[i];
-	//}
+	int* dataArray{ new int[data.size()]{} };
+	for (int i{}; i < data.size(); ++i)
+	{
+		dataArray[i] = data[i];
+	}
 	
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), &data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), dataArray, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	m_RenderData.indexCount = static_cast<int>(data.size());
-	//delete[] dataArray;
+	delete[] dataArray;
 }
 
 const std::vector<float>& ChunkMesh::getVertices() const

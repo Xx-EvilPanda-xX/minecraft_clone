@@ -76,8 +76,6 @@ void World::destroyPass(Vector2i playerPos)
 		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance)
 		{
 			std::cout << "Chunk deleted at: " << m_Chunks[i]->getLocation().x << ", " << m_Chunks[i]->getLocation().y << "\n";
-			delete m_Chunks[i];
-			m_Chunks[i] = nullptr;
 			m_Chunks.erase(m_Chunks.begin() + i);
 		}
 	}
@@ -92,7 +90,7 @@ void World::buildPass(int& sectionPtr)
 	if (!m_Manager.getBuildQueue().empty())
 		currentChunk = m_Manager.getBuildQueue().back();
 
-	if (currentChunk && shouldGen >= genInterval)
+	if (currentChunk != nullptr && shouldGen >= genInterval)
 	{
 		currentChunk->buildMesh(m_Manager);
 		++sectionPtr;
