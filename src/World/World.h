@@ -9,6 +9,8 @@
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
 
+constexpr int genInterval{ 3 };
+
 class World
 {
 private:
@@ -16,7 +18,6 @@ private:
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
 	ChunkManager m_Manager;
-	int shouldGen;
 
 public:
 	World(TerrainGenerator worldGen, Shader shader);
@@ -29,7 +30,7 @@ public:
 
 	void destroyPass(Vector2i playerPos);
 
-	void buildPass(int& sectionPtr);
+	void buildPass();
 
 	std::vector<Chunk*>& getChunks();
 };

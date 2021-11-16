@@ -153,6 +153,14 @@ void ChunkManager::updateGenQueue(const Camera& player)
 
 void ChunkManager::updateBuildQueue()
 {
+	for (int i{}; i < m_BuildQueue.size(); ++i)
+	{
+		if (!chunkExsists(m_BuildQueue[i]->getLocation()))
+		{
+			m_BuildQueue.erase(m_BuildQueue.begin() + i);
+		}
+	}
+
 	for (int i{}; i < m_World->getChunks().size(); ++i)
 	{
 		if (m_World->getChunks()[i]->isBuilt() || isInBuildQueue(m_World->getChunks()[i]))

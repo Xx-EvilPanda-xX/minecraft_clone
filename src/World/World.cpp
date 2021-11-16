@@ -16,20 +16,11 @@ World::World() = default;
 
 void World::worldRender(const Camera& camera, bool updateQueues)
 {
-	static int sectionPtr{ 0 };
-
-	if (sectionPtr == 0)
-	{
-		genPass();
-		destroyPass(Vector2i{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().z) });
-	}
-
-	if (updateQueues)
-	{
-		m_Manager.updateQueues(camera);
-	}
-
-	buildPass(sectionPtr);
+	genPass();
+	buildPass();
+	destroyPass(Vector2i{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().z) });
+		
+	m_Manager.updateQueues(camera);
 	
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
@@ -76,14 +67,22 @@ void World::destroyPass(Vector2i playerPos)
 		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance)
 		{
 			std::cout << "Chunk deleted at: " << m_Chunks[i]->getLocation().x << ", " << m_Chunks[i]->getLocation().y << "\n";
-			m_Chunks.erase(m_Chunks.begin() + i);
+			delete m_Chunks[i];
+			m_Chunks[i] = nullptr;
 		}
+	}
+
+	for (int i{ static_cast<int>(m_Chunks.size()) - 1 }; i >= 0; --i)
+	{
+		if (m_Chunks[i] == nullptr)
+			m_Chunks.erase(m_Chunks.begin() + i);
 	}
 }
 
-void World::buildPass(int& sectionPtr)
+void World::buildPass()
 {
-	static constexpr int genInterval{ 3 };
+	static int sectionPtr{};
+	static int shouldGen{};
 
 	Chunk* currentChunk{ nullptr };
 

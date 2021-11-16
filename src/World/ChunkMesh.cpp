@@ -266,10 +266,10 @@ ChunkMesh& ChunkMesh::pushIndex(int i)
 
 void ChunkMesh::clear()
 {
-	m_Vertices.clear();
-	m_TexCoords.clear();
-	m_Lighting.clear();
-	m_Indices.clear();
+	m_Vertices.resize(0);
+	m_TexCoords.resize(0);
+	m_Lighting.resize(0);
+	m_Indices.resize(0);
 
 	glDeleteVertexArrays(1, &m_RenderData.vao);
 
