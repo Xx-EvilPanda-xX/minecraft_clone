@@ -17,10 +17,11 @@ World::World() = default;
 void World::worldRender(const Camera& camera, bool updateQueues)
 {
 	genPass();
-	buildPass();
 	destroyPass(Vector2i{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().z) });
 		
 	m_Manager.updateQueues(camera);
+
+	buildPass();
 	
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
