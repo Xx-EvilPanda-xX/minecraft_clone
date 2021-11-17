@@ -57,5 +57,38 @@ namespace EventHandler
 			Vector2i chunkPos{ static_cast<int>(app.getCamera().getLocation().x) / 16, static_cast<int>(app.getCamera().getLocation().z) / 16 };
 			std::cout << "Chunk index: " << app.getWorld()->getChunkIndex(chunkPos) << "\n";
 		}
+
+		if (keyboard.isKeyDown(GLFW_KEY_R))
+		{
+			const char* blockName{};
+			Vector3i blockPos{ static_cast<int>(app.getCamera().getLocation().x), static_cast<int>(app.getCamera().getLocation().y), static_cast<int>(app.getCamera().getLocation().z) };
+
+			Block block{ app.getWorld()->getManager().getWorldBlock(blockPos) };
+
+			switch (block.getType())
+			{
+			case BlockType::Air:
+				blockName = "Air";
+				break;
+
+			case BlockType::Dirt:
+				blockName = "Dirt";
+				break;
+
+			case BlockType::Grass:
+				blockName = "Grass";
+				break;
+
+			case BlockType::Stone:
+				blockName = "Stone";
+				break;
+
+			default:
+				blockName = "Unknown";
+				break;
+			}
+
+			std::cout << "Block at player position: " << blockName << "\n";
+		}
 	}
 }

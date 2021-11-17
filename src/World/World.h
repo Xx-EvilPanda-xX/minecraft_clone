@@ -37,6 +37,8 @@ public:
 	int getChunkIndex(Vector2i chunkPos);
 
 	std::vector<Chunk*>& getChunks();
+
+	ChunkManager& getManager();
 };
 
 #endif

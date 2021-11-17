@@ -138,3 +138,8 @@ std::vector<Chunk*>& World::getChunks()
 {
 	return m_Chunks;
 }
+
+ChunkManager& World::getManager()
+{
+	return m_Manager;
+}
