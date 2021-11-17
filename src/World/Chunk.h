@@ -18,6 +18,7 @@ private:
 	bool m_Complete;
 	bool m_IsBuilt;
 	Vector2i m_Location;
+	std::vector<int> m_RemainingSections;
 
 public:
 	Chunk(Vector2i loc, Shader& shader);
@@ -26,7 +27,7 @@ public:
 
 	void addSection(ChunkSection* section);
 
-	void buildMesh(ChunkManager& manager);
+	void buildMesh(ChunkManager& manager, int section);
 
 	int getCurrentSectionIndex() const;
 

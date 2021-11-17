@@ -9,6 +9,7 @@
 
 #include "Application.h"
 #include "World/ChunkMesh.h"
+#include "Input/EventHandler.h"
 
 Application::Application() : m_Camera{ glm::vec3{ 0.0f, 96.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
 {
@@ -84,49 +85,22 @@ void Application::handleInput()
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };
 
-	if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
-		glfwSetWindowShouldClose(m_Window.getWindow(), true);
-
-	if (keyboard.isKeyDown(GLFW_KEY_W))
-	{
-		m_Camera.handleKeyboard(Direction::Forward, 5.0f, m_Dt);
-
-		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-			m_Camera.handleKeyboard(Direction::Forward, 20.0f, m_Dt);
-	}
-
-	if (keyboard.isKeyDown(GLFW_KEY_A))
-		m_Camera.handleKeyboard(Direction::Left, 5.0f, m_Dt);
-	
-	if (keyboard.isKeyDown(GLFW_KEY_S))
-		m_Camera.handleKeyboard(Direction::Back, 5.0f, m_Dt);
-
-	if (keyboard.isKeyDown(GLFW_KEY_D))
-		m_Camera.handleKeyboard(Direction::Right, 5.0f, m_Dt);
-	
-	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
-	{
-		m_Camera.handleKeyboard(Direction::Up, 5.0f, m_Dt);
-
-		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-			m_Camera.handleKeyboard(Direction::Up, 20.0f, m_Dt);
-	}
-
-	if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
-	{
-		m_Camera.handleKeyboard(Direction::Down, 5.0f, m_Dt);
-
-		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-			m_Camera.handleKeyboard(Direction::Down, 20.0f, m_Dt);
-	}
-
-	if (keyboard.isKeyDown(GLFW_KEY_C))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	if (keyboard.isKeyDown(GLFW_KEY_F))
-		std::cout << "XYZ: " << m_Camera.getLocation().x << ", " << m_Camera.getLocation().y << ", " << m_Camera.getLocation().z << "\n";
+	EventHandler::keyBoardEvent(keyboard, *this);
 
 	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() });
+}
+
+Window& Application::getWindow()
+{
+	return m_Window;
+}
+
+Camera& Application::getCamera()
+{
+	return m_Camera;
+}
+
+World* Application::getWorld()
+{
+	return m_World;
 }

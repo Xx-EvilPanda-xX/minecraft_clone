@@ -18,7 +18,6 @@ private:
 	World* m_World;
 	Camera m_Camera;
 
-	float m_Dt;
 	float m_LastFrame;
 
 	long frames;
@@ -33,11 +32,19 @@ private:
 	long getCurrentTimeMillis();
 
 public:
+	float m_Dt;
+
 	Application();
 
 	void init(int windowWidth, int windowHeight, const char* title);
 
 	void runMainLoop();
+
+	Window& getWindow();
+
+	Camera& getCamera();
+
+	World* getWorld();
 };
 
 

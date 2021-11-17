@@ -7,8 +7,8 @@
 
 TerrainGenerator::TerrainGenerator()
 {
-	rand = std::mt19937{ static_cast<std::mt19937::result_type>(345345) };
-	die = std::uniform_int_distribution<>{ 61, 64 };
+	rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
+	die = std::uniform_int_distribution<>{ 11, 13 };
 }
 
 ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)

@@ -13,6 +13,11 @@ Chunk::Chunk(Vector2i loc, Shader& shader) : m_Location{ loc }, m_Mesh{ Vector2i
 	m_CurrentSectionIndex = 0;
 	m_Complete = false;
 	m_IsBuilt = false;
+
+	for (int i{}; i < g_ChunkCap; ++i)
+	{
+		m_RemainingSections.push_back(i);
+	}
 }
 
 Chunk::~Chunk()
@@ -44,17 +49,27 @@ void Chunk::addSection(ChunkSection* section)
 	}
 }
 
-void Chunk::buildMesh(ChunkManager& manager)
+void Chunk::buildMesh(ChunkManager& manager, int section)
 {
-	static int i{};
-
-	if (m_Sections[i]->isEmpty())
+	if (section < 0 || section > 16)
 	{
-		++i;
+		std::cout << "Invalid section index!\n";
+		return;
+	}
 
-		if (i == g_ChunkCap)
+	for (int i{}; i < m_RemainingSections.size(); ++i)
+	{
+		if (m_RemainingSections[i] == section)
 		{
-			i = 0;
+			m_RemainingSections.erase(m_RemainingSections.begin() + i);
+			break;
+		}
+	}
+
+	if (m_Sections[section]->isEmpty())
+	{
+		if (m_RemainingSections.size() == 0)
+		{
 			m_Mesh.toBuffers();
 
 			if (m_IsBuilt)
@@ -73,7 +88,7 @@ void Chunk::buildMesh(ChunkManager& manager)
 			for (int z{}; z < 16; ++z)
 			{
 				int wX{ (m_Location.x * 16) + x };
-				int wY{ (i * 16) + y };
+				int wY{ (section * 16) + y };
 				int wZ{ (m_Location.y * 16) + z };
 				Block currentBlock{ manager.getWorldBlock(Vector3i{ wX, wY, wZ }) };
 				if (currentBlock.getType() == BlockType::Air)
@@ -115,11 +130,9 @@ void Chunk::buildMesh(ChunkManager& manager)
 			}
 		}
 	}
-	++i;
 	
-	if (i == g_ChunkCap)
+	if (m_RemainingSections.size() == 0)
 	{
-		i = 0;
 		m_Mesh.toBuffers();
 
 		if (m_IsBuilt)

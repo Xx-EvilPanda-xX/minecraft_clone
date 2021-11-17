@@ -43,6 +43,8 @@ public:
 	std::vector<Vector2i>& getGenQueue();
 
 	std::vector<Chunk*>& getBuildQueue();
+
+	void clearQueues();
 };
 
 #endif

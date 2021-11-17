@@ -221,3 +221,9 @@ std::vector<Chunk*>& ChunkManager::getBuildQueue()
 	return m_BuildQueue;
 }
 
+void ChunkManager::clearQueues()
+{
+	m_GenQueue.clear();
+	m_BuildQueue.clear();
+}
+

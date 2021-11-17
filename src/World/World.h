@@ -9,7 +9,7 @@
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
 
-constexpr int genInterval{ 3 };
+constexpr int genInterval{ 2 };
 
 class World
 {
@@ -31,6 +31,10 @@ public:
 	void destroyPass(Vector2i playerPos);
 
 	void buildPass();
+
+	void reloadChunks(const Camera& camera);
+
+	int getChunkIndex(Vector2i chunkPos);
 
 	std::vector<Chunk*>& getChunks();
 };

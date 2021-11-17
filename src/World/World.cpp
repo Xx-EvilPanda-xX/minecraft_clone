@@ -65,7 +65,7 @@ void World::destroyPass(Vector2i playerPos)
 	{
 		Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
 
-		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance)
+		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance + 2 || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance + 2)
 		{
 			std::cout << "Chunk deleted at: " << m_Chunks[i]->getLocation().x << ", " << m_Chunks[i]->getLocation().y << "\n";
 			delete m_Chunks[i];
@@ -92,7 +92,7 @@ void World::buildPass()
 
 	if (currentChunk != nullptr && shouldGen >= genInterval)
 	{
-		currentChunk->buildMesh(m_Manager);
+		currentChunk->buildMesh(m_Manager, sectionPtr);
 		++sectionPtr;
 
 		if (sectionPtr == g_ChunkCap)
@@ -108,6 +108,30 @@ void World::buildPass()
 		shouldGen = 0;
 	}
 	++shouldGen;
+}
+
+void World::reloadChunks(const Camera& camera)
+{
+	for (int i{}; i < m_Chunks.size(); ++i)
+	{
+		delete m_Chunks[i];
+		m_Chunks[i] = nullptr;
+	}
+
+	m_Chunks.clear();
+	m_Manager.clearQueues();
+	m_Manager.updateQueues(camera);
+}
+
+int World::getChunkIndex(Vector2i chunkPos)
+{
+	for (int i{}; i < m_Chunks.size(); ++i)
+	{
+		if (m_Chunks[i]->getLocation() == chunkPos)
+			return i;
+	}
+
+	return -1;
 }
 
 std::vector<Chunk*>& World::getChunks()
