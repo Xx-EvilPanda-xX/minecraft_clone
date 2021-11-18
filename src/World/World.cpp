@@ -38,7 +38,7 @@ void World::genPass()
 
 		Chunk* chunk{ new Chunk(chunkPos, m_Shader) };
 
-		int** heightMap{ m_WorldGen.getHeightMap() };
+		int** heightMap{ m_WorldGen.getHeightMap(chunk) };
 		for (int k{}; k < g_ChunkCap; ++k)
 		{
 			chunk->addSection(m_WorldGen.genSection(heightMap, k));
@@ -52,7 +52,7 @@ void World::genPass()
 		delete[] heightMap;
 
 		m_Chunks.push_back(chunk);
-		std::cout << "Chunk generated at : " << m_Chunks[m_Chunks.size() - 1]->getLocation().x << ", " << m_Chunks[m_Chunks.size() - 1]->getLocation().y << "\n";
+		//std::cout << "Chunk generated at : " << m_Chunks[m_Chunks.size() - 1]->getLocation().x << ", " << m_Chunks[m_Chunks.size() - 1]->getLocation().y << "\n";
 	}
 }
 
@@ -65,9 +65,9 @@ void World::destroyPass(Vector2i playerPos)
 	{
 		Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
 
-		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance + 2 || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance + 2)
+		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance)
 		{
-			std::cout << "Chunk deleted at: " << m_Chunks[i]->getLocation().x << ", " << m_Chunks[i]->getLocation().y << "\n";
+			//std::cout << "Chunk deleted at: " << m_Chunks[i]->getLocation().x << ", " << m_Chunks[i]->getLocation().y << "\n";
 			delete m_Chunks[i];
 			m_Chunks[i] = nullptr;
 		}
@@ -97,7 +97,7 @@ void World::buildPass()
 
 		if (sectionPtr == g_ChunkCap)
 		{
-			std::cout << "Mesh built at " << currentChunk->getLocation().x << ", " << currentChunk->getLocation().y << "\n";
+			//std::cout << "Mesh built at " << currentChunk->getLocation().x << ", " << currentChunk->getLocation().y << "\n";
 			m_Manager.getBuildQueue().pop_back();
 
 			currentChunk = nullptr;

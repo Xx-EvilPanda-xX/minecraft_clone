@@ -9,7 +9,7 @@
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
 
-constexpr int genInterval{ 2 };
+constexpr int genInterval{ 1 };
 
 class World
 {

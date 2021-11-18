@@ -13,7 +13,7 @@ namespace constants
 
 	constexpr float mouse_sensitivity{ 0.035 };
 
-	constexpr int renderDistance{ 8 };
+	constexpr int renderDistance{ 10 };
 }
 
 #endif

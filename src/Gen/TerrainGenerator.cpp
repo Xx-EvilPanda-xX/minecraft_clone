@@ -38,8 +38,13 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 	return chunkSection;
 }
 
-int** TerrainGenerator::getHeightMap()
+int** TerrainGenerator::getHeightMap(Chunk* chunk)
 {
+	//rand = std::mt19937{ static_cast<std::mt19937::result_type>(chunk->getLocation().x + chunk->getLocation().y) };
+	//die = std::uniform_int_distribution<>{ 11, 13 };
+
+	rand.seed(chunk->getLocation().x * chunk->getLocation().y);
+
 	int** heightMap = new int*[16];
 
 	for (int i{}; i < 16; ++i)

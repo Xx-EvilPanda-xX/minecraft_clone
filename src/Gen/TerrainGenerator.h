@@ -3,6 +3,7 @@
 
 #include <random>
 #include "../World/ChunkSection.h"
+#include "../World/Chunk.h"
 
 class TerrainGenerator
 {
@@ -15,7 +16,7 @@ public:
 
 	ChunkSection* genSection(int** heightMap, int section);
 
-	int** getHeightMap();
+	int** getHeightMap(Chunk* chunk);
 };
 
 #endif
