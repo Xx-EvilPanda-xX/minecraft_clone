@@ -5,13 +5,17 @@
 Keyboard g_Keyboard;
 Mouse g_Mouse;
 
-Window::Window(int width, int height, const char* title) : m_Width{ width }, m_Height{ height }, m_Title{ title }
+Window::Window(int width, int height, const char* title) 
+	: m_Width{ width },
+	m_Height{ height },
+	m_Title{ title }
 {
 	initGlfw();
 	createWindow();
 	loadGL();
 
 	g_Keyboard = Keyboard{ m_Window };
+	g_Mouse = Mouse{ m_Window };
 }
 
 Window::Window() = default;
@@ -65,22 +69,22 @@ void Window::loadGL()
 	}
 }
 
-GLFWwindow* Window::getWindow()
+GLFWwindow* Window::getWindow() const
 {
 	return m_Window;
 }
 
-int Window::getWidth()
+int Window::getWidth() const
 {
 	return m_Width;
 }
 
-int Window::getHeight()
+int Window::getHeight() const
 {
 	return m_Height;
 }
 
-const char* Window::getTitle()
+const char* Window::getTitle() const
 {
 	return m_Title;
 }

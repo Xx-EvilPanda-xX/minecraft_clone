@@ -1,8 +1,8 @@
 #include "Keyboard.h"
 
 Keyboard::Keyboard(GLFWwindow* win)
+	: m_Win{ win }
 {
-	this->m_Win = win;
 }
 
 Keyboard::Keyboard() = default;

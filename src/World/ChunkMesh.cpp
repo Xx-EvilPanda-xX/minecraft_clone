@@ -3,7 +3,9 @@
 #include "ChunkMesh.h"
 #include "Chunk.h"
 
-ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader) : m_Pos{ pos }, m_RenderData{ 0, 0, 0, 0, 0, 0, shader }
+ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader) 
+	: m_Pos{ pos },
+	m_RenderData{ 0, 0, 0, 0, 0, 0, shader }
 {
 	hasValidObjects = false;
 }

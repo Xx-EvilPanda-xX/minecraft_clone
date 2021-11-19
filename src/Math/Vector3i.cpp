@@ -1,6 +1,9 @@
 #include "Vector3i.h"
 
-Vector3i::Vector3i(int x, int y, int z) : x{ x }, y{ y }, z{ z }
+Vector3i::Vector3i(int x, int y, int z) 
+	: x{ x },
+	y{ y },
+	z{ z }
 {
 }
 

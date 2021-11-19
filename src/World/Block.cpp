@@ -1,6 +1,7 @@
 #include "Block.h"
 
-Block::Block(BlockType type) : m_Type{ type }
+Block::Block(BlockType type) 
+	: m_Type{ type }
 {
 }
 

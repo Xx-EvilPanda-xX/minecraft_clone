@@ -34,15 +34,19 @@ public:
 
 	Block getWorldBlock(Vector3i loc);
 
-	bool chunkExsists(Vector3i loc);
+	bool chunkExsists(Vector3i loc) const;
 
-	bool chunkExsists(Vector2i chunkLoc);
+	bool chunkExsists(Vector2i chunkLoc) const;
 
 	void updateQueues(const Camera& player);
 
 	std::vector<Vector2i>& getGenQueue();
 
 	std::vector<Chunk*>& getBuildQueue();
+
+	Chunk* getChunk(Vector3i loc) const;
+
+	Chunk* getChunk(Vector2i chunkLoc) const;
 
 	void clearQueues();
 };

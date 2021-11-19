@@ -1,5 +1,10 @@
 #include "Mouse.h"
 
+Mouse::Mouse(GLFWwindow* win)
+	: m_Win{ win }
+{
+}
+
 Mouse::Mouse() = default;
 
 float Mouse::getXOffset()
@@ -34,4 +39,9 @@ void Mouse::setYOffset(float y)
 {
 	m_yOffset = -y;
 	m_UsedY = false;
+}
+
+bool Mouse::isButtonDown(int button)
+{
+	return glfwGetMouseButton(m_Win, button) == GLFW_PRESS;
 }

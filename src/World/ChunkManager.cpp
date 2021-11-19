@@ -7,7 +7,8 @@
 #include "../Math/Vector2i.h"
 #include "World.h"
 
-ChunkManager::ChunkManager(World* world) : m_World{ world }
+ChunkManager::ChunkManager(World* world) 
+	: m_World{ world }
 {
 }
 
@@ -21,13 +22,20 @@ void ChunkManager::setWorldBlock(Vector3i loc, Block block)
 	int chunkIndex{};
 	int sectionIndex{};
 
-	Vector3i sectionLocal{ loc.x < 0 ? 16 + (loc.x % 16) : loc.x % 16, loc.y < 0 ? 16 + (loc.y % 16) : loc.y % 16, loc.z < 0 ? 16 + (loc.z % 16) : loc.z % 16 };
+	Vector3i sectionLocal{ loc.x % 16, loc.y % 16, loc.z % 16 };
+	if (loc.x < 0 && sectionLocal.x != 0)
+		sectionLocal.x += 16;
+	if (loc.y < 0 && sectionLocal.y != 0)
+		sectionLocal.y += 16;
+	if (loc.z < 0 && sectionLocal.z != 0)
+		sectionLocal.z += 16;
+
 	Vector2i chunkLocation{ loc.x / 16, loc.z / 16 };
 
-	if (loc.x < 0)
+	if (loc.x < 0 && sectionLocal.x != 0)
 		--chunkLocation.x;
 
-	if (loc.z < 0)
+	if (loc.z < 0 && sectionLocal.z != 0)
 		--chunkLocation.y;
 
 	bool foundChunk{ false };
@@ -100,38 +108,20 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 	return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal);
 }
 
-bool ChunkManager::chunkExsists(Vector3i loc)
+bool ChunkManager::chunkExsists(Vector3i loc) const
 {
-	Vector2i chunkLocation{ loc.x / 16, loc.z / 16 };
-
-	if (loc.x < 0)
-		--chunkLocation.x;
-
-	if (loc.z < 0)
-		--chunkLocation.y;
-
-	for (int i{}; i < m_World->getChunks().size(); ++i)
-	{
-		if (m_World->getChunks()[i]->getLocation() == chunkLocation)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	if (getChunk(loc))
+		return true;
+	else
+		return false;
 }
 
-bool ChunkManager::chunkExsists(Vector2i chunkLoc)
+bool ChunkManager::chunkExsists(Vector2i chunkLoc) const
 {
-	for (int i{}; i < m_World->getChunks().size(); ++i)
-	{
-		if (m_World->getChunks()[i]->getLocation() == chunkLoc)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	if (getChunk(chunkLoc))
+		return true;
+	else
+		return false;
 }
 
 void ChunkManager::updateGenQueue(const Camera& player)
@@ -219,6 +209,40 @@ std::vector<Vector2i>& ChunkManager::getGenQueue()
 std::vector<Chunk*>& ChunkManager::getBuildQueue()
 {
 	return m_BuildQueue;
+}
+
+Chunk* ChunkManager::getChunk(Vector3i loc) const
+{
+	Vector2i chunkLocation{ loc.x / 16, loc.z / 16 };
+
+	if (loc.x < 0 && loc.x % 16 != 0)
+		--chunkLocation.x;
+
+	if (loc.z < 0 && loc.z % 16 != 0)
+		--chunkLocation.y;
+
+	for (int i{}; i < m_World->getChunks().size(); ++i)
+	{
+		if (m_World->getChunks()[i]->getLocation() == chunkLocation)
+		{
+			return m_World->getChunks()[i];
+		}
+	}
+
+	return nullptr;
+}
+
+Chunk* ChunkManager::getChunk(Vector2i chunkLoc) const
+{
+	for (int i{}; i < m_World->getChunks().size(); ++i)
+	{
+		if (m_World->getChunks()[i]->getLocation() == chunkLoc)
+		{
+			return m_World->getChunks()[i];
+		}
+	}
+
+	return nullptr;
 }
 
 void ChunkManager::clearQueues()

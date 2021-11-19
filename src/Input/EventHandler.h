@@ -3,10 +3,13 @@
 
 #include "Keyboard.h"
 #include "../Application.h"
+#include "../Player/Player.h"
 
 namespace EventHandler
 {
-	void keyBoardEvent(Keyboard& keyboard, Application& app);
+	void keyboardEvent(Keyboard& keyboard, Application& app);
+
+	void mouseEvent(Mouse& mouse, Player& player);
 }
 
 #endif

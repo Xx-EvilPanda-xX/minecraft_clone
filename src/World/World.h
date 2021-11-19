@@ -8,6 +8,7 @@
 #include "../Render/Renderer.h"
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
+#include "../Player/Player.h"
 
 constexpr int genInterval{ 1 };
 
@@ -18,11 +19,10 @@ private:
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
 	ChunkManager m_Manager;
+	Player m_Player;
 
 public:
-	World(TerrainGenerator worldGen, Shader shader);
-
-	World();
+	World(TerrainGenerator worldGen, Shader shader, Player player);
 
 	void worldRender(const Camera& camera, bool moved);
 
@@ -34,11 +34,13 @@ public:
 
 	void reloadChunks(const Camera& camera);
 
-	int getChunkIndex(Vector2i chunkPos);
+	int getChunkIndex(Vector2i chunkPos) const;
 
 	std::vector<Chunk*>& getChunks();
 
 	ChunkManager& getManager();
+
+	Player& getPlayer();
 };
 
 #endif

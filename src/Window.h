@@ -27,13 +27,13 @@ public:
 
 	Window();
 
-	GLFWwindow* getWindow();
+	GLFWwindow* getWindow() const;
 
-	int getWidth();
+	int getWidth() const;
 
-	int getHeight();
+	int getHeight() const;
 
-	const char* getTitle();
+	const char* getTitle() const;
 
 	Keyboard& getKeyboard();
 

@@ -10,20 +10,23 @@
 #include "Application.h"
 #include "World/ChunkMesh.h"
 #include "Input/EventHandler.h"
+#include "Constants.h"
 
-Application::Application() : m_Camera{ glm::vec3{ 0.0f, 96.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
+Application::Application(int windowWidth, int windowHeight, const char* title)
+	: m_World{ new World{ TerrainGenerator{}, Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ m_Camera, nullptr, constants::playerReach } } },
+	m_Window{ windowWidth, windowHeight, title },
+	m_Camera{ glm::vec3{ 0.0f, 96.0f, 0.0f }, 0.0f, 0.0f, 90.0f }
 {
 	frames = 0;
 	time = 0;
 	m_LastFrame = 0;
 	m_Dt = 0;
+
+	m_World->getPlayer().setManager(&m_World->getManager());
 }
 
-void Application::init(int windowWidth, int windowHeight, const char* title)
+void Application::init()
 {
-	m_Window = Window{ windowWidth, windowHeight, title };
-	m_World = new World{ TerrainGenerator{}, Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" } };
-
 	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas.png");
 }
 
@@ -85,7 +88,8 @@ void Application::handleInput()
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };
 
-	EventHandler::keyBoardEvent(keyboard, *this);
+	EventHandler::keyboardEvent(keyboard, *this);
+	EventHandler::mouseEvent(mouse, m_World->getPlayer());
 
 	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() });
 }

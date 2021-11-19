@@ -2,7 +2,11 @@
 #include "Camera.h"
 #include "../Constants.h"
 
-Camera::Camera(glm::vec3 location, float yaw, float pitch, float fov) : m_Location{ location }, m_Yaw{ yaw }, m_Pitch{ pitch }, m_Fov{ fov }
+Camera::Camera(glm::vec3 location, float yaw, float pitch, float fov) 
+	: m_Location{ location },
+	m_Yaw{ yaw },
+	m_Pitch{ pitch },
+	m_Fov{ fov }
 {
 	calculateVecs();
 }
@@ -106,4 +110,9 @@ float Camera::getYaw() const
 float Camera::getPitch() const
 {
 	return m_Pitch;
+}
+
+glm::vec3 Camera::getFront() const
+{
+	return m_Front;
 }

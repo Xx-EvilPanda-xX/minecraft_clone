@@ -18,9 +18,9 @@ public:
 
 	void setBlock(Vector3i loc, Block block);
 
-	Block getBlock(Vector3i loc);
+	Block getBlock(Vector3i loc) const;
 
-	bool isEmpty();
+	bool isEmpty() const;
 };
 
 #endif

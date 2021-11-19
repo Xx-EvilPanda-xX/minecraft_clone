@@ -40,6 +40,8 @@ public:
 	ChunkSection* getSection(int index) const;
 
 	bool isBuilt() const;
+
+	void clearMesh();
 };
 
 #endif

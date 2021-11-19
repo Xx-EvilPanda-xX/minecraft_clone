@@ -3,7 +3,7 @@
 
 namespace EventHandler
 {
-	void keyBoardEvent(Keyboard& keyboard, Application& app)
+	void keyboardEvent(Keyboard& keyboard, Application& app)
 	{
 		if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
 			glfwSetWindowShouldClose(app.getWindow().getWindow(), true);
@@ -63,6 +63,9 @@ namespace EventHandler
 			const char* blockName{};
 			Vector3i blockPos{ static_cast<int>(app.getCamera().getLocation().x), static_cast<int>(app.getCamera().getLocation().y), static_cast<int>(app.getCamera().getLocation().z) };
 
+			if (app.getCamera().getLocation().y < 0.0f)
+				blockPos.y -= 1;
+
 			Block block{ app.getWorld()->getManager().getWorldBlock(blockPos) };
 
 			switch (block.getType())
@@ -89,6 +92,14 @@ namespace EventHandler
 			}
 
 			std::cout << "Block at player position: " << blockName << "\n";
+		}
+	}
+
+	void mouseEvent(Mouse& mouse, Player& player)
+	{
+		if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+		{
+			player.breakBlock();
 		}
 	}
 }

@@ -8,11 +8,13 @@
 #include "ChunkManager.h"
 #include "../Constants.h"
 
-World::World(TerrainGenerator worldGen, Shader shader) : m_WorldGen{ worldGen }, m_Shader{ shader }, m_Manager{ this }
+World::World(TerrainGenerator worldGen, Shader shader, Player player)
+	: m_WorldGen{ worldGen },
+	m_Shader{ shader },
+	m_Manager{ this },
+	m_Player{ player }
 {
 }
-
-World::World() = default;
 
 void World::worldRender(const Camera& camera, bool updateQueues)
 {
@@ -123,7 +125,7 @@ void World::reloadChunks(const Camera& camera)
 	m_Manager.updateQueues(camera);
 }
 
-int World::getChunkIndex(Vector2i chunkPos)
+int World::getChunkIndex(Vector2i chunkPos) const
 {
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
@@ -142,4 +144,9 @@ std::vector<Chunk*>& World::getChunks()
 ChunkManager& World::getManager()
 {
 	return m_Manager;
+}
+
+Player& World::getPlayer()
+{
+	return m_Player;
 }

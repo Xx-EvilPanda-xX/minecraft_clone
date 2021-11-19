@@ -6,14 +6,16 @@
 
 #include <glad/glad.h>
 
-Texture::Texture(const char* path) : m_Id{}, m_Path{ path }
+Texture::Texture(const char* path) 
+	: m_Id{},
+	m_Path{ path }
 {
 	load();
 }
 
 Texture::Texture() = default;
 
-unsigned int Texture::getId()
+unsigned int Texture::getId() const
 {
 	return m_Id;
 }

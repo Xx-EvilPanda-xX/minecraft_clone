@@ -50,6 +50,8 @@ public:
 	float getYaw() const;
 
 	float getPitch() const;
+
+	glm::vec3 getFront() const;
 };
 
 #endif

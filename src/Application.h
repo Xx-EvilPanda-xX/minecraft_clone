@@ -1,4 +1,3 @@
-
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
@@ -34,9 +33,9 @@ private:
 public:
 	float m_Dt;
 
-	Application();
+	Application(int windowWidth, int windowHeight, const char* title);
 
-	void init(int windowWidth, int windowHeight, const char* title);
+	void init();
 
 	void runMainLoop();
 

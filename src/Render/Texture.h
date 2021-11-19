@@ -14,7 +14,7 @@ public:
 
 	Texture();
 
-	unsigned int getId();
+	unsigned int getId() const;
 };
 
 #endif
