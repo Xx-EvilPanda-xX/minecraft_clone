@@ -2,11 +2,14 @@
 #include "TerrainGenerator.h"
 #include "../World/ChunkSection.h"
 #include "../World/Block.h"
+#include "../Constants.h"
 
 TerrainGenerator::TerrainGenerator()
 {
-	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_Perlin);
-	m_Noise.SetFrequency(0.015f);
+	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
+	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
+	m_Noise.SetFractalOctaves(7);
+	m_Noise.SetFrequency(0.005f);
 }
 
 ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
@@ -52,8 +55,15 @@ int** TerrainGenerator::getHeightMap(Chunk* chunk)
 	{
 		for (int j{}; j < 16; ++j)
 		{
-			float height{ (m_Noise.GetNoise(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0f + 0.5f) * 100.0f};
-			heightMap[i][j] = height;
+			if (constants::flatWorld)
+			{
+				heightMap[i][j] = constants::flatWorldHeight;
+			}
+			else
+			{
+				float height{ (m_Noise.GetNoise(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0f + 0.5f) * 100.0f };
+				heightMap[i][j] = height;
+			}
 		}
 	}
 

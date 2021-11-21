@@ -11,4 +11,9 @@ void main(){
     vec3 rgb = vec3(texColor);
     rgb *= passLighting;
     outColor = vec4(rgb, texColor.a);
+
+    if (outColor.a == 0)
+    {
+        discard;
+    }
 }

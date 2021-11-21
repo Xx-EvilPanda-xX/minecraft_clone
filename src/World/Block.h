@@ -8,6 +8,12 @@ enum BlockType
 	Stone,
 	Dirt,
 	CobbleStone,
+	Wood,
+	Leaves,
+	Glass,
+	CraftingTable,
+	Planks,
+	DiamondBlock,
 	NumBlocks
 };
 
@@ -15,6 +21,7 @@ class Block
 {
 private:
 	BlockType m_Type;
+	bool m_Transparent;
 
 public:
 	Block(BlockType type);
@@ -22,6 +29,8 @@ public:
 	Block();
 
 	BlockType getType() const;
+
+	bool isTransparent();
 };
 
 #endif

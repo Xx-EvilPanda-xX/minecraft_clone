@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "../World/Chunk.h"
+#include <glm/vec3.hpp>
 
 Player::Player(const Camera& cam, ChunkManager* manager, float reach) 
 	: m_Cam{ cam },
@@ -15,6 +16,9 @@ void Player::breakBlock()
 	if (breakPos != nullptr)
 	{
 		Vector3i pos{ *breakPos };
+
+		if (!m_Manager->chunkExsists(pos))
+			return;
 
 		m_Manager->setWorldBlock(pos, Block{ BlockType::Air });
 
@@ -37,10 +41,16 @@ void Player::placeBlock(Block block)
 		while (placePos == blockPos)
 		{
 			pos -= camFront;
-			placePos.x = static_cast<int>(intersect->x < 0.0f ? pos.x - 1.0f : pos.x);
-			placePos.y = static_cast<int>(intersect->y < 0.0f ? pos.y - 1.0f : pos.y);
-			placePos.z = static_cast<int>(intersect->z < 0.0f ? pos.z - 1.0f : pos.z);
-		}	
+			placePos.x = static_cast<int>(pos.x < 0.0f ? pos.x - 1.0f : pos.x);
+			placePos.y = static_cast<int>(pos.y < 0.0f ? pos.y - 1.0f : pos.y);
+			placePos.z = static_cast<int>(pos.z < 0.0f ? pos.z - 1.0f : pos.z);
+		}
+
+		if (pos.y < 0.0f)
+			return;
+
+		if (!m_Manager->chunkExsists(placePos))
+			return;
 
 		m_Manager->setWorldBlock(placePos, block.getType());
 

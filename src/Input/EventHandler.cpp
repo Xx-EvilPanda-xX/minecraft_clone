@@ -95,14 +95,29 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app)
 		std::cout << "Block at player position: " << blockName << "\n";
 	}
 
-	if ((keyboard.isKeyDown(GLFW_KEY_1)))
+	if (keyboard.isKeyDown(GLFW_KEY_1))
 		selectedBlock = Block{ BlockType::Grass };
-	if ((keyboard.isKeyDown(GLFW_KEY_2)))
+	if (keyboard.isKeyDown(GLFW_KEY_2))
 		selectedBlock = Block{ BlockType::Stone };
-	if ((keyboard.isKeyDown(GLFW_KEY_3)))
+	if (keyboard.isKeyDown(GLFW_KEY_3))
 		selectedBlock = Block{ BlockType::Dirt };
-	if ((keyboard.isKeyDown(GLFW_KEY_4)))
+	if (keyboard.isKeyDown(GLFW_KEY_4))
 		selectedBlock = Block{ BlockType::CobbleStone };
+	if (keyboard.isKeyDown(GLFW_KEY_5))
+		selectedBlock = Block{ BlockType::Wood };
+	if (keyboard.isKeyDown(GLFW_KEY_6))
+		selectedBlock = Block{ BlockType::Leaves };
+	if (keyboard.isKeyDown(GLFW_KEY_7))
+		selectedBlock = Block{ BlockType::Glass };
+	if (keyboard.isKeyDown(GLFW_KEY_8))
+		selectedBlock = Block{ BlockType::CraftingTable };
+	if (keyboard.isKeyDown(GLFW_KEY_9))
+		selectedBlock = Block{ BlockType::Planks };
+	if (keyboard.isKeyDown(GLFW_KEY_0))
+		selectedBlock = Block{ BlockType::DiamondBlock };
+
+	if (keyboard.isKeyDown(GLFW_KEY_P))
+		std::cout << "Address of first chunk: " << app.getWorld()->getChunks()[0] << "\n";
 }
 
 void EventHandler::mouseEvent(Mouse& mouse, Player& player)
