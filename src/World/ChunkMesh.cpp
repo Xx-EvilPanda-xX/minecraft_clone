@@ -11,7 +11,7 @@ ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader)
 }
 
 Texture ChunkMesh::s_TexAltas{ Texture{} };
-BlockType ChunkMesh::s_AtlasIndices[]{ BlockType::Grass, BlockType::Stone, BlockType::Dirt };
+BlockType ChunkMesh::s_AtlasIndices[]{ BlockType::Grass, BlockType::Stone, BlockType::Dirt, BlockType::CobbleStone };
 
 void ChunkMesh::createTextureAtlas(const char* path)
 {

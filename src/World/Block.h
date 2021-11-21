@@ -7,6 +7,7 @@ enum BlockType
 	Grass,
 	Stone,
 	Dirt,
+	CobbleStone,
 	NumBlocks
 };
 

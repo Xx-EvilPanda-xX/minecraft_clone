@@ -5,11 +5,15 @@
 #include "../Application.h"
 #include "../Player/Player.h"
 
-namespace EventHandler
+class EventHandler
 {
-	void keyboardEvent(Keyboard& keyboard, Application& app);
+private:
+	static Block selectedBlock;
 
-	void mouseEvent(Mouse& mouse, Player& player);
-}
+public:
+	static void keyboardEvent(Keyboard& keyboard, Application& app);
+
+	static void mouseEvent(Mouse& mouse, Player& player);
+};
 
 #endif
