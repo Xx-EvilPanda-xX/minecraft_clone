@@ -13,12 +13,20 @@ private:
 
 	float m_Reach;
 
+	Vector3i* breakIntersect();
+
+	glm::vec3* placeIntersect();
+
+	Vector3i sectionLocal(Vector3i worldPos);
+
+	void updateMeshes(Vector3i editPos);
+
 public:
 	Player(const Camera& cam, ChunkManager* manager, float reach);
 
 	void breakBlock();
 
-	void placeBlock();
+	void placeBlock(Block block);
 
 	float getReach() const;
 

@@ -9,6 +9,7 @@
 #include "Input/Keyboard.h"
 #include "World/ChunkManager.h"
 #include "Player/Camera.h"
+#include "Render/RenderData.h"
 
 class Application
 {
@@ -16,6 +17,9 @@ private:
 	Window m_Window;
 	World* m_World;
 	Camera m_Camera;
+
+	RenderData m_CrossHair;
+	Shader m_GuiShader;
 
 	float m_LastFrame;
 
@@ -30,8 +34,10 @@ private:
 
 	long getCurrentTimeMillis();
 
+	void createCrosshair();
+
 public:
-	float m_Dt;
+	static float m_Dt;
 
 	Application(int windowWidth, int windowHeight, const char* title);
 
@@ -44,6 +50,8 @@ public:
 	Camera& getCamera();
 
 	World* getWorld();
+
+	void renderCrosshair();
 };
 
 

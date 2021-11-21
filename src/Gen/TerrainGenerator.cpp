@@ -1,5 +1,3 @@
-#include <random>
-#include <ctime>
 #include <cmath>
 #include "TerrainGenerator.h"
 #include "../World/ChunkSection.h"
@@ -7,8 +5,8 @@
 
 TerrainGenerator::TerrainGenerator()
 {
-	rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
-	die = std::uniform_int_distribution<>{ 11, 13 };
+	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_Perlin);
+	m_Noise.SetFrequency(0.015f);
 }
 
 ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
@@ -40,11 +38,6 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 
 int** TerrainGenerator::getHeightMap(Chunk* chunk)
 {
-	//rand = std::mt19937{ static_cast<std::mt19937::result_type>(chunk->getLocation().x + chunk->getLocation().y) };
-	//die = std::uniform_int_distribution<>{ 11, 13 };
-
-	rand.seed(chunk->getLocation().x * chunk->getLocation().y);
-
 	int** heightMap = new int*[16];
 
 	for (int i{}; i < 16; ++i)
@@ -52,11 +45,15 @@ int** TerrainGenerator::getHeightMap(Chunk* chunk)
 		heightMap[i] = new int[16];
 	}
 
+	int chunkX{ chunk->getLocation().x * 16 };
+	int chunkY{ chunk->getLocation().y * 16 };
+
 	for (int i{}; i < 16; ++i)
 	{
 		for (int j{}; j < 16; ++j)
 		{
-			heightMap[i][j] = die(rand);
+			float height{ (m_Noise.GetNoise(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0f + 0.5f) * 100.0f};
+			heightMap[i][j] = height;
 		}
 	}
 

@@ -139,6 +139,7 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 void Chunk::clearMesh()
 {
 	m_Mesh.clear();
+	m_IsBuilt = false;
 }
 
 int Chunk::getCurrentSectionIndex() const

@@ -4,12 +4,12 @@
 #include <random>
 #include "../World/ChunkSection.h"
 #include "../World/Chunk.h"
+#include "../noise.h"
 
 class TerrainGenerator
 {
 private:
-	std::mt19937 rand;
-	std::uniform_int_distribution<> die;
+	FastNoiseLite m_Noise;
 
 public:
 	TerrainGenerator();

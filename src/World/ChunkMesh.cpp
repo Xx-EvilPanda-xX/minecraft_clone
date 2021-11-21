@@ -5,7 +5,7 @@
 
 ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader) 
 	: m_Pos{ pos },
-	m_RenderData{ 0, 0, 0, 0, 0, 0, shader }
+	m_RenderData{ 0, 0, 0, 0, 0, 0, &shader }
 {
 	hasValidObjects = false;
 }
@@ -159,7 +159,11 @@ void ChunkMesh::pushUp(Vector3i loc)
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //5
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //6
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
-	pushLighting(1.0f).pushLighting(1.0f).pushLighting(1.0f).pushLighting(1.0f);
+
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(1.0f);
+	}
 
 	pushNewIndices(size);
 }
@@ -172,7 +176,11 @@ void ChunkMesh::pushDown(Vector3i loc)
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //3
-	pushLighting(0.6f).pushLighting(0.6f).pushLighting(0.6f).pushLighting(0.6f);
+
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(0.6f);
+	}
 
 	pushNewIndices(size);
 }
@@ -186,7 +194,11 @@ void ChunkMesh::pushNorth(Vector3i loc)
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //5
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
-	pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f);
+	
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(0.8f);
+	}
 
 	pushNewIndices(size);
 }
@@ -200,7 +212,10 @@ void ChunkMesh::pushSouth(Vector3i loc)
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //6
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //2
 
-	pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f);
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(0.8f);
+	}
 
 	pushNewIndices(size);
 }
@@ -213,7 +228,11 @@ void ChunkMesh::pushEast(Vector3i loc)
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //3
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //7
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z + 1.0f); //6
-	pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f);
+
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(0.8f);
+	}
 
 	pushNewIndices(size);
 }
@@ -227,7 +246,11 @@ void ChunkMesh::pushWest(Vector3i loc)
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //2
 	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + 1.0f).pushVertexFloat(floats.z); //5
-	pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f).pushLighting(0.8f);
+
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(0.8f);
+	}
 	
 	pushNewIndices(size);
 }

@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include "EventHandler.h"
+#include "../Constants.h"
 
 namespace EventHandler
 {
@@ -10,35 +11,35 @@ namespace EventHandler
 
 		if (keyboard.isKeyDown(GLFW_KEY_W))
 		{
-			app.getCamera().handleKeyboard(Direction::Forward, 5.0f, app.m_Dt);
+			app.getCamera().handleKeyboard(Direction::Forward, 5.0f, Application::m_Dt);
 
 			if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-				app.getCamera().handleKeyboard(Direction::Forward, 20.0f, app.m_Dt);
+				app.getCamera().handleKeyboard(Direction::Forward, 20.0f, Application::m_Dt);
 		}
 
 		if (keyboard.isKeyDown(GLFW_KEY_A))
-			app.getCamera().handleKeyboard(Direction::Left, 5.0f, app.m_Dt);
+			app.getCamera().handleKeyboard(Direction::Left, 5.0f, Application::m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_S))
-			app.getCamera().handleKeyboard(Direction::Back, 5.0f, app.m_Dt);
+			app.getCamera().handleKeyboard(Direction::Back, 5.0f, Application::m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_D))
-			app.getCamera().handleKeyboard(Direction::Right, 5.0f, app.m_Dt);
+			app.getCamera().handleKeyboard(Direction::Right, 5.0f, Application::m_Dt);
 
 		if (keyboard.isKeyDown(GLFW_KEY_SPACE))
 		{
-			app.getCamera().handleKeyboard(Direction::Up, 5.0f, app.m_Dt);
+			app.getCamera().handleKeyboard(Direction::Up, 5.0f, Application::m_Dt);
 
 			if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-				app.getCamera().handleKeyboard(Direction::Up, 20.0f, app.m_Dt);
+				app.getCamera().handleKeyboard(Direction::Up, 20.0f, Application::m_Dt);
 		}
 
 		if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
 		{
-			app.getCamera().handleKeyboard(Direction::Down, 5.0f, app.m_Dt);
+			app.getCamera().handleKeyboard(Direction::Down, 5.0f, Application::m_Dt);
 
 			if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-				app.getCamera().handleKeyboard(Direction::Down, 20.0f, app.m_Dt);
+				app.getCamera().handleKeyboard(Direction::Down, 20.0f, Application::m_Dt);
 		}
 
 		if (keyboard.isKeyDown(GLFW_KEY_C))
@@ -97,9 +98,22 @@ namespace EventHandler
 
 	void mouseEvent(Mouse& mouse, Player& player)
 	{
-		if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+		static float breakCooldown{};
+		static float placeCooldown{};
+
+		if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_LEFT) && breakCooldown <= 0.0f)
 		{
 			player.breakBlock();
+			breakCooldown = constants::blockBreakCooldown;
 		}
+
+		if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_RIGHT) && placeCooldown <= 0.0f)
+		{
+			player.placeBlock(Block{ BlockType::Stone });
+			placeCooldown = constants::blockPlaceCooldown;
+		}
+
+		breakCooldown -= Application::m_Dt;
+		placeCooldown -= Application::m_Dt;
 	}
 }

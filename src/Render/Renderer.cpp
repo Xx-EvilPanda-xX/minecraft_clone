@@ -7,7 +7,7 @@ namespace Renderer
 {
 	void drawMesh(const Camera& camera, const ChunkMesh& mesh)
 	{
-		mesh.getRenderData().shader.bind();
+		mesh.getRenderData().shader->bind();
 		glBindTexture(GL_TEXTURE_2D, mesh.getRenderData().texture);
 
 		glBindVertexArray(mesh.getRenderData().vao);
@@ -22,7 +22,7 @@ namespace Renderer
 		glBindVertexArray(0);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
-		mesh.getRenderData().shader.unbind();
+		mesh.getRenderData().shader->unbind();
 	}
 
 	static void prepare(const Camera& camera, const ChunkMesh& mesh)
@@ -32,9 +32,9 @@ namespace Renderer
 
 		model = glm::translate(model, chunkPostion);
 
-		mesh.getRenderData().shader.setMat4("model", model);
-		mesh.getRenderData().shader.setMat4("view", camera.getViewMat());
-		mesh.getRenderData().shader.setMat4("proj", camera.getProjectionMat());
+		mesh.getRenderData().shader->setMat4("model", model);
+		mesh.getRenderData().shader->setMat4("view", camera.getViewMat());
+		mesh.getRenderData().shader->setMat4("proj", camera.getProjectionMat());
 	}
 }
 

@@ -42,6 +42,7 @@
     <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="noise.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\Gen\TerrainGenerator.h" />

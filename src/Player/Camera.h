@@ -5,6 +5,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <GLFW/glfw3.h>
 
 enum class Direction
 {
@@ -30,10 +31,12 @@ private:
 	glm::vec3 m_Front;
 	glm::vec3 m_Right;
 
+	GLFWwindow* m_Win;
+
 	void calculateVecs();
 
 public:
-	Camera(glm::vec3 location, float yaw, float pitch, float fov);
+	Camera(glm::vec3 location, float yaw, float pitch, float fov, GLFWwindow* win);
 
 	Camera();
 

@@ -13,7 +13,7 @@ struct RenderData
 
 	int indexCount;
 
-	Shader& shader;
+	Shader* shader;
 
 	unsigned int texture;
 };
