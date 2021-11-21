@@ -130,13 +130,19 @@ void ChunkManager::updateGenQueue(const Camera& player)
 	Vector3i playerPos{ static_cast<int>(pos.x), static_cast<int>(pos.y), static_cast<int>(pos.z) };
 	Vector2i chunkPlayerPos{ playerPos.x / 16, playerPos.z / 16 };
 	
-	for (int x{ chunkPlayerPos.x - constants::renderDistance }; x < chunkPlayerPos.x + constants::renderDistance; ++x)
+	for (int i{}; i <= constants::renderDistance; ++i)
 	{
-		for (int y{ chunkPlayerPos.y - constants::renderDistance };  y < chunkPlayerPos.y + constants::renderDistance; ++y)
+		for (int x{ chunkPlayerPos.x - i }; x <= chunkPlayerPos.x + i; ++x)
 		{
-			Vector2i chunkPos{ x, y };
-			if (!chunkExsists(chunkPos) && !isInGenQueue(chunkPos))
-				m_GenQueue.insert(m_GenQueue.begin(), chunkPos);
+			for (int y{ chunkPlayerPos.y - i }; y <= chunkPlayerPos.y + i; ++y)
+			{
+				if (std::abs(chunkPlayerPos.x - x) == i || std::abs(chunkPlayerPos.y - y) == i)
+				{
+					Vector2i chunkPos{ x, y };
+					if (!chunkExsists(chunkPos) && !isInGenQueue(chunkPos))
+						m_GenQueue.insert(m_GenQueue.begin(), chunkPos);
+				}
+			}
 		}
 	}
 }

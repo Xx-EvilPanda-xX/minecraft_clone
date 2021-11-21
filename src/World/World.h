@@ -10,7 +10,7 @@
 #include "ChunkManager.h"
 #include "../Player/Player.h"
 
-constexpr int genInterval{ 2 };
+constexpr int genInterval{ 1 };
 
 class World
 {
