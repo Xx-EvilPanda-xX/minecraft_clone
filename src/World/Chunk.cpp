@@ -106,37 +106,37 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 					if (x == 15 || x == 0 || y == 15 || y == 0 || z == 15 || z == 0)
 					{
 						Block PosX{ manager.getWorldBlock(Vector3i{ wX + 1, wY, wZ }) };
-						if (PosX.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !PosX.isTransparent()))
+						if (PosX.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
 						}
 
 						Block PosY{ manager.getWorldBlock(Vector3i{ wX, wY + 1, wZ }) };
-						if (PosY.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !PosY.isTransparent()))
+						if (PosY.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
 						}
 
 						Block PosZ{ manager.getWorldBlock(Vector3i{ wX, wY , wZ + 1 }) };
-						if (PosZ.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !PosZ.isTransparent()))
+						if (PosZ.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
 						}
 
 						Block NegX{ manager.getWorldBlock(Vector3i{ wX - 1, wY, wZ }) };
-						if (NegX.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !NegX.isTransparent()))
+						if (NegX.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
 						}
 
 						Block NegY{ manager.getWorldBlock(Vector3i{ wX, wY - 1, wZ }) };
-						if (NegY.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !NegY.isTransparent()))
+						if (NegY.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
 						}
 
 						Block NegZ{ manager.getWorldBlock(Vector3i{ wX, wY, wZ - 1 }) };
-						if (NegZ.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !NegZ.isTransparent()))
+						if (NegZ.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
 						}
@@ -144,37 +144,37 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 					else
 					{
 						Block PosX{ chunkSection->getBlock(Vector3i{ x + 1, y, z }) };
-						if (PosX.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !PosX.isTransparent()))
+						if (PosX.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
 						}
 
 						Block PosY{ chunkSection->getBlock(Vector3i{ x, y + 1, z }) };
-						if (PosY.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !PosY.isTransparent()))
+						if (PosY.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
 						}
 
 						Block PosZ{ chunkSection->getBlock(Vector3i{ x, y, z + 1 }) };
-						if (PosZ.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !PosZ.isTransparent()))
+						if (PosZ.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
 						}
 
 						Block NegX{ chunkSection->getBlock(Vector3i{ x - 1, y, z }) };
-						if (NegX.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !NegX.isTransparent()))
+						if (NegX.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
 						}
 
 						Block NegY{ chunkSection->getBlock(Vector3i{ x, y - 1, z }) };
-						if (NegY.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !NegY.isTransparent()))
+						if (NegY.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
 						}
 
 						Block NegZ{ chunkSection->getBlock(Vector3i{ x, y, z - 1 }) };
-						if (NegZ.getType() == BlockType::Air || (currentBlock.getType() != BlockType::Air && !NegZ.isTransparent()))
+						if (NegZ.getType() == BlockType::Air || (!currentBlock.isTransparent() && (PosX.isTransparent() && PosX.getType() != BlockType::Air)))
 						{
 							m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
 						}
