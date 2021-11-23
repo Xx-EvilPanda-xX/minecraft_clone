@@ -16,7 +16,7 @@ ChunkSection::~ChunkSection()
 	m_Blocks = nullptr;
 }
 
-void ChunkSection::setBlock(Vector3i loc, Block block)
+void ChunkSection::setBlock(Vector3i loc, BlockType type)
 {
 	int index{};
 
@@ -28,6 +28,8 @@ void ChunkSection::setBlock(Vector3i loc, Block block)
 	{
 		return;
 	}
+
+	Block block{ type, AABB{ glm::vec3{ loc.x, loc.y, loc.x }, glm::vec3{ loc.x + 1.0f, loc.y + 1.0f, loc.z + 1.0f } } };
 
 	if (block.getType() == BlockType::Air && m_Blocks[index].getType() != BlockType::Air)
 		++m_AirBlocks;
@@ -52,7 +54,7 @@ Block ChunkSection::getBlock(Vector3i loc) const
 
 	if (index >= 4096 || index < 0)
 	{
-		return Block{ BlockType::Air };
+		return Block{};
 	}
 
 	return m_Blocks[index];

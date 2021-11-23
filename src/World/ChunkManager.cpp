@@ -14,7 +14,7 @@ ChunkManager::ChunkManager(World* world)
 
 ChunkManager::ChunkManager() = default;
 
-void ChunkManager::setWorldBlock(Vector3i loc, Block block)
+void ChunkManager::setWorldBlock(Vector3i loc, BlockType type)
 {
 	if (loc.y < 0 || loc.y > 255)
 		return;
@@ -58,7 +58,7 @@ void ChunkManager::setWorldBlock(Vector3i loc, Block block)
 	if (sectionIndex > 15)
 		return;
 
-	m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(sectionLocal, block);
+	m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(sectionLocal, type);
 }
 
 Block ChunkManager::getWorldBlock(Vector3i loc)
@@ -105,7 +105,10 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 	if (sectionIndex > 15)
 		return Block{};
 
-	return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal);
+	Block block{ m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal) };
+	block.getBounds().min(block.getBounds().min() + glm::vec3(chunkLocation.x * 16, sectionIndex * 16, chunkLocation.y * 16));
+	block.getBounds().max(block.getBounds().max() + glm::vec3(chunkLocation.x * 16, sectionIndex * 16, chunkLocation.y * 16));
+	return block;
 }
 
 bool ChunkManager::chunkExsists(Vector3i loc) const
@@ -169,20 +172,15 @@ void ChunkManager::updateBuildQueue()
 			}
 		}
 	}
-
-	for (int i{ static_cast<int>(m_BuildQueue.size()) - 1 }; i >= 0; --i)
-	{
-		if (!chunkExsists(m_BuildQueue[i]->getLocation()))
-		{
-			m_BuildQueue.erase(m_BuildQueue.begin() + i);
-		}
-	}
 }
 
 void ChunkManager::updateQueues(const Camera& player)
 {
-	updateGenQueue(player);
-	updateBuildQueue();
+	if (m_GenQueue.empty())
+		updateGenQueue(player);
+
+	if (m_BuildQueue.empty())
+		updateBuildQueue();
 }
 
 bool ChunkManager::isInGenQueue(Vector2i gen)

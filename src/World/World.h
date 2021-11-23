@@ -24,7 +24,7 @@ private:
 public:
 	World(TerrainGenerator worldGen, Shader shader, Player player);
 
-	void worldRender(const Camera& camera, bool moved);
+	void worldRender(const Camera& camera, bool deletePass);
 
 	void genPass();
 

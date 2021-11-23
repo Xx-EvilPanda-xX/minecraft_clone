@@ -8,7 +8,7 @@
 class EventHandler
 {
 private:
-	static Block selectedBlock;
+	static BlockType selectedBlock;
 
 public:
 	static void keyboardEvent(Keyboard& keyboard, Application& app);

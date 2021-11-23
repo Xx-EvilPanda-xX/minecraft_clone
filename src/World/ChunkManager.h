@@ -21,22 +21,22 @@ private:
 
 	void updateBuildQueue();
 
-	bool isInGenQueue(Vector2i gen);
-
-	bool isInBuildQueue(Chunk* build);
-
 public:
 	ChunkManager(World* world);
 
 	ChunkManager();
 
-	void setWorldBlock(Vector3i loc, Block block);
+	void setWorldBlock(Vector3i loc, BlockType type);
 
 	Block getWorldBlock(Vector3i loc);
 
 	bool chunkExsists(Vector3i loc) const;
 
 	bool chunkExsists(Vector2i chunkLoc) const;
+
+	bool isInGenQueue(Vector2i gen);
+
+	bool isInBuildQueue(Chunk* build);
 
 	void updateQueues(const Camera& player);
 

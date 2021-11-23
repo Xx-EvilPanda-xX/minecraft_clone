@@ -26,7 +26,7 @@ private:
 	long frames;
 	long time;
 
-	long updateQueues;
+	long doDeletePass;
 
 	void handleInput();
 

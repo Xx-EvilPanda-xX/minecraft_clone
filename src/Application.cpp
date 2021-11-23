@@ -94,14 +94,14 @@ void Application::runMainLoop()
 		updateFPS();
 		handleInput();
 
-		bool update{ false };
-		if (getCurrentTimeMillis() > (updateQueues + 100))
+		bool deletePass{ false };
+		if (getCurrentTimeMillis() > (doDeletePass + 500))
 		{
-			updateQueues = getCurrentTimeMillis();
-			update = true;
+			doDeletePass = getCurrentTimeMillis();
+			deletePass = true;
 		}
 
-		m_World->worldRender(m_Camera, update);
+		m_World->worldRender(m_Camera, deletePass);
 		renderCrosshair();
 
 		glfwSwapBuffers(m_Window.getWindow());

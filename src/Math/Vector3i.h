@@ -14,6 +14,9 @@ public:
 
 	friend bool operator== (const Vector3i& v1, const Vector3i& v2);
 	friend bool operator!= (const Vector3i& v1, const Vector3i& v2);
+
+	friend bool operator< (const Vector3i& v1, const Vector3i& v2);
+	friend bool operator> (const Vector3i& v1, const Vector3i& v2);
 };
 
 #endif

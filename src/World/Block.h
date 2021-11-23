@@ -1,6 +1,8 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
+#include "../Player/AABB.h"
+
 enum BlockType
 {
 	Air,
@@ -14,6 +16,7 @@ enum BlockType
 	CraftingTable,
 	Planks,
 	DiamondBlock,
+	Water,
 	NumBlocks
 };
 
@@ -21,16 +24,19 @@ class Block
 {
 private:
 	BlockType m_Type;
+	AABB m_Bounds;
 	bool m_Transparent;
 
 public:
-	Block(BlockType type);
+	Block(BlockType type, AABB bounds);
 
 	Block();
 
 	BlockType getType() const;
 
 	bool isTransparent();
+
+	AABB& getBounds();
 };
 
 #endif

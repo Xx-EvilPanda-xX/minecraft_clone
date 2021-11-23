@@ -16,12 +16,16 @@ World::World(TerrainGenerator worldGen, Shader shader, Player player)
 {
 }
 
-void World::worldRender(const Camera& camera, bool updateQueues)
+void World::worldRender(const Camera& camera, bool deletePass)
 {
-	genPass();
-	destroyPass(Vector2i{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().z) });
-		
+	m_Player.move();
+
 	m_Manager.updateQueues(camera);
+
+	genPass();
+
+	if (deletePass)
+		destroyPass(Vector2i{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().z) });
 
 	buildPass();
 	
@@ -78,6 +82,14 @@ void World::destroyPass(Vector2i playerPos)
 	{
 		if (m_Chunks[i] == nullptr)
 			m_Chunks.erase(m_Chunks.begin() + i);
+	}
+
+	for (int i{ static_cast<int>(m_Manager.getBuildQueue().size()) - 1 }; i >= 0; --i)
+	{
+		if (!m_Manager.chunkExsists(m_Manager.getBuildQueue()[i]->getLocation()))
+		{
+			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + i);
+		}
 	}
 }
 

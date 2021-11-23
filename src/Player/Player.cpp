@@ -9,6 +9,28 @@ Player::Player(const Camera& cam, ChunkManager* manager, float reach)
 {
 }
 
+void Player::move()
+{
+	aabb.min(glm::vec3{ m_Cam.getLocation().x - 0.5f, m_Cam.getLocation().y - 1.5f, m_Cam.getLocation().z - 0.5f });
+	aabb.max(glm::vec3{ m_Cam.getLocation().x + 0.5f, m_Cam.getLocation().y + 0.5f, m_Cam.getLocation().z + 0.5f });
+
+	Vector3i playerPos{ static_cast<int>(m_Cam.getLocation().x), static_cast<int>(m_Cam.getLocation().y), static_cast<int>(m_Cam.getLocation().z) };
+	  
+	//TODO: sub 1 from playerpos if neg
+
+	for (int x{ playerPos.x - 3 }; x < playerPos.x + 3; ++x)
+	{
+		for (int y{ playerPos.y - 3 }; y < playerPos.y + 3; ++y)
+		{
+			for (int z{ playerPos.z - 3 }; z < playerPos.z + 3; ++z)
+			{
+				if (m_Manager->getWorldBlock(Vector3i{ x, y, z }).getBounds().intersects(aabb))
+					std::cout << "collision!\n";
+			}
+		}
+	}
+}
+
 void Player::breakBlock()
 {
 	Vector3i* breakPos{ breakIntersect() };
@@ -20,7 +42,7 @@ void Player::breakBlock()
 		if (!m_Manager->chunkExsists(pos))
 			return;
 
-		m_Manager->setWorldBlock(pos, Block{ BlockType::Air });
+		m_Manager->setWorldBlock(pos, BlockType::Air );
 
 		updateMeshes(pos);
 
@@ -28,7 +50,7 @@ void Player::breakBlock()
 	}
 }
 
-void Player::placeBlock(Block block)
+void Player::placeBlock(BlockType type)
 {
 	glm::vec3 camFront{ m_Cam.getFront() * 0.01f };
 	glm::vec3* intersect{ placeIntersect() };
@@ -52,7 +74,7 @@ void Player::placeBlock(Block block)
 		if (!m_Manager->chunkExsists(placePos))
 			return;
 
-		m_Manager->setWorldBlock(placePos, block.getType());
+		m_Manager->setWorldBlock(placePos, type);
 
 		updateMeshes(placePos);
 

@@ -3,6 +3,7 @@
 
 #include "Block.h"
 #include "../Math/Vector3i.h"
+#include "../Player/AABB.h"
 
 class ChunkSection
 {
@@ -16,7 +17,7 @@ public:
 
 	~ChunkSection();
 
-	void setBlock(Vector3i loc, Block block);
+	void setBlock(Vector3i loc, BlockType type);
 
 	Block getBlock(Vector3i loc) const;
 

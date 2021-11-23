@@ -10,6 +10,7 @@ class Player
 private:
 	const Camera& m_Cam;
 	ChunkManager* m_Manager;
+	AABB aabb;
 
 	float m_Reach;
 
@@ -24,9 +25,11 @@ private:
 public:
 	Player(const Camera& cam, ChunkManager* manager, float reach);
 
+	void move();
+
 	void breakBlock();
 
-	void placeBlock(Block block);
+	void placeBlock(BlockType block);
 
 	float getReach() const;
 

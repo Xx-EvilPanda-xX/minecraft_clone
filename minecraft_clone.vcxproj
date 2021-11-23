@@ -28,6 +28,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Math\Vector2i.cpp" />
     <ClCompile Include="src\Math\Vector3i.cpp" />
+    <ClCompile Include="src\Player\AABB.cpp" />
     <ClCompile Include="src\Player\Camera.cpp" />
     <ClCompile Include="src\Player\Player.cpp" />
     <ClCompile Include="src\Render\Renderer.cpp" />
@@ -51,6 +52,7 @@
     <ClInclude Include="src\Input\Mouse.h" />
     <ClInclude Include="src\Math\Vector2i.h" />
     <ClInclude Include="src\Math\Vector3i.h" />
+    <ClInclude Include="src\Player\AABB.h" />
     <ClInclude Include="src\Player\Camera.h" />
     <ClInclude Include="src\Player\Player.h" />
     <ClInclude Include="src\Render\RenderData.h" />
