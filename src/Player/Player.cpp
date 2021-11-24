@@ -15,8 +15,10 @@ void Player::move()
 {
 	calculateVelocity(); 
 
-	aabb.min(glm::vec3{ m_Cam.getLocation().x - 0.45f, m_Cam.getLocation().y - 1.45f, m_Cam.getLocation().z - 0.45f });
-	aabb.max(glm::vec3{ m_Cam.getLocation().x + 0.45f, m_Cam.getLocation().y + 0.45f, m_Cam.getLocation().z + 0.45f });
+	float aabbRadius{ 1.0f };
+
+	aabb.min(glm::vec3{ m_Cam.getLocation().x - 0.5f, m_Cam.getLocation().y - 1.5f, m_Cam.getLocation().z - 0.5f });
+	aabb.max(glm::vec3{ m_Cam.getLocation().x + 0.5f, m_Cam.getLocation().y + 0.5f, m_Cam.getLocation().z + 0.5f });
 
 	Vector3i playerPos{ static_cast<int>(m_Cam.getLocation().x), static_cast<int>(m_Cam.getLocation().y), static_cast<int>(m_Cam.getLocation().z) };
 
@@ -31,19 +33,20 @@ void Player::move()
 	Vector3i collisionPos{};
 	Block collisionBlock{};
 
-	for (int x{ playerPos.x - 2 }; x < playerPos.x + 2; ++x)
+	for (int x{ playerPos.x - 3 }; x < playerPos.x + 3; ++x)
 	{
-		for (int y{ playerPos.y - 2 }; y < playerPos.y + 2; ++y)
+		for (int y{ playerPos.y - 3 }; y < playerPos.y + 3; ++y)
 		{
-			for (int z{ playerPos.z - 2 }; z < playerPos.z + 2; ++z)
+			for (int z{ playerPos.z - 3 }; z < playerPos.z + 3; ++z)
 			{
 				Block block{ m_Manager->getWorldBlock(Vector3i{ x, y, z }) };
 				if (block.getBounds().intersects(aabb) && block.getType() != BlockType::Air)
 				{
-					std::cout << "collision with block at: " << x << ", " << y << ", " << z << "\n";
+ 					std::cout << "collision with block at: " << x << ", " << y << ", " << z << "\n";
 					collision = true;
 					collisionPos = { x, y, z };
 					collisionBlock = block;
+					bool collides{ collisionBlock.getBounds().intersects(aabb) };
 					break;
 				}
 			}
