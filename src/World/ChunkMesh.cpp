@@ -72,12 +72,12 @@ float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 		}
 	}
 
-	float fullIndex{ index * 0.6f };
+	float fullIndex{ index * (6 * faceRatio) };
 
 	//extract integer part and decimal part of float
 	float y{ static_cast<float>(static_cast<int>(fullIndex)) };
 	float x{ fullIndex - y };
-	y /= 10;
+	y *= faceRatio;
 	
 	glm::vec2 startCoord{ x, y };
 
@@ -91,31 +91,31 @@ float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 		}	
 		case Face::North:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ 0.1f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::East:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ 0.2f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio * 2.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::South:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ 0.3f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio * 3.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::West:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ 0.4f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio * 4.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::Down:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ 0.5f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio * 5.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
@@ -126,7 +126,7 @@ void ChunkMesh::checkTexCoordBounds(glm::vec2& faceStartCoords)
 {
 	if (faceStartCoords.x >= 1.0f)
 	{
-		faceStartCoords.y += 0.1f;
+		faceStartCoords.y += faceRatio;
 		faceStartCoords.x = faceStartCoords.x - 1.0f;
 	}
 }
@@ -135,13 +135,13 @@ float* ChunkMesh::getTexCoordsFromStartPos(glm::vec2 startPos)
 {
 	float* coords{ new float[8]{} };
 	
-	coords[0] = startPos.x + 0.1f;
-	coords[1] = startPos.y + 0.1f;
+	coords[0] = startPos.x + faceRatio;
+	coords[1] = startPos.y + faceRatio;
 
 	coords[2] = startPos.x;
-	coords[3] = startPos.y + 0.1f;
+	coords[3] = startPos.y + faceRatio;
 
-	coords[4] = startPos.x + 0.1f;
+	coords[4] = startPos.x + faceRatio;
 	coords[5] = startPos.y;
 
 	coords[6] = startPos.x;

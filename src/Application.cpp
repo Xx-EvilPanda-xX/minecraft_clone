@@ -137,7 +137,7 @@ void Application::handleInput()
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };
 
-	EventHandler::keyboardEvent(keyboard, *this);
+	EventHandler::keyboardEvent(keyboard, *this, m_World->getPlayer());
 	EventHandler::mouseEvent(mouse, m_World->getPlayer());
 
 	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() });

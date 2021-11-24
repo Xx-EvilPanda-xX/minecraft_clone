@@ -25,6 +25,7 @@ class Block
 private:
 	BlockType m_Type;
 	AABB m_Bounds;
+	//Vector3i m_Velocity;
 	bool m_Transparent;
 
 public:

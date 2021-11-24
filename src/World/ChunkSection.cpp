@@ -29,7 +29,7 @@ void ChunkSection::setBlock(Vector3i loc, BlockType type)
 		return;
 	}
 
-	Block block{ type, AABB{ glm::vec3{ loc.x, loc.y, loc.x }, glm::vec3{ loc.x + 1.0f, loc.y + 1.0f, loc.z + 1.0f } } };
+	Block block{ type, AABB{ glm::vec3{ loc.x, loc.y, loc.z }, glm::vec3{ loc.x + 1.0f, loc.y + 1.0f, loc.z + 1.0f } } };
 
 	if (block.getType() == BlockType::Air && m_Blocks[index].getType() != BlockType::Air)
 		++m_AirBlocks;

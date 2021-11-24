@@ -183,6 +183,34 @@ void ChunkManager::updateQueues(const Camera& player)
 		updateBuildQueue();
 }
 
+bool ChunkManager::isInGenQueue(Vector2i gen, int& o_Index)
+{
+	for (int i{}; i < m_GenQueue.size(); ++i)
+	{
+		if (m_GenQueue[i] == gen)
+		{
+			o_Index = i;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ChunkManager::isInBuildQueue(Chunk* build, int& o_Index)
+{
+	for (int i{}; i < m_BuildQueue.size(); ++i)
+	{
+		if (m_BuildQueue[i] == build)
+		{
+			o_Index = i;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool ChunkManager::isInGenQueue(Vector2i gen)
 {
 	for (int i{}; i < m_GenQueue.size(); ++i)

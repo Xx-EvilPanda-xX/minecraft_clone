@@ -9,6 +9,8 @@
 #include "../Render/Texture.h"
 #include "../World/Block.h"
 
+constexpr float faceRatio{ 0.1f };
+
 enum class Face
 {
 	Up,

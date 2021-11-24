@@ -38,6 +38,10 @@ public:
 
 	bool isInBuildQueue(Chunk* build);
 
+	bool isInGenQueue(Vector2i gen, int& o_Index);
+
+	bool isInBuildQueue(Chunk* build, int& o_Index);
+
 	void updateQueues(const Camera& player);
 
 	std::vector<Vector2i>& getGenQueue();

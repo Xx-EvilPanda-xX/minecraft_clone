@@ -73,6 +73,10 @@ void World::destroyPass(Vector2i playerPos)
 		//+ 1 becuase otherwise chunks that had just been generated got deleted
 		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance + 1 || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance + 1)
 		{
+			int index;
+			if (m_Manager.isInBuildQueue(m_Chunks[i], index))
+				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+
 			delete m_Chunks[i];
 			m_Chunks[i] = nullptr;
 		}
@@ -82,14 +86,6 @@ void World::destroyPass(Vector2i playerPos)
 	{
 		if (m_Chunks[i] == nullptr)
 			m_Chunks.erase(m_Chunks.begin() + i);
-	}
-
-	for (int i{ static_cast<int>(m_Manager.getBuildQueue().size()) - 1 }; i >= 0; --i)
-	{
-		if (!m_Manager.chunkExsists(m_Manager.getBuildQueue()[i]->getLocation()))
-		{
-			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + i);
-		}
 	}
 }
 

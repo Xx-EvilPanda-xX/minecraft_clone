@@ -1,8 +1,10 @@
 #include "Player.h"
 #include "../World/Chunk.h"
 #include <glm/vec3.hpp>
+#include "../Application.h"
+#include "../Constants.h"
 
-Player::Player(const Camera& cam, ChunkManager* manager, float reach) 
+Player::Player(Camera& cam, ChunkManager* manager, float reach) 
 	: m_Cam{ cam },
 	m_Manager{ manager },
 	m_Reach{ reach }
@@ -11,24 +13,112 @@ Player::Player(const Camera& cam, ChunkManager* manager, float reach)
 
 void Player::move()
 {
-	aabb.min(glm::vec3{ m_Cam.getLocation().x - 0.5f, m_Cam.getLocation().y - 1.5f, m_Cam.getLocation().z - 0.5f });
-	aabb.max(glm::vec3{ m_Cam.getLocation().x + 0.5f, m_Cam.getLocation().y + 0.5f, m_Cam.getLocation().z + 0.5f });
+	calculateVelocity(); 
+
+	aabb.min(glm::vec3{ m_Cam.getLocation().x - 0.45f, m_Cam.getLocation().y - 1.45f, m_Cam.getLocation().z - 0.45f });
+	aabb.max(glm::vec3{ m_Cam.getLocation().x + 0.45f, m_Cam.getLocation().y + 0.45f, m_Cam.getLocation().z + 0.45f });
 
 	Vector3i playerPos{ static_cast<int>(m_Cam.getLocation().x), static_cast<int>(m_Cam.getLocation().y), static_cast<int>(m_Cam.getLocation().z) };
-	  
-	//TODO: sub 1 from playerpos if neg
 
-	for (int x{ playerPos.x - 3 }; x < playerPos.x + 3; ++x)
+	if (m_Cam.getLocation().x < 0.0f)
+		playerPos.x -= 1;
+	if (m_Cam.getLocation().y < 0.0f)
+		playerPos.y -= 1;
+	if (m_Cam.getLocation().z < 0.0f)
+		playerPos.z -= 1;
+	
+	bool collision{ false };
+	Vector3i collisionPos{};
+	Block collisionBlock{};
+
+	for (int x{ playerPos.x - 2 }; x < playerPos.x + 2; ++x)
 	{
-		for (int y{ playerPos.y - 3 }; y < playerPos.y + 3; ++y)
+		for (int y{ playerPos.y - 2 }; y < playerPos.y + 2; ++y)
 		{
-			for (int z{ playerPos.z - 3 }; z < playerPos.z + 3; ++z)
+			for (int z{ playerPos.z - 2 }; z < playerPos.z + 2; ++z)
 			{
-				if (m_Manager->getWorldBlock(Vector3i{ x, y, z }).getBounds().intersects(aabb))
-					std::cout << "collision!\n";
+				Block block{ m_Manager->getWorldBlock(Vector3i{ x, y, z }) };
+				if (block.getBounds().intersects(aabb) && block.getType() != BlockType::Air)
+				{
+					std::cout << "collision with block at: " << x << ", " << y << ", " << z << "\n";
+					collision = true;
+					collisionPos = { x, y, z };
+					collisionBlock = block;
+					break;
+				}
 			}
 		}
 	}
+
+	if (collision)
+	{
+		m_Cam.setLocation(m_LastValidLoc);
+		m_Velocity *= 0.0f;
+
+		/*
+		* get vector from position right before collision to the position right after 
+		* and do a binary search along that vector until the vector is right outside of the 
+		* colliding block. Then take that vector and the center of the colliding block and
+		* follow it out to the near adjacent block that passes through that vector, similar
+		* to block placing. Then find diff between those two block positions and theres your
+		* velocity component to mitigate.
+		*/
+	}
+	else
+	{
+		m_LastValidLoc = m_Cam.getLocation();
+	}
+
+	m_Cam.handleKeyboard(m_Velocity, Application::m_Dt);
+}
+
+void Player::calculateVelocity()
+{
+	if (m_Velocity.x < 0.0f)
+	{
+		m_Velocity.x += constants::playerDrift * Application::m_Dt;
+		if (m_Velocity.x > 0.0f)
+			m_Velocity.x = 0.0f;
+	}
+	else
+	{
+		m_Velocity.x -= constants::playerDrift * Application::m_Dt;
+		if (m_Velocity.x < 0.0f)
+			m_Velocity.x = 0.0f;
+	}
+
+	if (m_Velocity.y < 0.0f)
+	{
+		m_Velocity.y += constants::playerDrift * Application::m_Dt;
+		if (m_Velocity.y > 0.0f)
+			m_Velocity.y = 0.0f;
+	}	
+	else
+	{
+		m_Velocity.y -= constants::playerDrift * Application::m_Dt;
+		if (m_Velocity.y < 0.0f)
+			m_Velocity.y = 0.0f;
+	}
+
+	if (m_Velocity.z < 0.0f)
+	{
+		m_Velocity.z += constants::playerDrift * Application::m_Dt;
+		if (m_Velocity.z > 0.0f)
+			m_Velocity.z = 0.0f;
+	}	
+	else
+	{
+		m_Velocity.z -= constants::playerDrift * Application::m_Dt;
+		if (m_Velocity.z < 0.0f)
+			m_Velocity.z = 0.0f;
+	}
+
+	if ((m_Velocity.x < 0.01f && m_Velocity.x > 0.0f) || (m_Velocity.x > -0.01f && m_Velocity.x < 0.0f))
+		m_Velocity.x = 0.0f;
+	if ((m_Velocity.y < 0.01f && m_Velocity.y > 0.0f) || (m_Velocity.y > -0.01f && m_Velocity.y < 0.0f))
+		m_Velocity.y = 0.0f;
+	if ((m_Velocity.z < 0.01f && m_Velocity.z > 0.0f) || (m_Velocity.z > -0.01f && m_Velocity.z < 0.0f))
+		m_Velocity.z = 0.0f;
 }
 
 void Player::breakBlock()
@@ -225,4 +315,19 @@ void Player::setReach(float reach)
 void Player::setManager(ChunkManager* manager)
 {
 	m_Manager = manager;
+}
+
+glm::vec3& Player::getVelocity()
+{
+	return m_Velocity;
+}
+
+bool Player::isSprinting()
+{
+	return m_Sprinting;
+}
+
+void Player::setSprinting(bool sprinting)
+{
+	m_Sprinting = sprinting;
 }

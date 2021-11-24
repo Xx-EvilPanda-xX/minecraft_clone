@@ -54,35 +54,13 @@ void Camera::handleMouse(glm::vec2 offset)
 	calculateVecs();
 }
 
-void Camera::handleKeyboard(Direction dir, float velocity, float dt)
+void Camera::handleKeyboard(glm::vec3 velocity, float dt)
 {
 	velocity *= dt;
-	
-	switch (dir)
-	{
-	case Direction::Up:
-		m_Location += m_WorldUp * velocity;
-		break;
 
-	case Direction::Down:
-		m_Location -= m_WorldUp * velocity;
-		break;
-
-	case Direction::Right:
-		m_Location += m_Right * velocity;
-		break;
-
-	case Direction::Left:
-		m_Location -= m_Right * velocity;
-		break;
-
-	case Direction::Forward:
-		m_Location += glm::normalize(glm::vec3(m_Front.x, 0.0f, m_Front.z)) * velocity;
-		break;
-	case Direction::Back:
-		m_Location -= glm::normalize(glm::vec3(m_Front.x, 0.0f, m_Front.z)) * velocity;
-		break;
-	}
+	m_Location += glm::normalize(glm::vec3(m_Front.x, 0.0f, m_Front.z)) * velocity.z;
+	m_Location += m_WorldUp * velocity.y;
+	m_Location += m_Right * velocity.x;
 
 	calculateVecs();
 }
@@ -118,4 +96,9 @@ float Camera::getPitch() const
 glm::vec3 Camera::getFront() const
 {
 	return m_Front;
+}
+
+void Camera::setLocation(glm::vec3 loc)
+{
+	m_Location = loc;
 }

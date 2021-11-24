@@ -7,16 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
 
-enum class Direction
-{
-	Up,
-	Down,
-	Right,
-	Left,
-	Forward,
-	Back
-};
-
 class Camera
 {
 private:
@@ -46,7 +36,7 @@ public:
 
 	void handleMouse(glm::vec2 offset);
 
-	void handleKeyboard(Direction dir, float velocity, float dt);
+	void handleKeyboard(glm::vec3 velocity, float dt);
 
 	glm::vec3 getLocation() const;
 
@@ -55,6 +45,8 @@ public:
 	float getPitch() const;
 
 	glm::vec3 getFront() const;
+
+	void setLocation(glm::vec3 loc);
 };
 
 #endif

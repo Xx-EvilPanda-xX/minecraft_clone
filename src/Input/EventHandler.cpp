@@ -4,42 +4,52 @@
 
 BlockType EventHandler::selectedBlock{ BlockType::Stone };
 
-void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app)
+void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& player)
 {
 	if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(app.getWindow().getWindow(), true);
 
+	if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
+		player.setSprinting(true);
+	else
+		player.setSprinting(false);
+
+	float velocityLimit{ player.isSprinting() ? 20.0f : 5.0f };
+
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
-		app.getCamera().handleKeyboard(Direction::Forward, 5.0f, Application::m_Dt);
-
-		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-			app.getCamera().handleKeyboard(Direction::Forward, 20.0f, Application::m_Dt);
+		if (player.getVelocity().z < velocityLimit)
+			player.getVelocity().z += (constants::playerDrift * 10.0f) * Application::m_Dt;
 	}
-
+		
 	if (keyboard.isKeyDown(GLFW_KEY_A))
-		app.getCamera().handleKeyboard(Direction::Left, 5.0f, Application::m_Dt);
-
+	{
+		if (player.getVelocity().x > -velocityLimit)
+			player.getVelocity().x -= (constants::playerDrift * 10.0f) * Application::m_Dt;
+	}
+		
 	if (keyboard.isKeyDown(GLFW_KEY_S))
-		app.getCamera().handleKeyboard(Direction::Back, 5.0f, Application::m_Dt);
-
+	{
+		if (player.getVelocity().z > -velocityLimit)
+			player.getVelocity().z -= (constants::playerDrift * 10.0f) * Application::m_Dt;
+	}
+		
 	if (keyboard.isKeyDown(GLFW_KEY_D))
-		app.getCamera().handleKeyboard(Direction::Right, 5.0f, Application::m_Dt);
+	{
+		if (player.getVelocity().x < velocityLimit)
+			player.getVelocity().x += (constants::playerDrift * 10.0f) * Application::m_Dt;
+	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
 	{
-		app.getCamera().handleKeyboard(Direction::Up, 5.0f, Application::m_Dt);
-
-		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-			app.getCamera().handleKeyboard(Direction::Up, 20.0f, Application::m_Dt);
+		if (player.getVelocity().y < velocityLimit)
+			player.getVelocity().y += (constants::playerDrift * 10.0f) * Application::m_Dt;
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
 	{
-		app.getCamera().handleKeyboard(Direction::Down, 5.0f, Application::m_Dt);
-
-		if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-			app.getCamera().handleKeyboard(Direction::Down, 20.0f, Application::m_Dt);
+		if (player.getVelocity().y > -velocityLimit)
+			player.getVelocity().y -= (constants::playerDrift * 10.0f) * Application::m_Dt;
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_C))

@@ -22,6 +22,7 @@ bool operator> (const glm::vec3& v1, const glm::vec3& v2)
 
 bool AABB::intersects(const AABB& other)
 {
+	//update to support fully enveloping
 	return (m_Min < other.max() && m_Min > other.min()) && (m_Max > other.max() && m_Max > other.min()) ||
 		(m_Min < other.min() && m_Min < other.max()) && (m_Max > other.min() && m_Max < other.max());
 }

@@ -4,14 +4,18 @@
 #include <glm/glm.hpp>
 #include "Camera.h"
 #include "../World/ChunkManager.h"
+#include "../Math/Vector3i.h"
 
 class Player
 {
 private:
-	const Camera& m_Cam;
+	Camera& m_Cam;
 	ChunkManager* m_Manager;
+	glm::vec3 m_Velocity;
+	glm::vec3 m_LastValidLoc;
 	AABB aabb;
 
+	bool m_Sprinting;
 	float m_Reach;
 
 	Vector3i* breakIntersect();
@@ -22,8 +26,10 @@ private:
 
 	void updateMeshes(Vector3i editPos);
 
+	void calculateVelocity();
+
 public:
-	Player(const Camera& cam, ChunkManager* manager, float reach);
+	Player(Camera& cam, ChunkManager* manager, float reach);
 
 	void move();
 
@@ -36,6 +42,12 @@ public:
 	void setReach(float reach);
 
 	void setManager(ChunkManager* manager);
+
+	glm::vec3 & getVelocity();
+
+	bool isSprinting();
+	
+	void setSprinting(bool sprinting);
 };
 
 #endif

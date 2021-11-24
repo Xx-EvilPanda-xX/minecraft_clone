@@ -89,6 +89,8 @@ void TerrainGenerator::genTree(ChunkSection* section, Vector3i pos)
 
 int** TerrainGenerator::getHeightMap(Chunk* chunk)
 {
+	rand.seed(std::pow(chunk->getLocation().x, chunk->getLocation().y));
+
 	int** heightMap = new int*[16];
 
 	for (int i{}; i < 16; ++i)

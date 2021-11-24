@@ -11,7 +11,7 @@ private:
 	static BlockType selectedBlock;
 
 public:
-	static void keyboardEvent(Keyboard& keyboard, Application& app);
+	static void keyboardEvent(Keyboard& keyboard, Application& app, Player& player);
 
 	static void mouseEvent(Mouse& mouse, Player& player);
 };
