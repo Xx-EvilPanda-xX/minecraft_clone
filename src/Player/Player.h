@@ -28,6 +28,8 @@ private:
 
 	void calculateVelocity();
 
+	bool testCollide(Vector3i& o_Pos);
+
 public:
 	Player(Camera& cam, ChunkManager* manager, float reach);
 
@@ -43,7 +45,9 @@ public:
 
 	void setManager(ChunkManager* manager);
 
-	glm::vec3 & getVelocity();
+	glm::vec3& getVelocity();
+
+	glm::vec3& getLocalVelocity();
 
 	bool isSprinting();
 	

@@ -105,10 +105,7 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 	if (sectionIndex > 15)
 		return Block{};
 
-	Block block{ m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal) };
-	block.getBounds().min(block.getBounds().min() + glm::vec3(chunkLocation.x * 16, sectionIndex * 16, chunkLocation.y * 16));
-	block.getBounds().max(block.getBounds().max() + glm::vec3(chunkLocation.x * 16, sectionIndex * 16, chunkLocation.y * 16));
-	return block;
+	return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal);
 }
 
 bool ChunkManager::chunkExsists(Vector3i loc) const

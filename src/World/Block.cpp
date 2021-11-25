@@ -1,8 +1,7 @@
 #include "Block.h"
 
-Block::Block(BlockType type, AABB bounds) 
-	: m_Type{ type },
-	m_Bounds{ bounds }
+Block::Block(BlockType type) 
+	: m_Type{ type }
 {
 	m_Transparent = false;
 
@@ -48,9 +47,4 @@ BlockType Block::getType() const
 bool Block::isTransparent()
 {
 	return m_Transparent;
-}
-
-AABB& Block::getBounds()
-{
-	return m_Bounds;
 }

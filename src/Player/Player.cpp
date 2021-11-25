@@ -9,16 +9,54 @@ Player::Player(Camera& cam, ChunkManager* manager, float reach)
 	m_Manager{ manager },
 	m_Reach{ reach }
 {
+	m_Velocity = glm::vec3{};
+	m_Velocity = glm::vec3{};
 }
 
 void Player::move()
 {
-	calculateVelocity(); 
+	m_Cam.handleKeyboard(m_Velocity, Application::m_Dt);
+	calculateVelocity();
 
-	float aabbRadius{ 1.0f };
+	Vector3i collsionPos{};
+	while (testCollide(collsionPos))
+	{
+		glm::vec3 blockCenter{ collsionPos.x + 0.5f, collsionPos.y + 0.5f, collsionPos.z + 0.5f };
+		glm::vec3 direction{ glm::normalize(blockCenter - m_LastValidLoc) * 0.01f };
 
-	aabb.min(glm::vec3{ m_Cam.getLocation().x - 0.5f, m_Cam.getLocation().y - 1.5f, m_Cam.getLocation().z - 0.5f });
-	aabb.max(glm::vec3{ m_Cam.getLocation().x + 0.5f, m_Cam.getLocation().y + 0.5f, m_Cam.getLocation().z + 0.5f });
+		glm::vec3 center{ blockCenter };
+		Vector3i block{ static_cast<int>(center.x < 0.0f ? center.x - 1.0f : center.x), static_cast<int>(center.y < 0.0f ? center.y - 1.0f : center.y), static_cast<int>(center.z < 0.0f ? center.z - 1.0f : center.z) };
+		while (block == collsionPos)
+		{
+			center -= direction;
+			block.x = static_cast<int>(center.x < 0.0f ? center.x - 1.0f : center.x);
+			block.y = static_cast<int>(center.y < 0.0f ? center.y - 1.0f : center.y);
+			block.z = static_cast<int>(center.z < 0.0f ? center.z - 1.0f : center.z);
+		}
+
+		Vector3i locationMask{ block.x - collsionPos.x, block.y - collsionPos.y, block.z - collsionPos.z };
+		glm::vec3 camPos{ m_Cam.getLocation() };
+
+		if (locationMask.x != 0)
+			m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+
+		if (locationMask.y != 0)
+			m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
+
+		if (locationMask.z != 0)
+			m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
+
+		if ((locationMask.x != 0 && locationMask.y != 0) || (locationMask.x != 0 && locationMask.z) || (locationMask.z != 0 && locationMask.y))
+			std::cout << "ahhh\n";
+	}
+
+	m_LastValidLoc = m_Cam.getLocation();
+}
+
+bool Player::testCollide(Vector3i& o_Pos)
+{
+	aabb.min(glm::vec3{ m_Cam.getLocation().x - 0.45f, m_Cam.getLocation().y - 0.45f, m_Cam.getLocation().z - 0.45f });
+	aabb.max(glm::vec3{ m_Cam.getLocation().x + 0.45f, m_Cam.getLocation().y + 0.45f, m_Cam.getLocation().z + 0.45f });
 
 	Vector3i playerPos{ static_cast<int>(m_Cam.getLocation().x), static_cast<int>(m_Cam.getLocation().y), static_cast<int>(m_Cam.getLocation().z) };
 
@@ -28,10 +66,9 @@ void Player::move()
 		playerPos.y -= 1;
 	if (m_Cam.getLocation().z < 0.0f)
 		playerPos.z -= 1;
-	
+
 	bool collision{ false };
-	Vector3i collisionPos{};
-	Block collisionBlock{};
+	Vector3i collsionPos{};
 
 	for (int x{ playerPos.x - 3 }; x < playerPos.x + 3; ++x)
 	{
@@ -39,40 +76,20 @@ void Player::move()
 		{
 			for (int z{ playerPos.z - 3 }; z < playerPos.z + 3; ++z)
 			{
+				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager->getWorldBlock(Vector3i{ x, y, z }) };
-				if (block.getBounds().intersects(aabb) && block.getType() != BlockType::Air)
+				if (blockAABB.intersects(aabb) && block.getType() != BlockType::Air)
 				{
- 					std::cout << "collision with block at: " << x << ", " << y << ", " << z << "\n";
 					collision = true;
-					collisionPos = { x, y, z };
-					collisionBlock = block;
-					bool collides{ collisionBlock.getBounds().intersects(aabb) };
+					collsionPos = { x, y, z };
 					break;
 				}
 			}
 		}
 	}
 
-	if (collision)
-	{
-		m_Cam.setLocation(m_LastValidLoc);
-		m_Velocity *= 0.0f;
-
-		/*
-		* get vector from position right before collision to the position right after 
-		* and do a binary search along that vector until the vector is right outside of the 
-		* colliding block. Then take that vector and the center of the colliding block and
-		* follow it out to the near adjacent block that passes through that vector, similar
-		* to block placing. Then find diff between those two block positions and theres your
-		* velocity component to mitigate.
-		*/
-	}
-	else
-	{
-		m_LastValidLoc = m_Cam.getLocation();
-	}
-
-	m_Cam.handleKeyboard(m_Velocity, Application::m_Dt);
+	o_Pos = collsionPos;
+	return collision;
 }
 
 void Player::calculateVelocity()

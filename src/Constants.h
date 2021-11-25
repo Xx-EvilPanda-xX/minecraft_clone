@@ -24,7 +24,7 @@ namespace constants
 
 	constexpr int waterLevel{ 48 };
 
-	constexpr float playerDrift{ 10.0f };
+	constexpr float playerDrift{ 15.0f };
 }
 
 #endif

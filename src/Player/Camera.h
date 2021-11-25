@@ -23,8 +23,6 @@ private:
 
 	GLFWwindow* m_Win;
 
-	void calculateVecs();
-
 public:
 	Camera(glm::vec3 location, float yaw, float pitch, float fov, GLFWwindow* win);
 
@@ -33,6 +31,8 @@ public:
 	glm::mat4 getProjectionMat() const;
 
 	glm::mat4 getViewMat() const;
+
+	void calculateVecs();
 
 	void handleMouse(glm::vec2 offset);
 
@@ -45,6 +45,10 @@ public:
 	float getPitch() const;
 
 	glm::vec3 getFront() const;
+
+	glm::vec3 getRight() const;
+
+	glm::vec3 getWorldUp() const;
 
 	void setLocation(glm::vec3 loc);
 };
