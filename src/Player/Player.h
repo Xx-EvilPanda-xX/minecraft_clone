@@ -6,6 +6,12 @@
 #include "../World/ChunkManager.h"
 #include "../Math/Vector3i.h"
 
+enum class CollsionType
+{
+	PlayerUpperHalf,
+	PlayerLowerHalf
+};
+
 class Player
 {
 private:
@@ -34,9 +40,7 @@ private:
 
 	void calculateVelocity();
 
-	bool testCollide(glm::vec3 playerPos, AABB& playerAABB, Vector3i& o_Pos, AABB& o_Aabb);
-
-	bool testCollide(glm::vec3 playerPos, AABB& playerAABB);
+	bool testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType);
 
 	AABB createPlayerAABB(glm::vec3 playerPos);
 

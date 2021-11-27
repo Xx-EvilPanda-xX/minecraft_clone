@@ -19,17 +19,35 @@ void Player::move()
 	calculateVelocity();
 
 	Vector3i collsionPos{};
-	AABB blockAABB{};
 	bool update{ true };
 
 	m_Aabb = createPlayerAABB(m_Cam.getLocation());
 
-	while (testCollide(m_Cam.getLocation(), m_Aabb, collsionPos, blockAABB))
-	{
-		
-		glm::vec3 blockCenter{ collsionPos.x + 0.5f, collsionPos.y + 0.5f, collsionPos.z + 0.5f };
-		glm::vec3 direction{ glm::normalize(m_LastValidLoc - blockCenter) * 0.001f };
+	float playerHeight{ m_Aabb.max().y - m_Aabb.min().y };
+	float playerMiddle{ m_Aabb.min().y + playerHeight / 2 };
+	float quarterHeight{ playerHeight / 4 };
 
+	glm::vec3 lowerPlayerHalf{ m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
+	glm::vec3 upperPlayerHalf{ m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
+
+	CollsionType collisionType;
+
+	while (testCollide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType))
+	{
+		glm::vec3 blockCenter{ collsionPos.x + 0.5f, collsionPos.y + 0.5f, collsionPos.z + 0.5f };
+		glm::vec3 lastValidLoc;
+
+		switch (collisionType)
+		{
+		case CollsionType::PlayerUpperHalf:
+			lastValidLoc = { m_LastValidLoc.x, m_LastValidAABB.max().y - constants::playerSize, m_LastValidLoc.z };
+			break;
+		case CollsionType::PlayerLowerHalf:
+			lastValidLoc = { m_LastValidLoc.x, m_LastValidAABB.min().y + constants::playerSize, m_LastValidLoc.z };
+			break;
+		}
+
+		glm::vec3 direction{ glm::normalize(lastValidLoc - blockCenter) * 0.001f };
 		glm::vec3 center{ blockCenter };
 		Vector3i block{ static_cast<int>(center.x < 0.0f ? center.x - 1.0f : center.x), static_cast<int>(center.y < 0.0f ? center.y - 1.0f : center.y), static_cast<int>(center.z < 0.0f ? center.z - 1.0f : center.z) };
 		while (block == collsionPos)
@@ -65,8 +83,10 @@ void Player::move()
 			++intersects;
 		}
 
-		if (intersects > 1)
+		if (intersects != 1)
 		{
+			std::cout << intersects << "\n";
+
 			if (m_LastCollideX)
 				m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
 
@@ -93,6 +113,13 @@ void Player::move()
 		}
 
 		m_Aabb = createPlayerAABB(m_Cam.getLocation());
+
+		playerHeight = m_Aabb.max().y - m_Aabb.min().y;
+		playerMiddle = m_Aabb.min().y + playerHeight / 2;
+		quarterHeight = playerHeight / 4;
+
+		lowerPlayerHalf = { m_Cam.getLocation().x, m_Aabb.min().y + quarterHeight, m_Cam.getLocation().z };
+		upperPlayerHalf = { m_Cam.getLocation().x, m_Aabb.max().y - quarterHeight, m_Cam.getLocation().z };
 	}
 
 	m_LastValidLoc = m_Cam.getLocation();
@@ -102,95 +129,119 @@ void Player::move()
 AABB Player::createPlayerAABB(glm::vec3 playerPos)
 {
 	AABB aabb{};
-	aabb.min(glm::vec3{ playerPos.x - 0.35f, playerPos.y - 0.35f, playerPos.z - 0.35f });
-	aabb.max(glm::vec3{ playerPos.x + 0.35f, playerPos.y + 0.35f, playerPos.z + 0.35f });
+	aabb.min(glm::vec3{ playerPos.x - constants::playerSize, playerPos.y - (1.0f + constants::playerSize), playerPos.z - constants::playerSize });
+	aabb.max(glm::vec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize, playerPos.z + constants::playerSize });
 	return aabb;
 }
 
-bool Player::testCollide(glm::vec3 playerPos, AABB& playerAABB, Vector3i& o_Pos, AABB& o_Aabb)
+bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType)
 {
-	Vector3i playerBlock{ static_cast<int>(m_Cam.getLocation().x), static_cast<int>(m_Cam.getLocation().y), static_cast<int>(m_Cam.getLocation().z) };
+	Vector3i lowerBlock{ static_cast<int>(playerLowerHalf.x), static_cast<int>(playerLowerHalf.y), static_cast<int>(playerLowerHalf.z) };
+	Vector3i upperBlock{ static_cast<int>(playerUpperHalf.x), static_cast<int>(playerUpperHalf.y), static_cast<int>(playerUpperHalf.z) };
 
-	if (playerPos.x < 0.0f)
-		playerBlock.x -= 1;
-	if (playerPos.y < 0.0f)
-		playerBlock.y -= 1;
-	if (playerPos.z < 0.0f)
-		playerBlock.z -= 1;
+	if (playerLowerHalf.x < 0.0f)
+		lowerBlock.x -= 1;
+	if (playerLowerHalf.y < 0.0f)
+		lowerBlock.y -= 1;
+	if (playerLowerHalf.z < 0.0f)
+		lowerBlock.z -= 1;
+
+	if (playerUpperHalf.x < 0.0f)
+		upperBlock.x -= 1;
+	if (playerUpperHalf.y < 0.0f)
+		upperBlock.y -= 1;
+	if (playerUpperHalf.z < 0.0f)
+		upperBlock.z -= 1;
 
 	bool collision{ false };
-	float closestCollision{ -1.0f };
-	Vector3i collsionPos{};
 
-	for (int x{ playerBlock.x - 2 }; x < playerBlock.x + 2; ++x)
+	float lowerClosestCollision{ -1.0f };
+	Vector3i lowerCollsionPos{};
+	AABB lowerAABB{};
+
+	float upperClosestCollision{ -1.0f };
+	Vector3i upperCollsionPos{};
+	AABB upperAABB{};
+
+	for (int x{ lowerBlock.x - 2 }; x < lowerBlock.x + 2; ++x)
 	{
-		for (int y{ playerBlock.y - 2 }; y < playerBlock.y + 2; ++y)
+		for (int y{ lowerBlock.y - 2 }; y < lowerBlock.y + 2; ++y)
 		{
-			for (int z{ playerBlock.z - 2 }; z < playerBlock.z + 2; ++z)
+			for (int z{ lowerBlock.z - 2 }; z < lowerBlock.z + 2; ++z)
 			{
 				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager->getWorldBlock(Vector3i{ x, y, z }) };
 				if (blockAABB.intersects(playerAABB) && block.getType() != BlockType::Air)
 				{
 					glm::vec3 blockCenter{ x + 0.5f, y + 0.5f, z + 0.5f };
-					glm::vec3 playerToCenter{ blockCenter - playerPos };
+					glm::vec3 playerToCenter{ blockCenter - playerLowerHalf };
 					float distance{ glm::length(playerToCenter) };
 
 					collision = true;
 
-					if (distance < closestCollision || closestCollision == -1.0f)
+					if (distance < lowerClosestCollision || lowerClosestCollision == -1.0f)
 					{
-						closestCollision = distance;
-						collsionPos = { x, y, z };
-						o_Aabb = blockAABB;
+						lowerClosestCollision = distance;
+						lowerCollsionPos = { x, y, z };
+						lowerAABB = blockAABB;
 					}
 				}
 			}
 		}
 	}
 
-	o_Pos = collsionPos;
-	return collision;
-}
-
-bool Player::testCollide(glm::vec3 playerPos, AABB& playerAABB)
-{
-	Vector3i playerBlock{ static_cast<int>(m_Cam.getLocation().x), static_cast<int>(m_Cam.getLocation().y), static_cast<int>(m_Cam.getLocation().z) };
-
-	if (playerPos.x < 0.0f)
-		playerBlock.x -= 1;
-	if (playerPos.y < 0.0f)
-		playerBlock.y -= 1;
-	if (playerPos.z < 0.0f)
-		playerBlock.z -= 1;
-
-	bool collision{ false };
-	float closestCollision{ -1.0f };
-	Vector3i collsionPos{};
-
-	for (int x{ playerBlock.x - 2 }; x < playerBlock.x + 2; ++x)
+	for (int x{ upperBlock.x - 2 }; x < upperBlock.x + 2; ++x)
 	{
-		for (int y{ playerBlock.y - 2 }; y < playerBlock.y + 2; ++y)
+		for (int y{ upperBlock.y - 2 }; y < upperBlock.y + 2; ++y)
 		{
-			for (int z{ playerBlock.z - 2 }; z < playerBlock.z + 2; ++z)
+			for (int z{ upperBlock.z - 2 }; z < upperBlock.z + 2; ++z)
 			{
 				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager->getWorldBlock(Vector3i{ x, y, z }) };
 				if (blockAABB.intersects(playerAABB) && block.getType() != BlockType::Air)
 				{
 					glm::vec3 blockCenter{ x + 0.5f, y + 0.5f, z + 0.5f };
-					glm::vec3 playerToCenter{ blockCenter - playerPos };
+					glm::vec3 playerToCenter{ blockCenter - playerUpperHalf };
 					float distance{ glm::length(playerToCenter) };
 
 					collision = true;
 
-					if (distance < closestCollision || closestCollision == -1.0f)
+					if (distance < upperClosestCollision || upperClosestCollision == -1.0f)
 					{
-						closestCollision = distance;
-						collsionPos = { x, y, z };
+						upperClosestCollision = distance;
+						upperCollsionPos = { x, y, z };
+						upperAABB = blockAABB;
 					}
 				}
 			}
+		}
+	}
+
+	if (lowerClosestCollision != -1.0f)
+	{
+		if (lowerClosestCollision <= upperClosestCollision)
+		{
+			o_Pos = lowerCollsionPos;
+			o_CollisionType = CollsionType::PlayerLowerHalf;
+		}
+		else if (upperClosestCollision <= lowerClosestCollision)
+		{
+			o_Pos = upperCollsionPos;
+			o_CollisionType = CollsionType::PlayerUpperHalf;
+		}
+	}
+
+	else if (upperClosestCollision != -1.0f)
+	{
+		if (upperClosestCollision <= lowerClosestCollision)
+		{
+			o_Pos = upperCollsionPos;
+			o_CollisionType = CollsionType::PlayerUpperHalf;
+		}
+		else if (lowerClosestCollision <= upperClosestCollision)
+		{
+			o_Pos = upperCollsionPos;
+			o_CollisionType = CollsionType::PlayerUpperHalf;
 		}
 	}
 

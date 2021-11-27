@@ -10,8 +10,10 @@ class TerrainGenerator
 {
 private:
 	FastNoiseLite m_Noise;
-	std::mt19937 rand;
-	std::uniform_int_distribution<> die;
+	std::mt19937 m_Rand;
+	std::uniform_int_distribution<> m_Die;
+
+	const int m_MaxTreesPerChunk;
 
 	void genTree(ChunkSection* section, Vector3i pos);
 

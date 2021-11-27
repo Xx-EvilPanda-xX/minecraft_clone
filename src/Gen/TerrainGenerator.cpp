@@ -5,19 +5,28 @@
 #include "../Constants.h"
 
 TerrainGenerator::TerrainGenerator()
+	: m_MaxTreesPerChunk{ 2 }
 {
-	rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
-	die = std::uniform_int_distribution<>{ 0, 64 };
+	m_Rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
+	m_Die = std::uniform_int_distribution<>{ 0, 64 };
+
+	std::mt19937 tempRand{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
+	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
+	int seed{ tempDie(tempRand) };
 
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
 	m_Noise.SetFractalOctaves(7);
 	m_Noise.SetFrequency(0.005f);
+	m_Noise.SetSeed(seed);
+
+	std::cout << "Seed: " << seed << "\n";
 }
 
 ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 {
 	ChunkSection* chunkSection{ new ChunkSection{} };
+	int trees{};
 
 	for (int x{}; x < 16; ++x)
 	{
@@ -44,13 +53,17 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 
 				if (wY == currentHeight && wY > constants::waterLevel)
 				{
-					if (die(rand) == 0)
+					if (m_Die(m_Rand) == 0)
 					{
 						if (y + 4 > 15 || x >= 14 || x <= 1 || z >= 14 || z <= 1 )
 							//invalid tree position
 							continue;
 
-						genTree(chunkSection, Vector3i{ x, y, z } );
+						if (trees <= m_MaxTreesPerChunk)
+						{
+							genTree(chunkSection, Vector3i{ x, y, z });
+							++trees;
+						}
 					}
 				}
 			}
@@ -89,7 +102,7 @@ void TerrainGenerator::genTree(ChunkSection* section, Vector3i pos)
 
 int** TerrainGenerator::getHeightMap(Chunk* chunk)
 {
-	rand.seed(std::pow(chunk->getLocation().x, chunk->getLocation().y));
+	m_Rand.seed(std::pow(chunk->getLocation().x, chunk->getLocation().y));
 
 	int** heightMap = new int*[16];
 

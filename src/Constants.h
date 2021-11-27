@@ -6,7 +6,7 @@ namespace constants
 	constexpr int windowWidth{ 1280 };
 	constexpr int windowHeight{ 720 };
 
-	constexpr int fullscreenWidth{ 1920};
+	constexpr int fullscreenWidth{ 1920 };
 	constexpr int fullscreenHeight{ 1080 };
 
 	constexpr bool fullscreen{ false };
@@ -25,6 +25,7 @@ namespace constants
 	constexpr int waterLevel{ 48 };
 
 	constexpr float playerDrift{ 15.0f };
+	constexpr float playerSize{ 0.45f };
 }
 
 #endif
