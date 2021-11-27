@@ -12,8 +12,11 @@ private:
 	Camera& m_Cam;
 	ChunkManager* m_Manager;
 	glm::vec3 m_Velocity;
+	AABB m_Aabb;
+
 	glm::vec3 m_LastValidLoc;
-	AABB aabb;
+	AABB m_LastValidAABB;
+	
 
 	bool m_Sprinting;
 	float m_Reach;
@@ -28,7 +31,11 @@ private:
 
 	void calculateVelocity();
 
-	bool testCollide(Vector3i& o_Pos);
+	bool testCollide(glm::vec3 playerPos, AABB& playerAABB, Vector3i& o_Pos, AABB& o_Aabb);
+
+	bool testCollide(glm::vec3 playerPos, AABB& playerAABB);
+
+	AABB createPlayerAABB(glm::vec3 playerPos);
 
 public:
 	Player(Camera& cam, ChunkManager* manager, float reach);
@@ -46,8 +53,6 @@ public:
 	void setManager(ChunkManager* manager);
 
 	glm::vec3& getVelocity();
-
-	glm::vec3& getLocalVelocity();
 
 	bool isSprinting();
 	
