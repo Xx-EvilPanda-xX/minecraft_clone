@@ -17,6 +17,9 @@ private:
 	glm::vec3 m_LastValidLoc;
 	AABB m_LastValidAABB;
 	
+	bool m_LastCollideX;
+	bool m_LastCollideY;
+	bool m_LastCollideZ;
 
 	bool m_Sprinting;
 	float m_Reach;

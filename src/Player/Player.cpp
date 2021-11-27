@@ -10,7 +10,7 @@ Player::Player(Camera& cam, ChunkManager* manager, float reach)
 	m_Reach{ reach }
 {
 	m_Velocity = glm::vec3{};
-	m_Velocity = glm::vec3{};
+	m_LastValidLoc = glm::vec3{};
 }
 
 void Player::move()
@@ -28,7 +28,7 @@ void Player::move()
 	{
 		
 		glm::vec3 blockCenter{ collsionPos.x + 0.5f, collsionPos.y + 0.5f, collsionPos.z + 0.5f };
-		glm::vec3 direction{ glm::normalize(m_LastValidLoc - blockCenter) * 0.01f };
+		glm::vec3 direction{ glm::normalize(m_LastValidLoc - blockCenter) * 0.001f };
 
 		glm::vec3 center{ blockCenter };
 		Vector3i block{ static_cast<int>(center.x < 0.0f ? center.x - 1.0f : center.x), static_cast<int>(center.y < 0.0f ? center.y - 1.0f : center.y), static_cast<int>(center.z < 0.0f ? center.z - 1.0f : center.z) };
@@ -43,28 +43,53 @@ void Player::move()
 		glm::vec3 camPos{ m_Cam.getLocation() };
 		int intersects{};
 
+		bool collideX{};
+		bool collideY{};
+		bool collideZ{};
+
 		if (block.x != collsionPos.x)
 		{
-			m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+			collideX = true;
 			++intersects;
 		}
 
 		if (block.y != collsionPos.y)
 		{
-			m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
+			collideY = true;
 			++intersects;
 		}
 
 		if (block.z != collsionPos.z)
 		{
-			m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
+			collideZ = true;
 			++intersects;
 		}
 
-		if (intersects != 1)
+		if (intersects > 1)
 		{
-			std::cout << intersects << "\n";
-			//break;
+			if (m_LastCollideX)
+				m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+
+			if (m_LastCollideY)
+				m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
+
+			if (m_LastCollideZ)
+				m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
+		}
+		else
+		{
+			if (collideX)
+				m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+
+			if (collideY)
+				m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
+
+			if (collideZ)
+				m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
+
+			m_LastCollideX = collideX;
+			m_LastCollideY = collideY;
+			m_LastCollideZ = collideZ;
 		}
 
 		m_Aabb = createPlayerAABB(m_Cam.getLocation());
@@ -77,8 +102,8 @@ void Player::move()
 AABB Player::createPlayerAABB(glm::vec3 playerPos)
 {
 	AABB aabb{};
-	aabb.min(glm::vec3{ playerPos.x - 0.45f, playerPos.y - 0.45f, playerPos.z - 0.45f });
-	aabb.max(glm::vec3{ playerPos.x + 0.45f, playerPos.y + 0.45f, playerPos.z + 0.45f });
+	aabb.min(glm::vec3{ playerPos.x - 0.35f, playerPos.y - 0.35f, playerPos.z - 0.35f });
+	aabb.max(glm::vec3{ playerPos.x + 0.35f, playerPos.y + 0.35f, playerPos.z + 0.35f });
 	return aabb;
 }
 
@@ -262,6 +287,10 @@ void Player::placeBlock(BlockType type)
 			return;
 
 		if (!m_Manager->chunkExsists(placePos))
+			return;
+
+		AABB blockAABB{ glm::vec3{ placePos.x, placePos.y, placePos.z }, glm::vec3{ placePos.x + 1, placePos.y + 1, placePos.z + 1 } };
+		if (m_Aabb.intersects(blockAABB))
 			return;
 
 		m_Manager->setWorldBlock(placePos, type);

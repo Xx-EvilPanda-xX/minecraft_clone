@@ -18,7 +18,7 @@ namespace constants
 
 	constexpr int renderDistance{ 10 };
 
-	constexpr float playerReach{ 10.0f };
+	constexpr float playerReach{ 8.0f };
 	constexpr float blockBreakCooldown{ 0.15f };
 	constexpr float blockPlaceCooldown{ 0.15f };
 
