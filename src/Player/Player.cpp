@@ -18,8 +18,12 @@ void Player::move()
 	m_Cam.handleKeyboard(m_Velocity, Application::m_Dt);
 	calculateVelocity();
 
+	//gravity
+	if (!m_Flying)
+		m_Velocity.y -= Application::m_Dt * constants::gravity;
+
 	Vector3i collsionPos{};
-	bool update{ true };
+	bool onGround{ false };
 
 	m_Aabb = createPlayerAABB(m_Cam.getLocation());
 
@@ -34,6 +38,7 @@ void Player::move()
 
 	while (testCollide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType))
 	{
+
 		glm::vec3 blockCenter{ collsionPos.x + 0.5f, collsionPos.y + 0.5f, collsionPos.z + 0.5f };
 		glm::vec3 lastValidLoc;
 
@@ -91,26 +96,44 @@ void Player::move()
 				m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
 
 			if (m_LastCollideY)
+			{
 				m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
+				m_Velocity.y = 0.0f;
+				onGround = true;
+			}
 
 			if (m_LastCollideZ)
 				m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
+
+			m_LastCollideX = false;
+			m_LastCollideY = false;
+			m_LastCollideZ = false;
 		}
 		else
 		{
 			if (collideX)
+			{
 				m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+				m_LastCollideX = true;
+			}
+				
 
 			if (collideY)
+			{
 				m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
+				m_Velocity.y = 0.0f;
+				onGround = true;
+				m_LastCollideY = true;
+			}
 
 			if (collideZ)
+			{
 				m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
-
-			m_LastCollideX = collideX;
-			m_LastCollideY = collideY;
-			m_LastCollideZ = collideZ;
+				m_LastCollideZ = true;
+			}
 		}
+
+		m_Grounded = onGround;
 
 		m_Aabb = createPlayerAABB(m_Cam.getLocation());
 
@@ -505,6 +528,21 @@ glm::vec3& Player::getVelocity()
 bool Player::isSprinting()
 {
 	return m_Sprinting;
+}
+
+bool Player::isGrounded()
+{
+	return m_Grounded;
+}
+
+bool Player::isFlying()
+{
+	return m_Flying;
+}
+
+void Player::setFlying(bool flying)
+{
+	m_Flying = flying;
 }
 
 void Player::setSprinting(bool sprinting)

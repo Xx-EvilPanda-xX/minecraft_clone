@@ -6,6 +6,8 @@ BlockType EventHandler::selectedBlock{ BlockType::Stone };
 
 void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& player)
 {
+	static float flyToggleCooldown{};
+
 	if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(app.getWindow().getWindow(), true);
 
@@ -42,14 +44,22 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
 	{
-		if (player.getVelocity().y < velocityLimit)
-			player.getVelocity().y += (constants::playerDrift * 10.0f) * Application::m_Dt;
+		if (player.isFlying())
+		{
+			if (player.getVelocity().y < velocityLimit)
+				player.getVelocity().y += (constants::playerDrift * 10.0f) * Application::m_Dt;
+		}
+		else
+			player.getVelocity().y += Application::m_Dt * constants::jumpHeight;
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
 	{
-		if (player.getVelocity().y > -velocityLimit)
-			player.getVelocity().y -= (constants::playerDrift * 10.0f) * Application::m_Dt;
+		if (player.isFlying())
+		{
+			if (player.getVelocity().y > -velocityLimit)
+				player.getVelocity().y -= (constants::playerDrift * 10.0f) * Application::m_Dt;
+		}
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_C))
@@ -57,7 +67,15 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	if (keyboard.isKeyDown(GLFW_KEY_F))
+	if (keyboard.isKeyDown(GLFW_KEY_F) && flyToggleCooldown <= 0.0f)
+	{
+		player.setFlying(!player.isFlying());
+		flyToggleCooldown = 0.15f;
+	}
+
+	flyToggleCooldown -= Application::m_Dt;
+
+	if (keyboard.isKeyDown(GLFW_KEY_B))
 		std::cout << "XYZ: " << app.getCamera().getLocation().x << ", " << app.getCamera().getLocation().y << ", " << app.getCamera().getLocation().z << "\n";
 
 	if (keyboard.isKeyDown(GLFW_KEY_G))

@@ -28,6 +28,8 @@ private:
 	bool m_LastCollideZ;
 
 	bool m_Sprinting;
+	bool m_Grounded;
+	bool m_Flying;
 	float m_Reach;
 
 	Vector3i* breakIntersect();
@@ -62,6 +64,12 @@ public:
 	glm::vec3& getVelocity();
 
 	bool isSprinting();
+
+	bool isGrounded();
+
+	bool isFlying();
+
+	void setFlying(bool flying);
 	
 	void setSprinting(bool sprinting);
 };
