@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <random>
 #include <glm/glm.hpp>
 #include "Camera.h"
 #include "../World/ChunkManager.h"
@@ -20,6 +21,9 @@ private:
 	glm::vec3 m_Velocity;
 	AABB m_Aabb;
 
+	std::mt19937 m_Rand;
+	std::uniform_int_distribution<> m_Die;
+
 	glm::vec3 m_LastValidLoc;
 	AABB m_LastValidAABB;
 	
@@ -31,6 +35,8 @@ private:
 	bool m_Grounded;
 	bool m_Flying;
 	float m_Reach;
+
+	int m_Moves;
 
 	Vector3i* breakIntersect();
 

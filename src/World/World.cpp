@@ -8,6 +8,8 @@
 #include "ChunkManager.h"
 #include "../Constants.h"
 
+#define DEBUG
+
 World::World(TerrainGenerator worldGen, Shader shader, Player player)
 	: m_WorldGen{ worldGen },
 	m_Shader{ shader },
@@ -41,6 +43,12 @@ void World::genPass()
 	{
 		Vector2i chunkPos{ m_Manager.getGenQueue().back() };
 		m_Manager.getGenQueue().pop_back();
+
+#ifdef DEBUG
+		if (chunkPos.x > 4 || chunkPos.x < -4 || chunkPos.y > 4 || chunkPos.y < -4)
+			return;
+#endif // DEBUG
+
 
 		Chunk* chunk{ new Chunk(chunkPos, m_Shader) };
 

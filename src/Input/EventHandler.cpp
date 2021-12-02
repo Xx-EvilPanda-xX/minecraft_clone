@@ -49,8 +49,10 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 			if (player.getVelocity().y < velocityLimit)
 				player.getVelocity().y += (constants::playerDrift * 10.0f) * Application::m_Dt;
 		}
-		else
-			player.getVelocity().y += Application::m_Dt * constants::jumpHeight;
+		else if (player.isGrounded())
+		{
+			player.getVelocity().y += constants::jumpHeight * 10.0f;
+		}
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
