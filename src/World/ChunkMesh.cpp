@@ -3,15 +3,16 @@
 #include "ChunkMesh.h"
 #include "Chunk.h"
 
-ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader) 
+ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader)
 	: m_Pos{ pos },
-	m_RenderData{ 0, 0, 0, 0, 0, 0, &shader }
+	m_RenderData{ 0, 0, 0, 0, 0, 0, &shader },
+	m_FaceRatio{ 1.0f / facesPerRow }
 {
 	hasValidObjects = false;
 }
 
 Texture ChunkMesh::s_TexAltas{ Texture{} };
-BlockType ChunkMesh::s_AtlasIndices[]{ BlockType::Grass, BlockType::Stone, BlockType::Dirt, BlockType::CobbleStone, BlockType::Wood, BlockType::Leaves, BlockType::Glass, BlockType::CraftingTable, BlockType::Planks, BlockType::DiamondBlock, BlockType::Water };
+BlockType ChunkMesh::s_AtlasIndices[]{ BlockType::Grass, BlockType::Stone, BlockType::Dirt, BlockType::CobbleStone, BlockType::Wood, BlockType::Leaves, BlockType::Glass, BlockType::CraftingTable, BlockType::Planks, BlockType::DiamondBlock, BlockType::Water, BlockType::Sand };
 
 void ChunkMesh::createTextureAtlas(const char* path)
 {
@@ -72,12 +73,12 @@ float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 		}
 	}
 
-	float fullIndex{ index * (6 * faceRatio) };
+	float fullIndex{ index * (6 * m_FaceRatio) };
 
 	//extract integer part and decimal part of float
 	float y{ static_cast<float>(static_cast<int>(fullIndex)) };
 	float x{ fullIndex - y };
-	y *= faceRatio;
+	y *= m_FaceRatio;
 	
 	glm::vec2 startCoord{ x, y };
 
@@ -91,31 +92,31 @@ float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 		}	
 		case Face::North:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::East:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio * 2.0f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio * 2.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::South:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio * 3.0f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio * 3.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::West:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio * 4.0f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio * 4.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::Down:
 		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ faceRatio * 5.0f, 0.0f } };
+			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio * 5.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
@@ -126,7 +127,7 @@ void ChunkMesh::checkTexCoordBounds(glm::vec2& faceStartCoords)
 {
 	if (faceStartCoords.x >= 1.0f)
 	{
-		faceStartCoords.y += faceRatio;
+		faceStartCoords.y += m_FaceRatio;
 		faceStartCoords.x = faceStartCoords.x - 1.0f;
 	}
 }
@@ -135,13 +136,13 @@ float* ChunkMesh::getTexCoordsFromStartPos(glm::vec2 startPos)
 {
 	float* coords{ new float[8]{} };
 	
-	coords[0] = startPos.x + faceRatio;
-	coords[1] = startPos.y + faceRatio;
+	coords[0] = startPos.x + m_FaceRatio;
+	coords[1] = startPos.y + m_FaceRatio;
 
 	coords[2] = startPos.x;
-	coords[3] = startPos.y + faceRatio;
+	coords[3] = startPos.y + m_FaceRatio;
 
-	coords[4] = startPos.x + faceRatio;
+	coords[4] = startPos.x + m_FaceRatio;
 	coords[5] = startPos.y;
 
 	coords[6] = startPos.x;
@@ -162,7 +163,7 @@ void ChunkMesh::pushUp(Vector3i loc)
 
 	for (int i{}; i < 4; ++i)
 	{
-		pushLighting(1.0f);
+		pushLighting(upAmbient);
 	}
 
 	pushNewIndices(size);
@@ -179,7 +180,7 @@ void ChunkMesh::pushDown(Vector3i loc)
 
 	for (int i{}; i < 4; ++i)
 	{
-		pushLighting(0.6f);
+		pushLighting(downAmbient);
 	}
 
 	pushNewIndices(size);
@@ -197,7 +198,7 @@ void ChunkMesh::pushNorth(Vector3i loc)
 	
 	for (int i{}; i < 4; ++i)
 	{
-		pushLighting(0.8f);
+		pushLighting(northAmbient);
 	}
 
 	pushNewIndices(size);
@@ -214,7 +215,7 @@ void ChunkMesh::pushSouth(Vector3i loc)
 
 	for (int i{}; i < 4; ++i)
 	{
-		pushLighting(0.8f);
+		pushLighting(southAmbient);
 	}
 
 	pushNewIndices(size);
@@ -231,7 +232,7 @@ void ChunkMesh::pushEast(Vector3i loc)
 
 	for (int i{}; i < 4; ++i)
 	{
-		pushLighting(0.8f);
+		pushLighting(eastAmbient);
 	}
 
 	pushNewIndices(size);
@@ -249,7 +250,7 @@ void ChunkMesh::pushWest(Vector3i loc)
 
 	for (int i{}; i < 4; ++i)
 	{
-		pushLighting(0.8f);
+		pushLighting(westAmbient);
 	}
 	
 	pushNewIndices(size);

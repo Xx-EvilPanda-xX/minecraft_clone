@@ -9,6 +9,7 @@ enum BlockType
 	Grass,
 	Stone,
 	Dirt,
+	Sand,
 	CobbleStone,
 	Wood,
 	Leaves,

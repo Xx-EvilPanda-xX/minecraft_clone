@@ -9,7 +9,14 @@
 #include "../Render/Texture.h"
 #include "../World/Block.h"
 
-constexpr float faceRatio{ 0.1f };
+constexpr int facesPerRow{ 10 };
+
+constexpr float upAmbient{ 1.0f };
+constexpr float northAmbient{ 0.9f };
+constexpr float eastAmbient{ 0.8f };
+constexpr float southAmbient{ 0.9f };
+constexpr float westAmbient{ 0.8f };
+constexpr float downAmbient{ 0.6f };
 
 enum class Face
 {
@@ -32,6 +39,7 @@ private:
 	bool hasValidObjects;
 	static Texture s_TexAltas;
 	static BlockType s_AtlasIndices[];
+	const float m_FaceRatio;
 
 	Face currentFace;
 

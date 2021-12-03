@@ -16,7 +16,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	else
 		player.setSprinting(false);
 
-	float velocityLimit{ player.isSprinting() ? 20.0f : 5.0f };
+	float velocityLimit{ player.isSprinting() ? 15.0f : 3.5f };
 
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
@@ -140,7 +140,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	if (keyboard.isKeyDown(GLFW_KEY_7))
 		selectedBlock = BlockType::Glass;
 	if (keyboard.isKeyDown(GLFW_KEY_8))
-		selectedBlock = BlockType::CraftingTable;
+		selectedBlock = BlockType::Sand;
 	if (keyboard.isKeyDown(GLFW_KEY_9))
 		selectedBlock = BlockType::Planks;
 	if (keyboard.isKeyDown(GLFW_KEY_0))

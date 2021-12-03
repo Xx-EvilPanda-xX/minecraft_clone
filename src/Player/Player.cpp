@@ -190,18 +190,18 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 	Vector3i upperBlock{ static_cast<int>(playerUpperHalf.x), static_cast<int>(playerUpperHalf.y), static_cast<int>(playerUpperHalf.z) };
 
 	if (playerLowerHalf.x < 0.0f)
-		lowerBlock.x -= 1;
+		--lowerBlock.x;
 	if (playerLowerHalf.y < 0.0f)
-		lowerBlock.y -= 1;
+		--lowerBlock.y;
 	if (playerLowerHalf.z < 0.0f)
-		lowerBlock.z -= 1;
+		--lowerBlock.z;
 
 	if (playerUpperHalf.x < 0.0f)
-		upperBlock.x -= 1;
+		--upperBlock.x;
 	if (playerUpperHalf.y < 0.0f)
-		upperBlock.y -= 1;
+		--upperBlock.y;
 	if (playerUpperHalf.z < 0.0f)
-		upperBlock.z -= 1;
+		--upperBlock.z;
 
 	bool collision{ false };
 

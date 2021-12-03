@@ -9,7 +9,7 @@ namespace constants
 	constexpr int fullscreenWidth{ 1920 };
 	constexpr int fullscreenHeight{ 1080 };
 
-	constexpr bool fullscreen{ false };
+	constexpr bool fullscreen{ true };
 
 	constexpr float mouse_sensitivity{ 0.035f };
 
@@ -27,7 +27,7 @@ namespace constants
 	constexpr float playerDrift{ 20.0f };
 	constexpr float playerSize{ 0.45f };
 
-	constexpr float gravity{ 75.0f };
+	constexpr float gravity{ 60.0f };
 	constexpr float jumpHeight{ 1.75f };
 }
 

@@ -16,6 +16,8 @@ Block::Block(BlockType type)
 		break;
 	case Dirt:
 		break;
+	case Sand:
+		break;
 	case CobbleStone:
 		break;
 	case Wood:
