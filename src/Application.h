@@ -15,7 +15,7 @@ class Application
 {
 private:
 	Window m_Window;
-	World* m_World;
+	World m_World;
 	Camera m_Camera;
 
 	RenderData m_CrossHair;
@@ -37,9 +37,9 @@ private:
 	void createCrosshair();
 
 public:
-	static float m_Dt;
+	static float s_Dt;
 
-	Application(int windowWidth, int windowHeight, const char* title);
+	Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager);
 
 	void init();
 
@@ -49,7 +49,7 @@ public:
 
 	Camera& getCamera();
 
-	World* getWorld();
+	World& getWorld();
 
 	void renderCrosshair();
 };

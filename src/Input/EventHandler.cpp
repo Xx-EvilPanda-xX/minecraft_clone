@@ -21,25 +21,25 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
 		if (player.getVelocity().z < velocityLimit)
-			player.getVelocity().z += (constants::playerDrift * 10.0f) * Application::m_Dt;
+			player.getVelocity().z += (constants::playerDrift * 10.0f) * Application::s_Dt;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_A))
 	{
 		if (player.getVelocity().x > -velocityLimit)
-			player.getVelocity().x -= (constants::playerDrift * 10.0f) * Application::m_Dt;
+			player.getVelocity().x -= (constants::playerDrift * 10.0f) * Application::s_Dt;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_S))
 	{
 		if (player.getVelocity().z > -velocityLimit)
-			player.getVelocity().z -= (constants::playerDrift * 10.0f) * Application::m_Dt;
+			player.getVelocity().z -= (constants::playerDrift * 10.0f) * Application::s_Dt;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_D))
 	{
 		if (player.getVelocity().x < velocityLimit)
-			player.getVelocity().x += (constants::playerDrift * 10.0f) * Application::m_Dt;
+			player.getVelocity().x += (constants::playerDrift * 10.0f) * Application::s_Dt;
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
@@ -47,7 +47,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		if (player.isFlying())
 		{
 			if (player.getVelocity().y < velocityLimit)
-				player.getVelocity().y += (constants::playerDrift * 10.0f) * Application::m_Dt;
+				player.getVelocity().y += (constants::playerDrift * 10.0f) * Application::s_Dt;
 		}
 		else if (player.isGrounded())
 		{
@@ -60,7 +60,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		if (player.isFlying())
 		{
 			if (player.getVelocity().y > -velocityLimit)
-				player.getVelocity().y -= (constants::playerDrift * 10.0f) * Application::m_Dt;
+				player.getVelocity().y -= (constants::playerDrift * 10.0f) * Application::s_Dt;
 		}
 	}
 
@@ -75,18 +75,18 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		flyToggleCooldown = 0.15f;
 	}
 
-	flyToggleCooldown -= Application::m_Dt;
+	flyToggleCooldown -= Application::s_Dt;
 
 	if (keyboard.isKeyDown(GLFW_KEY_B))
 		std::cout << "XYZ: " << app.getCamera().getLocation().x << ", " << app.getCamera().getLocation().y << ", " << app.getCamera().getLocation().z << "\n";
 
 	if (keyboard.isKeyDown(GLFW_KEY_G))
-		app.getWorld()->reloadChunks(app.getCamera());
+		app.getWorld().reloadChunks(app.getCamera());
 
 	if (keyboard.isKeyDown(GLFW_KEY_V))
 	{
 		Vector2i chunkPos{ static_cast<int>(app.getCamera().getLocation().x) / 16, static_cast<int>(app.getCamera().getLocation().z) / 16 };
-		std::cout << "Chunk index: " << app.getWorld()->getChunkIndex(chunkPos) << "\n";
+		std::cout << "Chunk index: " << app.getWorld().getChunkIndex(chunkPos) << "\n";
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_R))
@@ -97,7 +97,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		if (app.getCamera().getLocation().y < 0.0f)
 			blockPos.y -= 1;
 
-		Block block{ app.getWorld()->getManager().getWorldBlock(blockPos) };
+		Block block{ app.getWorld().getManager().getWorldBlock(blockPos) };
 
 		switch (block.getType())
 		{
@@ -147,7 +147,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		selectedBlock = BlockType::DiamondBlock;
 
 	if (keyboard.isKeyDown(GLFW_KEY_P))
-		std::cout << "Address of first chunk: " << app.getWorld()->getChunks()[0] << "\n";
+		std::cout << "Address of first chunk: " << app.getWorld().getChunks()[0] << "\n";
 }
 
 void EventHandler::mouseEvent(Mouse& mouse, Player& player)
@@ -167,6 +167,6 @@ void EventHandler::mouseEvent(Mouse& mouse, Player& player)
 		placeCooldown = constants::blockPlaceCooldown;
 	}
 
-	breakCooldown -= Application::m_Dt;
-	placeCooldown -= Application::m_Dt;
+	breakCooldown -= Application::s_Dt;
+	placeCooldown -= Application::s_Dt;
 }

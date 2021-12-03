@@ -4,7 +4,7 @@
 #include "../Application.h"
 #include "../Constants.h"
 
-Player::Player(Camera& cam, ChunkManager* manager, float reach) 
+Player::Player(Camera& cam, ChunkManager& manager, float reach) 
 	: m_Cam{ cam },
 	m_Manager{ manager },
 	m_Reach{ reach }
@@ -19,14 +19,11 @@ Player::Player(Camera& cam, ChunkManager* manager, float reach)
 void Player::move()
 {
 	calculateVelocity();
-	m_Cam.handleKeyboard(m_Velocity, Application::m_Dt);
+	m_Cam.handleKeyboard(m_Velocity, Application::s_Dt);
 
 	//gravity
 	if (!m_Flying && !m_Grounded)
-		m_Velocity.y -= Application::m_Dt * constants::gravity;
-
-	if (m_Velocity.z == 0.0f)
-		int i{};
+		m_Velocity.y -= Application::s_Dt * constants::gravity;
 
 	Vector3i collsionPos{};
 	bool onGround{ false };
@@ -177,8 +174,6 @@ void Player::move()
 
 	m_LastValidLoc = m_Cam.getLocation();
 	m_LastValidAABB = createPlayerAABB(m_LastValidLoc);
-
-	++m_Moves;
 }
 
 AABB Player::createPlayerAABB(glm::vec3 playerPos)
@@ -225,7 +220,7 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 			for (int z{ lowerBlock.z - 2 }; z < lowerBlock.z + 2; ++z)
 			{
 				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
-				Block block{ m_Manager->getWorldBlock(Vector3i{ x, y, z }) };
+				Block block{ m_Manager.getWorldBlock(Vector3i{ x, y, z }) };
 				if (blockAABB.intersects(playerAABB) && block.getType() != BlockType::Air)
 				{
 					glm::vec3 blockCenter{ x + 0.5f, y + 0.5f, z + 0.5f };
@@ -252,7 +247,7 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 			for (int z{ upperBlock.z - 2 }; z < upperBlock.z + 2; ++z)
 			{
 				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
-				Block block{ m_Manager->getWorldBlock(Vector3i{ x, y, z }) };
+				Block block{ m_Manager.getWorldBlock(Vector3i{ x, y, z }) };
 				if (blockAABB.intersects(playerAABB) && block.getType() != BlockType::Air)
 				{
 					glm::vec3 blockCenter{ x + 0.5f, y + 0.5f, z + 0.5f };
@@ -307,39 +302,39 @@ void Player::calculateVelocity()
 {
 	if (m_Velocity.x < 0.0f)
 	{
-		m_Velocity.x += constants::playerDrift * Application::m_Dt;
+		m_Velocity.x += constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.x > 0.0f)
 			m_Velocity.x = 0.0f;
 	}
 	else
 	{
-		m_Velocity.x -= constants::playerDrift * Application::m_Dt;
+		m_Velocity.x -= constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.x < 0.0f)
 			m_Velocity.x = 0.0f;
 	}
 
 	if (m_Velocity.y < 0.0f)
 	{
-		m_Velocity.y += constants::playerDrift * Application::m_Dt;
+		m_Velocity.y += constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.y > 0.0f)
 			m_Velocity.y = 0.0f;
 	}	
 	else
 	{
-		m_Velocity.y -= constants::playerDrift * Application::m_Dt;
+		m_Velocity.y -= constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.y < 0.0f)
 			m_Velocity.y = 0.0f;
 	}
 
 	if (m_Velocity.z < 0.0f)
 	{
-		m_Velocity.z += constants::playerDrift * Application::m_Dt;
+		m_Velocity.z += constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.z > 0.0f)
 			m_Velocity.z = 0.0f;
 	}	
 	else
 	{
-		m_Velocity.z -= constants::playerDrift * Application::m_Dt;
+		m_Velocity.z -= constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.z < 0.0f)
 			m_Velocity.z = 0.0f;
 	}
@@ -360,10 +355,10 @@ void Player::breakBlock()
 	{
 		Vector3i pos{ *breakPos };
 
-		if (!m_Manager->chunkExsists(pos))
+		if (!m_Manager.chunkExsists(pos))
 			return;
 
-		m_Manager->setWorldBlock(pos, BlockType::Air );
+		m_Manager.setWorldBlock(pos, BlockType::Air );
 
 		updateMeshes(pos);
 
@@ -392,14 +387,14 @@ void Player::placeBlock(BlockType type)
 		if (pos.y < 0.0f)
 			return;
 
-		if (!m_Manager->chunkExsists(placePos))
+		if (!m_Manager.chunkExsists(placePos))
 			return;
 
 		AABB blockAABB{ glm::vec3{ placePos.x, placePos.y, placePos.z }, glm::vec3{ placePos.x + 1, placePos.y + 1, placePos.z + 1 } };
 		if (m_Aabb.intersects(blockAABB))
 			return;
 
-		m_Manager->setWorldBlock(placePos, type);
+		m_Manager.setWorldBlock(placePos, type);
 
 		updateMeshes(placePos);
 
@@ -409,57 +404,57 @@ void Player::placeBlock(BlockType type)
 
 void Player::updateMeshes(Vector3i editPos)
 {
-	Chunk* chunk{ m_Manager->getChunk(editPos) };
+	Chunk* chunk{ m_Manager.getChunk(editPos) };
 
 	chunk->clearMesh();
 	for (int i{}; i < 16; ++i)
 	{
-		chunk->buildMesh(*m_Manager, i);
+		chunk->buildMesh(m_Manager, i);
 	}
 
 	Vector3i local{ sectionLocal(editPos) };
 
 	if (local.x == 15)
 	{
-		Chunk* chunkPosX{ m_Manager->getChunk(Vector2i{ chunk->getLocation().x + 1, chunk->getLocation().y }) };
+		Chunk* chunkPosX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x + 1, chunk->getLocation().y }) };
 
 		chunkPosX->clearMesh();
 		for (int i{}; i < 16; ++i)
 		{
-			chunkPosX->buildMesh(*m_Manager, i);
+			chunkPosX->buildMesh(m_Manager, i);
 		}
 	}
 
 	if (local.x == 0)
 	{
-		Chunk* chunkNegX{ m_Manager->getChunk(Vector2i{ chunk->getLocation().x - 1, chunk->getLocation().y }) };
+		Chunk* chunkNegX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x - 1, chunk->getLocation().y }) };
 
 		chunkNegX->clearMesh();
 		for (int i{}; i < 16; ++i)
 		{
-			chunkNegX->buildMesh(*m_Manager, i);
+			chunkNegX->buildMesh(m_Manager, i);
 		}
 	}
 
 	if (local.z == 15)
 	{
-		Chunk* chunkPosY{ m_Manager->getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y + 1 }) };
+		Chunk* chunkPosY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y + 1 }) };
 
 		chunkPosY->clearMesh();
 		for (int i{}; i < 16; ++i)
 		{
-			chunkPosY->buildMesh(*m_Manager, i);
+			chunkPosY->buildMesh(m_Manager, i);
 		}
 	}
 
 	if (local.z == 0)
 	{
-		Chunk* chunkNegY{ m_Manager->getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y - 1 }) };
+		Chunk* chunkNegY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y - 1 }) };
 
 		chunkNegY->clearMesh();
 		for (int i{}; i < 16; ++i)
 		{
-			chunkNegY->buildMesh(*m_Manager, i);
+			chunkNegY->buildMesh(m_Manager, i);
 		}
 	}
 }
@@ -495,7 +490,7 @@ Vector3i* Player::breakIntersect()
 		if (currentPos.z < 0.0f)
 			blockPos.z -= 1;
 
-		if (m_Manager->getWorldBlock(blockPos).getType() != BlockType::Air)
+		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air)
 		{
 			breakPos = new Vector3i{ blockPos };
 			break;
@@ -525,7 +520,7 @@ glm::vec3* Player::placeIntersect()
 		if (currentPos.z < 0.0f)
 			blockPos.z -= 1.0f;
 
-		if (m_Manager->getWorldBlock(blockPos).getType() != BlockType::Air)
+		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air)
 		{
 			placePos = new glm::vec3{ currentPos };
 			break;
@@ -545,11 +540,6 @@ float Player::getReach() const
 void Player::setReach(float reach)
 {
 	m_Reach = reach;
-}
-
-void Player::setManager(ChunkManager* manager)
-{
-	m_Manager = manager;
 }
 
 glm::vec3& Player::getVelocity()

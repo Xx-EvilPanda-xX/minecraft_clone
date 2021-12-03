@@ -16,20 +16,19 @@
 #include "Render/Texture.h"
 #include "Constants.h"
 
-Application::Application(int windowWidth, int windowHeight, const char* title)
-	: m_World{ new World{ TerrainGenerator{}, Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ m_Camera, nullptr, constants::playerReach } } },
+Application::Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager)
+	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ m_Camera, chunkManager, constants::playerReach }, chunkManager },
 	m_Window{ windowWidth, windowHeight, title },
 	m_Camera{ glm::vec3{ 0.0f, 96.0f, 0.0f }, 0.0f, 0.0f, 90.0f, m_Window.getWindow() }
 {
+	chunkManager.setWorld(&m_World);
+
 	frames = 0;
 	time = 0;
 	m_LastFrame = 0;
-	m_Dt = 0;
-
-	m_World->getPlayer().setManager(&m_World->getManager());
 }
 
-float Application::m_Dt{};
+float Application::s_Dt{};
 
 void Application::init()
 {
@@ -101,7 +100,7 @@ void Application::runMainLoop()
 			deletePass = true;
 		}
 
-		m_World->worldRender(m_Camera, deletePass);
+		m_World.worldRender(m_Camera, deletePass);
 		renderCrosshair();
 
 		glfwSwapBuffers(m_Window.getWindow());
@@ -131,14 +130,14 @@ long Application::getCurrentTimeMillis()
 void Application::handleInput()
 {
 	float frame = static_cast<float>(glfwGetTime());
-	m_Dt = frame - m_LastFrame;
+	s_Dt = frame - m_LastFrame;
 	m_LastFrame = frame;
 
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };
 
-	EventHandler::keyboardEvent(keyboard, *this, m_World->getPlayer());
-	EventHandler::mouseEvent(mouse, m_World->getPlayer());
+	EventHandler::keyboardEvent(keyboard, *this, m_World.getPlayer());
+	EventHandler::mouseEvent(mouse, m_World.getPlayer());
 
 	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() });
 }
@@ -189,7 +188,7 @@ Camera& Application::getCamera()
 	return m_Camera;
 }
 
-World* Application::getWorld()
+World& Application::getWorld()
 {
 	return m_World;
 }

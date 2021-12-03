@@ -17,7 +17,7 @@ class Player
 {
 private:
 	Camera& m_Cam;
-	ChunkManager* m_Manager;
+	ChunkManager& m_Manager;
 	glm::vec3 m_Velocity;
 	AABB m_Aabb;
 
@@ -36,8 +36,6 @@ private:
 	bool m_Flying;
 	float m_Reach;
 
-	int m_Moves;
-
 	Vector3i* breakIntersect();
 
 	glm::vec3* placeIntersect();
@@ -53,7 +51,7 @@ private:
 	AABB createPlayerAABB(glm::vec3 playerPos);
 
 public:
-	Player(Camera& cam, ChunkManager* manager, float reach);
+	Player(Camera& cam, ChunkManager& manager, float reach);
 
 	void move();
 
@@ -64,8 +62,6 @@ public:
 	float getReach() const;
 
 	void setReach(float reach);
-
-	void setManager(ChunkManager* manager);
 
 	glm::vec3& getVelocity();
 

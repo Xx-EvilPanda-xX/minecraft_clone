@@ -238,7 +238,7 @@ bool Chunk::isComplete() const
 
 const Vector2i Chunk::getLocation() const
 {
-	return m_Location; 
+	return m_Location;
 }
 
 ChunkSection* Chunk::getSection(int index) const

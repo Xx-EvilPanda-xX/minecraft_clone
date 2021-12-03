@@ -53,6 +53,8 @@ public:
 	Chunk* getChunk(Vector2i chunkLoc) const;
 
 	void clearQueues();
+
+	void setWorld(World* world);
 };
 
 #endif

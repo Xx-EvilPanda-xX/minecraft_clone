@@ -8,19 +8,27 @@
 #include "ChunkManager.h"
 #include "../Constants.h"
 
-#define DEBUG
+//#define DEBUG
 
-World::World(TerrainGenerator worldGen, Shader shader, Player player)
-	: m_WorldGen{ worldGen },
-	m_Shader{ shader },
-	m_Manager{ this },
+World::World(Shader shader, Player player, ChunkManager& manager)
+	: m_Shader{ shader },
+	m_Manager{ manager },
 	m_Player{ player }
 {
 }
 
 void World::worldRender(const Camera& camera, bool deletePass)
 {
-	m_Player.move();
+	Vector3i loc{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().y), static_cast<int>(camera.getLocation().z) };
+	if (camera.getLocation().x < 0.0f)
+		--loc.x;
+	if (camera.getLocation().y < 0.0f)
+		--loc.y;
+	if (camera.getLocation().z < 0.0f)
+		--loc.z;
+
+	if (m_Manager.chunkExsists(loc))
+		m_Player.move();
 
 	m_Manager.updateQueues(camera);
 

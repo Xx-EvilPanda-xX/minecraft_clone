@@ -280,3 +280,8 @@ void ChunkManager::clearQueues()
 	m_BuildQueue.clear();
 }
 
+void ChunkManager::setWorld(World* world)
+{
+	m_World = world;
+}
+

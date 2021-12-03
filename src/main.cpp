@@ -6,7 +6,9 @@ int main()
 {
 	std::cout << "initializing...\n";
 
-	Application app{ constants::windowWidth, constants::windowHeight, "Minecraft!" };
+	ChunkManager chunkManager{ nullptr };
+
+	Application app{ constants::windowWidth, constants::windowHeight, "Minecraft!", chunkManager };
 	app.init();
 
 	std::cout << "done!\n";
