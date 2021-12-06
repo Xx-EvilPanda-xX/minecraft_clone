@@ -46,10 +46,6 @@ public:
 
 	glm::vec3 getFront() const;
 
-	glm::vec3 getRight() const;
-
-	glm::vec3 getWorldUp() const;
-
 	void setLocation(glm::vec3 loc);
 };
 

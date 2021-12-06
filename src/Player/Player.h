@@ -61,8 +61,6 @@ public:
 
 	float getReach() const;
 
-	void setReach(float reach);
-
 	glm::vec3& getVelocity();
 
 	bool isSprinting();
@@ -71,9 +69,11 @@ public:
 
 	bool isFlying();
 
-	void setFlying(bool flying);
-	
+	void setReach(float reach);
+
 	void setSprinting(bool sprinting);
+
+	void setFlying(bool flying);
 };
 
 #endif

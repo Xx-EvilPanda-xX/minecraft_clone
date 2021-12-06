@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -32,6 +33,8 @@ float Application::s_Dt{};
 
 void Application::init()
 {
+	std::cout << std::setprecision(4);
+
 	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas.png");
 	createCrosshair();
 }

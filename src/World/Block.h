@@ -18,7 +18,8 @@ enum BlockType
 	Planks,
 	DiamondBlock,
 	Water,
-	NumBlocks
+
+	NUM_BLOCKS
 };
 
 class Block
@@ -35,8 +36,6 @@ public:
 	BlockType getType() const;
 
 	bool isTransparent();
-
-	AABB& getBounds();
 };
 
 #endif

@@ -52,7 +52,7 @@ void Player::move()
 			break;
 		}
 
-		glm::vec3 direction{ glm::normalize(lastValidLoc - blockCenter) * 0.01f };
+		glm::vec3 direction{ glm::normalize(lastValidLoc - blockCenter) * 0.001f };
 		glm::vec3 center{ blockCenter };
 		Vector3i block{ static_cast<int>(center.x < 0.0f ? center.x - 1.0f : center.x), static_cast<int>(center.y < 0.0f ? center.y - 1.0f : center.y), static_cast<int>(center.z < 0.0f ? center.z - 1.0f : center.z) };
 		while (block == collsionPos)
@@ -70,19 +70,19 @@ void Player::move()
 		bool collideY{};
 		bool collideZ{};
 
-		if (block.x != collsionPos.x)
+		if (std::abs(block.x - collsionPos.x) == 1)
 		{
 			collideX = true;
 			++intersects;
 		}
 
-		if (block.y != collsionPos.y)
+		if (std::abs(block.y - collsionPos.y) == 1)
 		{
 			collideY = true;
 			++intersects;
 		}
 
-		if (block.z != collsionPos.z)
+		if (std::abs(block.z - collsionPos.z) == 1)
 		{
 			collideZ = true;
 			++intersects;
@@ -368,7 +368,7 @@ void Player::breakBlock()
 
 void Player::placeBlock(BlockType type)
 {
-	glm::vec3 camFront{ m_Cam.getFront() * 0.01f };
+	glm::vec3 camFront{ m_Cam.getFront() * 0.001f };
 	glm::vec3* intersect{ placeIntersect() };
 
 	if (intersect != nullptr)
@@ -474,7 +474,7 @@ Vector3i Player::sectionLocal(Vector3i worldPos)
 
 Vector3i* Player::breakIntersect()
 {
-	glm::vec3 camFront{ m_Cam.getFront() * 0.01f };
+	glm::vec3 camFront{ m_Cam.getFront() * 0.001f };
 	glm::vec3 currentPos{ m_Cam.getLocation() };
 	Vector3i* breakPos{ nullptr };
 
@@ -504,7 +504,7 @@ Vector3i* Player::breakIntersect()
 
 glm::vec3* Player::placeIntersect()
 {
-	glm::vec3 camFront{ m_Cam.getFront() * 0.01f };
+	glm::vec3 camFront{ m_Cam.getFront() * 0.001f };
 	glm::vec3 currentPos{ m_Cam.getLocation() };
 	glm::vec3* placePos{ nullptr };
 

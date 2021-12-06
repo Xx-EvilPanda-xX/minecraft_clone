@@ -89,42 +89,6 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		std::cout << "Chunk index: " << app.getWorld().getChunkIndex(chunkPos) << "\n";
 	}
 
-	if (keyboard.isKeyDown(GLFW_KEY_R))
-	{
-		const char* blockName{};
-		Vector3i blockPos{ static_cast<int>(app.getCamera().getLocation().x), static_cast<int>(app.getCamera().getLocation().y), static_cast<int>(app.getCamera().getLocation().z) };
-
-		if (app.getCamera().getLocation().y < 0.0f)
-			blockPos.y -= 1;
-
-		Block block{ app.getWorld().getManager().getWorldBlock(blockPos) };
-
-		switch (block.getType())
-		{
-		case BlockType::Air:
-			blockName = "Air";
-			break;
-
-		case BlockType::Dirt:
-			blockName = "Dirt";
-			break;
-
-		case BlockType::Grass:
-			blockName = "Grass";
-			break;
-
-		case BlockType::Stone:
-			blockName = "Stone";
-			break;
-
-		default:
-			blockName = "Unknown";
-			break;
-		}
-
-		std::cout << "Block at player position: " << blockName << "\n";
-	}
-
 	if (keyboard.isKeyDown(GLFW_KEY_1))
 		selectedBlock = BlockType::Grass;
 	if (keyboard.isKeyDown(GLFW_KEY_2))
@@ -146,7 +110,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	if (keyboard.isKeyDown(GLFW_KEY_0))
 		selectedBlock = BlockType::DiamondBlock;
 
-	if (keyboard.isKeyDown(GLFW_KEY_P))
+	if (keyboard.isKeyDown(GLFW_KEY_R))
 		std::cout << "Address of first chunk: " << app.getWorld().getChunks()[0] << "\n";
 }
 

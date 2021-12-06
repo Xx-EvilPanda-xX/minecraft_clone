@@ -40,9 +40,7 @@ private:
 	static Texture s_TexAltas;
 	static BlockType s_AtlasIndices[];
 	const float m_FaceRatio;
-
-	Face currentFace;
-
+	Face m_CurrentFace;
 	Vector2i m_Pos;
 
 	void storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data);

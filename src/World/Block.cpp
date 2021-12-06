@@ -28,7 +28,7 @@ Block::Block(BlockType type)
 	case Glass:
 		m_Transparent = true;
 		break;
-	case NumBlocks:
+	case NUM_BLOCKS:
 		break;
 	default:
 		break;

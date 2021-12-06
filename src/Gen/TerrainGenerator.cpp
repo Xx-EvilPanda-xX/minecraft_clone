@@ -43,7 +43,7 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Stone);
 					else if (wY < currentHeight - 1 && wY >= currentHeight - 6)
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Dirt);
-					else if (wY < constants::waterLevel + 1 && wY > constants::waterLevel - 3 && wY <= currentHeight)
+					else if (wY < constants::waterLevel + 1 && wY <= currentHeight)
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Sand);
 					else if (wY < currentHeight && wY >= currentHeight - 1)
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Grass);

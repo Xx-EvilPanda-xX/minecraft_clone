@@ -250,15 +250,7 @@ Chunk* ChunkManager::getChunk(Vector3i loc) const
 	if (loc.z < 0 && loc.z % 16 != 0)
 		--chunkLocation.y;
 
-	for (int i{}; i < m_World->getChunks().size(); ++i)
-	{
-		if (m_World->getChunks()[i]->getLocation() == chunkLocation)
-		{
-			return m_World->getChunks()[i];
-		}
-	}
-
-	return nullptr;
+	return getChunk(chunkLocation);
 }
 
 Chunk* ChunkManager::getChunk(Vector2i chunkLoc) const

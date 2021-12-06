@@ -7,6 +7,7 @@ class Keyboard
 {
 private:
 	GLFWwindow* m_Win;
+
 public:
 	Keyboard(GLFWwindow* win);
 

@@ -21,7 +21,7 @@ void ChunkMesh::createTextureAtlas(const char* path)
 
 void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 {
-	currentFace = face;
+	m_CurrentFace = face;
 
 	switch (face)
 	{
@@ -64,7 +64,7 @@ float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 	int e{};		
 
 	float index{};
-	for (int i{}; i < BlockType::NumBlocks; ++i)
+	for (int i{}; i < BlockType::NUM_BLOCKS; ++i)
 	{
 		if (s_AtlasIndices[i] == block)
 		{
