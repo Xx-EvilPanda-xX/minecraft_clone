@@ -16,8 +16,32 @@ ChunkManager::ChunkManager() = default;
 
 void ChunkManager::setWorldBlock(Vector3i loc, BlockType type)
 {
+	int chunkIndex{};
+	int sectionIndex{};
+	Vector3i sectionLocal{};
+
+	if (getBlockAbsoluteIndex(loc, chunkIndex, sectionIndex, sectionLocal))
+		m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(sectionLocal, type);
+}
+
+Block ChunkManager::getWorldBlock(Vector3i loc)
+{
+	int chunkIndex{};
+	int sectionIndex{};
+	Vector3i sectionLocal{};
+
+	if (getBlockAbsoluteIndex(loc, chunkIndex, sectionIndex, sectionLocal))
+		return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal);
+	else
+		return Block{};
+}
+
+bool ChunkManager::getBlockAbsoluteIndex(Vector3i loc, int& o_ChunkIndex, int& o_SectionIndex, Vector3i& o_SectionLocal)
+{
+	bool success{ true };
+
 	if (loc.y < 0 || loc.y > 255)
-		return;
+		success = false;
 
 	int chunkIndex{};
 	int sectionIndex{};
@@ -51,61 +75,21 @@ void ChunkManager::setWorldBlock(Vector3i loc, BlockType type)
 	}
 
 	if (!foundChunk)
-		return;
+		success = false;
 
 	sectionIndex = loc.y / 16;
 
 	if (sectionIndex > 15)
-		return;
+		success = false;
 
-	m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(sectionLocal, type);
-}
-
-Block ChunkManager::getWorldBlock(Vector3i loc)
-{
-	if (loc.y < 0 || loc.y > 255)
-		return Block{};
-
-	int chunkIndex{};
-	int sectionIndex{};
-
-	Vector3i sectionLocal{loc.x % 16, loc.y % 16, loc.z % 16 };
-	if (loc.x < 0 && sectionLocal.x != 0)
-		sectionLocal.x += 16;
-	if (loc.y < 0 && sectionLocal.y != 0)
-		sectionLocal.y += 16;
-	if (loc.z < 0 && sectionLocal.z != 0)
-		sectionLocal.z += 16;
-
-	Vector2i chunkLocation{ loc.x / 16, loc.z / 16 };
-
-	if (loc.x < 0 && sectionLocal.x != 0)
-		--chunkLocation.x;
-
-	if (loc.z < 0 && sectionLocal.z != 0)
-		--chunkLocation.y;
-
-	bool foundChunk{ false };
-
-	for (int i{}; i < m_World->getChunks().size(); ++i)
+	if (success)
 	{
-		if (m_World->getChunks()[i]->getLocation() == chunkLocation)
-		{
-			chunkIndex = i;
-			foundChunk = true;
-			break;
-		}
+		o_ChunkIndex = chunkIndex;
+		o_SectionIndex = sectionIndex;
+		o_SectionLocal = sectionLocal;
 	}
 
-	if (!foundChunk)
-		return Block{};
-
-	sectionIndex = loc.y / 16;
-
-	if (sectionIndex > 15)
-		return Block{};
-
-	return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal);
+	return success;
 }
 
 bool ChunkManager::chunkExsists(Vector3i loc) const
@@ -210,24 +194,16 @@ bool ChunkManager::isInBuildQueue(Chunk* build, int& o_Index)
 
 bool ChunkManager::isInGenQueue(Vector2i gen)
 {
-	for (int i{}; i < m_GenQueue.size(); ++i)
-	{
-		if (m_GenQueue[i] == gen)
-			return true;
-	}
+	int index;
 
-	return false;
+	return isInGenQueue(gen, index);
 }
 
 bool ChunkManager::isInBuildQueue(Chunk* build)
 {
-	for (int i{}; i < m_BuildQueue.size(); ++i)
-	{
-		if (m_BuildQueue[i] == build)
-			return true;
-	}
+	int index;
 
-	return false;
+	return isInBuildQueue(build, index);
 }
 
 std::vector<Vector2i>& ChunkManager::getGenQueue()
