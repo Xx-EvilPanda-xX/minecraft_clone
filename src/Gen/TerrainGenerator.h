@@ -13,7 +13,7 @@ private:
 	std::mt19937 m_Rand;
 	std::uniform_int_distribution<> m_Die;
 
-	const int m_MaxTreesPerChunk;
+	const int m_MaxTreesPerChunk{ 2 };
 
 	void genTree(ChunkSection* section, Vector3i pos);
 

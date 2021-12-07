@@ -33,8 +33,6 @@ float Application::s_Dt{};
 
 void Application::init()
 {
-	std::cout << std::setprecision(4);
-
 	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas.png");
 	createCrosshair();
 }
@@ -147,6 +145,7 @@ void Application::handleInput()
 
 void Application::renderCrosshair()
 {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 

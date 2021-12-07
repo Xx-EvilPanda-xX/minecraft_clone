@@ -46,6 +46,8 @@ public:
 
 	void updateQueues(const Camera& player);
 
+	Vector3i toSectionLocal(Vector3i worldPos);
+
 	std::vector<Vector2i>& getGenQueue();
 
 	std::vector<Chunk*>& getBuildQueue();

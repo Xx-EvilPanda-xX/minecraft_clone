@@ -5,14 +5,13 @@
 #include "../Constants.h"
 
 TerrainGenerator::TerrainGenerator()
-	: m_MaxTreesPerChunk{ 2 }
 {
 	m_Rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	m_Die = std::uniform_int_distribution<>{ 0, 64 };
 
 	std::mt19937 tempRand{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
-	int seed{ 1720700428 };
+	int seed{ tempDie(tempRand) };
 
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
@@ -48,7 +47,7 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 					else if (wY < currentHeight && wY >= currentHeight - 1)
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Grass);
 					else if (wY < constants::waterLevel)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Water);
+						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Air);
 					else
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Air);
 				}

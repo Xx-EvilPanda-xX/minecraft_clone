@@ -36,11 +36,11 @@ private:
 	bool m_Flying;
 	float m_Reach;
 
+	const float vecPrecision{ 0.025f };
+
 	Vector3i* breakIntersect();
 
 	glm::vec3* placeIntersect();
-
-	Vector3i sectionLocal(Vector3i worldPos);
 
 	void updateMeshes(Vector3i editPos);
 

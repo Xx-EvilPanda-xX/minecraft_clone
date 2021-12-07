@@ -46,14 +46,7 @@ bool ChunkManager::getBlockAbsoluteIndex(Vector3i loc, int& o_ChunkIndex, int& o
 	int chunkIndex{};
 	int sectionIndex{};
 
-	Vector3i sectionLocal{ loc.x % 16, loc.y % 16, loc.z % 16 };
-	if (loc.x < 0 && sectionLocal.x != 0)
-		sectionLocal.x += 16;
-	if (loc.y < 0 && sectionLocal.y != 0)
-		sectionLocal.y += 16;
-	if (loc.z < 0 && sectionLocal.z != 0)
-		sectionLocal.z += 16;
-
+	Vector3i sectionLocal{ toSectionLocal(loc) };
 	Vector2i chunkLocation{ loc.x / 16, loc.z / 16 };
 
 	if (loc.x < 0 && sectionLocal.x != 0)
@@ -190,6 +183,19 @@ bool ChunkManager::isInBuildQueue(Chunk* build, int& o_Index)
 	}
 
 	return false;
+}
+
+Vector3i ChunkManager::toSectionLocal(Vector3i worldPos)
+{
+	Vector3i sectionLocal{ worldPos.x % 16, worldPos.y % 16, worldPos.z % 16 };
+	if (worldPos.x < 0 && sectionLocal.x != 0)
+		sectionLocal.x += 16;
+	if (worldPos.y < 0 && sectionLocal.y != 0)
+		sectionLocal.y += 16;
+	if (worldPos.z < 0 && sectionLocal.z != 0)
+		sectionLocal.z += 16;
+
+	return sectionLocal;
 }
 
 bool ChunkManager::isInGenQueue(Vector2i gen)
