@@ -98,15 +98,26 @@ void World::destroyPass(Vector2i playerPos)
 			if (m_Manager.isInBuildQueue(m_Chunks[i], index))
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
 
-			delete m_Chunks[i];
-			m_Chunks[i] = nullptr;
-		}
-	}
+			Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
 
-	for (int i{ static_cast<int>(m_Chunks.size()) - 1 }; i >= 0; --i)
-	{
-		if (m_Chunks[i] == nullptr)
+			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x + 1, chunkLoc.y }), index))
+				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+
+			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x, chunkLoc.y + 1 }), index))
+				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+
+			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x - 1, chunkLoc.y }), index))
+				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+
+			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }), index))
+				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+
+			delete m_Chunks[i];
 			m_Chunks.erase(m_Chunks.begin() + i);
+
+			//erasing an element from the middle of the vec shifts all elements beyond that one down once, essentially incrementing i
+			--i;
+		}
 	}
 }
 
