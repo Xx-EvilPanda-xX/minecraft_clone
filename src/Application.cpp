@@ -33,8 +33,40 @@ float Application::s_Dt{};
 
 void Application::init()
 {
-	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas.png");
+	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_big.png");
 	createCrosshair();
+}
+
+void Application::runMainLoop()
+{
+	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+
+	while (!glfwWindowShouldClose(m_Window.getWindow()))
+	{
+		glfwSetCursorPos(m_Window.getWindow(), 0.0, 0.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		updateFPS();
+		handleInput();
+
+		bool deletePass{ false };
+		if (getCurrentTimeMillis() > (doDeletePass + 500))
+		{
+			doDeletePass = getCurrentTimeMillis();
+			deletePass = true;
+		}
+
+		m_World.worldUpdate(m_Camera, deletePass);
+		m_World.worldRender(m_Camera);
+		renderCrosshair();
+
+		glfwSwapBuffers(m_Window.getWindow());
+		glfwPollEvents();
+	}
 }
 
 void Application::createCrosshair()
@@ -76,37 +108,6 @@ void Application::createCrosshair()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	m_CrossHair.indexCount = sizeof(indices) / sizeof(indices[0]);
-}
-
-void Application::runMainLoop()
-{
-	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
-
-	while (!glfwWindowShouldClose(m_Window.getWindow()))
-	{
-		glfwSetCursorPos(m_Window.getWindow(), 0.0, 0.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		updateFPS();
-		handleInput();
-
-		bool deletePass{ false };
-		if (getCurrentTimeMillis() > (doDeletePass + 500))
-		{
-			doDeletePass = getCurrentTimeMillis();
-			deletePass = true;
-		}
-
-		m_World.worldRender(m_Camera, deletePass);
-		renderCrosshair();
-
-		glfwSwapBuffers(m_Window.getWindow());
-		glfwPollEvents();
-	}
 }
 
 void Application::updateFPS()

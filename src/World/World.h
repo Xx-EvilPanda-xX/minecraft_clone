@@ -24,7 +24,9 @@ private:
 public:
 	World(Shader shader, Player player, ChunkManager& manager);
 
-	void worldRender(const Camera& camera, bool deletePass);
+	void worldRender(const Camera& camera);
+	
+	void worldUpdate(const Camera& camera, bool deletePass);
 
 	void genPass();
 

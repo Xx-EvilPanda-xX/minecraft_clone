@@ -9,7 +9,7 @@
 #include "../Render/Texture.h"
 #include "../World/Block.h"
 
-constexpr int facesPerRow{ 10 };
+constexpr int facesPerRow{ 16 };
 
 constexpr float upAmbient{ 1.0f };
 constexpr float northAmbient{ 0.9f };

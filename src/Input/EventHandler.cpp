@@ -80,7 +80,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	if (keyboard.isKeyDown(GLFW_KEY_B))
 		std::cout << "XYZ: " << app.getCamera().getLocation().x << ", " << app.getCamera().getLocation().y << ", " << app.getCamera().getLocation().z << "\n";
 
-	if (keyboard.isKeyDown(GLFW_KEY_G))
+	if (keyboard.isKeyDown(GLFW_KEY_O))
 		app.getWorld().reloadChunks(app.getCamera());
 
 	if (keyboard.isKeyDown(GLFW_KEY_V))

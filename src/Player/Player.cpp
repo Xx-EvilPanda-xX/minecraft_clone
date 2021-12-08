@@ -132,7 +132,9 @@ void Player::move()
 			{
 				m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
 				m_Velocity.y = 0.0f;
-				onGround = true;
+
+				if (collisionType == CollsionType::PlayerLowerHalf)
+					onGround = true;
 			}
 
 			if (m_LastCollideZ)
@@ -149,7 +151,9 @@ void Player::move()
 			{
 				m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
 				m_Velocity.y = 0.0f;
-				onGround = true;
+
+				if (collisionType == CollsionType::PlayerLowerHalf)
+					onGround = true;
 			}
 
 			if (collideZ)
@@ -179,7 +183,7 @@ void Player::move()
 AABB Player::createPlayerAABB(glm::vec3 playerPos)
 {
 	AABB aabb{};
-	aabb.min(glm::vec3{ playerPos.x - constants::playerSize, playerPos.y - (1.0f + constants::playerSize), playerPos.z - constants::playerSize });
+	aabb.min(glm::vec3{ playerPos.x - constants::playerSize, playerPos.y - (3.0f * constants::playerSize), playerPos.z - constants::playerSize });
 	aabb.max(glm::vec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize, playerPos.z + constants::playerSize });
 	return aabb;
 }

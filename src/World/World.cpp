@@ -17,9 +17,10 @@ World::World(Shader shader, Player player, ChunkManager& manager)
 {
 }
 
-void World::worldRender(const Camera& camera, bool deletePass)
+void World::worldUpdate(const Camera& camera, bool deletePass)
 {
 	Vector3i loc{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().y), static_cast<int>(camera.getLocation().z) };
+	
 	if (camera.getLocation().x < 0.0f)
 		--loc.x;
 	if (camera.getLocation().y < 0.0f)
@@ -35,13 +36,17 @@ void World::worldRender(const Camera& camera, bool deletePass)
 	genPass();
 
 	if (deletePass)
-		destroyPass(Vector2i{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().z) });
+		destroyPass(Vector2i{ loc.x, loc.z });
 
 	buildPass();
-	
+}
+
+void World::worldRender(const Camera& camera)
+{
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
-		Renderer::drawMesh(camera, m_Chunks[i]->getMesh());
+		if (m_Chunks[i]->isBuilt())
+			Renderer::drawMesh(camera, m_Chunks[i]->getMesh());
 	}
 }
 
