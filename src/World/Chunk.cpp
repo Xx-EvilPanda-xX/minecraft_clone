@@ -52,17 +52,7 @@ void Chunk::addSection(ChunkSection* section)
 }
 
 void Chunk::buildMesh(ChunkManager& manager, int section)
-{
-	/*
-	if (!manager.chunkExsists(Vector2i{ m_Location.x + 1, m_Location.y })
-		|| !manager.chunkExsists(Vector2i{ m_Location.x, m_Location.y + 1 })
-		|| !manager.chunkExsists(Vector2i{ m_Location.x - 1, m_Location.y })
-		|| !manager.chunkExsists(Vector2i{ m_Location.x, m_Location.y - 1 }))
-	{
-		return;
-	}
-	*/
-	
+{	
 	if (section < 0 || section > 16)
 	{
 		std::cout << "Invalid section index!\n";

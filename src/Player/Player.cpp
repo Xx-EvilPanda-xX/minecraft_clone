@@ -21,6 +21,8 @@ void Player::move()
 	calculateVelocity();
 	m_Cam.handleKeyboard(m_Velocity, Application::s_Dt);
 
+	//std::cout << "velocity: " << m_Velocity.x << ", " << m_Velocity.y << ", " << m_Velocity.z << "\n";
+
 	//gravity
 	if (!m_Flying && !m_Grounded)
 		m_Velocity.y -= Application::s_Dt * constants::gravity;
@@ -29,8 +31,6 @@ void Player::move()
 	bool onGround{ false };
 
 	m_Aabb = createPlayerAABB(m_Cam.getLocation());
-
-	float playerHeight{ m_Aabb.max().y - m_Aabb.min().y };
 
 	glm::vec3 lowerPlayerHalf{ m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
 	glm::vec3 upperPlayerHalf{ m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
@@ -63,30 +63,31 @@ void Player::move()
 			block.z = static_cast<int>(center.z < 0.0f ? center.z - 1.0f : center.z);
 		}
 
-		glm::vec3 camPos{ m_Cam.getLocation() };
 		int intersects{};
 
 		bool collideX{};
 		bool collideY{};
 		bool collideZ{};
 
-		if (std::abs(block.x - collsionPos.x) == 1)
+		if (block.x != collsionPos.x)
 		{
 			collideX = true;
 			++intersects;
 		}
 
-		if (std::abs(block.y - collsionPos.y) == 1)
+		if (block.y != collsionPos.y)
 		{
 			collideY = true;
 			++intersects;
 		}
 
-		if (std::abs(block.z - collsionPos.z) == 1)
+		if (block.z != collsionPos.z)
 		{
 			collideZ = true;
 			++intersects;
 		}
+
+		glm::vec3 camPos{ m_Cam.getLocation() };
 
 		if (intersects != 1)
 		{
@@ -168,8 +169,6 @@ void Player::move()
 
 		m_Aabb = createPlayerAABB(m_Cam.getLocation());
 
-		playerHeight = m_Aabb.max().y - m_Aabb.min().y;
-
 		lowerPlayerHalf = { m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
 		upperPlayerHalf = { m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
 	}
@@ -177,7 +176,7 @@ void Player::move()
 	m_Grounded = onGround;
 
 	m_LastValidLoc = m_Cam.getLocation();
-	m_LastValidAABB = createPlayerAABB(m_LastValidLoc);
+	m_LastValidAABB = m_Aabb;
 }
 
 AABB Player::createPlayerAABB(glm::vec3 playerPos)
