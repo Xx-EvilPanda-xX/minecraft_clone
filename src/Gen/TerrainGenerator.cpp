@@ -11,12 +11,12 @@ TerrainGenerator::TerrainGenerator()
 
 	std::mt19937 tempRand{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
-	int seed{ tempDie(tempRand) };
+	int seed{ 214380478 };
 
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
-	m_Noise.SetFractalOctaves(7);
-	m_Noise.SetFrequency(0.005f);
+	m_Noise.SetFractalOctaves(5);
+	m_Noise.SetFrequency(0.05f);
 	m_Noise.SetSeed(seed);
 
 	std::cout << "Seed: " << seed << "\n";

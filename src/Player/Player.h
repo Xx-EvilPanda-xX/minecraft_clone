@@ -26,7 +26,7 @@ private:
 
 	glm::vec3 m_LastValidLoc;
 	AABB m_LastValidAABB;
-	
+
 	bool m_LastCollideX;
 	bool m_LastCollideY;
 	bool m_LastCollideZ;
@@ -34,6 +34,7 @@ private:
 	bool m_Sprinting;
 	bool m_Grounded;
 	bool m_Flying;
+	bool m_Spectating;
 	float m_Reach;
 
 	const float vecPrecision{ 0.025f };
@@ -69,11 +70,15 @@ public:
 
 	bool isFlying();
 
+	bool isSpectating();
+
 	void setReach(float reach);
 
 	void setSprinting(bool sprinting);
 
 	void setFlying(bool flying);
+
+	void setSpectating(bool spectating);
 };
 
 #endif
