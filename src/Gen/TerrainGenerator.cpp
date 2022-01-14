@@ -16,7 +16,7 @@ TerrainGenerator::TerrainGenerator()
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
 	m_Noise.SetFractalOctaves(5);
-	m_Noise.SetFrequency(0.05f);
+	m_Noise.SetFrequency(0.0075f);
 	m_Noise.SetSeed(seed);
 
 	std::cout << "Seed: " << seed << "\n";

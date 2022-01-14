@@ -21,9 +21,6 @@ private:
 	glm::vec3 m_Velocity;
 	AABB m_Aabb;
 
-	std::mt19937 m_Rand;
-	std::uniform_int_distribution<> m_Die;
-
 	glm::vec3 m_LastValidLoc;
 	AABB m_LastValidAABB;
 

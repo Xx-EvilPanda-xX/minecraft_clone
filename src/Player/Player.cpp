@@ -11,9 +11,6 @@ Player::Player(Camera & cam, ChunkManager & manager, float reach)
 {
 	m_Velocity = glm::vec3{};
 	m_LastValidLoc = glm::vec3{};
-
-	m_Rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
-	m_Die = std::uniform_int_distribution<>{ 0, 2 };
 }
 
 void Player::move()
@@ -32,13 +29,16 @@ void Player::move()
 
 		Vector3i collsionPos{};
 		bool onGround{ false };
+		int tries{};
+		//bool firstTryFailed{};
+		//bool secondTryFailed{};
 
 		m_Aabb = createPlayerAABB(m_Cam.getLocation());
 
 		glm::vec3 lowerPlayerHalf{ m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
 		glm::vec3 upperPlayerHalf{ m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
 
-		CollsionType collisionType;
+		CollsionType collisionType{};
 
 		while (testCollide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType))
 		{
@@ -96,63 +96,27 @@ void Player::move()
 			{
 				if (!m_LastCollideX && !m_LastCollideY && !m_LastCollideZ)
 					m_Cam.setLocation(m_LastValidLoc);
-				
-				if ((m_LastCollideX && m_LastCollideY) || (m_LastCollideX && m_LastCollideZ) || (m_LastCollideY && m_LastCollideZ) || (m_LastCollideX && m_LastCollideY && m_LastCollideZ))
+
+				if (tries == 0)
 				{
-					int rand = m_Die(m_Rand);
-
-					switch (rand)
-					{
-					case 0:
-						if (m_LastCollideX)
-						{
-							m_LastCollideY = false;
-							m_LastCollideZ = false;
-						}
-						break;
-
-					case 1:
-						if (m_LastCollideY)
-						{
-							m_LastCollideX = false;
-							m_LastCollideZ = false;
-						}
-						break;
-
-					case 2:
-						if (m_LastCollideZ)
-						{
-							m_LastCollideX = false;
-							m_LastCollideY = false;
-						}
-						break;
-					}
-					
-					/*
 					if (m_LastCollideX)
+						m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+
+					if (m_LastCollideY)
 					{
-						m_LastCollideY = false;
-						m_LastCollideZ = false;
+						m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
+						m_Velocity.y = 0.0f;
+
+						if (collisionType == CollsionType::PlayerLowerHalf)
+							onGround = true;
 					}
 
-					else if (m_LastCollideY)
-					{
-						m_LastCollideX = false;
-						m_LastCollideZ = false;
-					}
-
-					else if (m_LastCollideZ)
-					{
-						m_LastCollideX = false;
-						m_LastCollideY = false;
-					}
-					*/
+					if (m_LastCollideZ)
+						m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
 				}
-
-				if (m_LastCollideX)
+				else if (tries == 1)
 					m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
-
-				if (m_LastCollideY)
+				else if (tries == 2)
 				{
 					m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
 					m_Velocity.y = 0.0f;
@@ -160,15 +124,22 @@ void Player::move()
 					if (collisionType == CollsionType::PlayerLowerHalf)
 						onGround = true;
 				}
-
-				if (m_LastCollideZ)
+				else if (tries == 4)
 					m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
+
+				else
+				{
+					std::cout << "shouldnt be possible\n";
+				}
+
 			}
 			else
 			{
 				if (collideX)
 				{
 					m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+					collideY = false;
+					collideZ = false;
 				}
 
 				if (collideY)
@@ -178,11 +149,16 @@ void Player::move()
 
 					if (collisionType == CollsionType::PlayerLowerHalf)
 						onGround = true;
+
+					collideX = false;
+					collideZ = false;
 				}
 
 				if (collideZ)
 				{
 					m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
+					collideX = false;
+					collideY = false;
 				}
 			}
 
@@ -194,6 +170,8 @@ void Player::move()
 
 			lowerPlayerHalf = { m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
 			upperPlayerHalf = { m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
+
+			++tries;
 		}
 
 		m_Grounded = onGround;

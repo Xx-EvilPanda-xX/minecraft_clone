@@ -41,7 +41,7 @@ bool ChunkManager::getBlockAbsoluteIndex(Vector3i loc, int& o_ChunkIndex, int& o
 	bool success{ true };
 
 	if (loc.y < 0 || loc.y > 255)
-		success = false;
+		success = false; 
 
 	int chunkIndex{};
 	int sectionIndex{};
