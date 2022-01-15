@@ -55,17 +55,17 @@ private:
 
 	ChunkMesh& pushIndex(int i);
 
-	void pushUp(Vector3i loc);
+	void pushUp(Vector3i loc, Block block);
 
 	void pushDown(Vector3i loc);
 
-	void pushNorth(Vector3i loc);
+	void pushNorth(Vector3i loc, Block block);
 
-	void pushSouth(Vector3i loc);
+	void pushSouth(Vector3i loc, Block block);
 
-	void pushEast(Vector3i loc);
+	void pushEast(Vector3i loc, Block block);
 
-	void pushWest(Vector3i loc);
+	void pushWest(Vector3i loc, Block block);
 
 	void pushNewIndices(int size);
 

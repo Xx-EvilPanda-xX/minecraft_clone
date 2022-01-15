@@ -351,7 +351,7 @@ void Player::breakBlock()
 		if (!m_Manager.chunkExsists(pos))
 			return;
 
-		m_Manager.setWorldBlock(pos, BlockType::Air);
+		m_Manager.setWorldBlock(pos, BlockType::Air, false);
 
 		updateMeshes(pos);
 
@@ -387,7 +387,7 @@ void Player::placeBlock(BlockType type)
 		if (m_Aabb.intersects(blockAABB))
 			return;
 
-		m_Manager.setWorldBlock(placePos, type);
+		m_Manager.setWorldBlock(placePos, type, false);
 
 		updateMeshes(placePos);
 

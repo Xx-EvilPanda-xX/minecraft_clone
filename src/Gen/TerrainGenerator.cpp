@@ -39,17 +39,21 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 				if (chunkSection->getBlock(Vector3i{ x, y, z }).getType() == BlockType::Air)
 				{
 					if (wY < currentHeight - 6)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Stone);
+						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Stone, false);
 					else if (wY < currentHeight - 1 && wY >= currentHeight - 6)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Dirt);
+						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Dirt, false);
 					else if (wY < constants::waterLevel + 1 && wY <= currentHeight)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Sand);
+						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Sand, false);
 					else if (wY < currentHeight && wY >= currentHeight - 1)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Grass);
+						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Grass, false);
 					else if (wY < constants::waterLevel)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Water);
+					{
+						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Water, false);
+						if (wY == constants::waterLevel - 1)
+							chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Water, true);
+					}
 					else
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Air);
+						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Air, false);
 				}
 
 				if (wY == currentHeight && wY > constants::waterLevel)
@@ -78,25 +82,25 @@ void TerrainGenerator::genTree(ChunkSection* section, Vector3i pos)
 {
 	for (int i{}; i < 4; ++i)
 	{
-		section->setBlock(Vector3i{ pos.x, pos.y + i, pos.z }, BlockType::Wood);
+		section->setBlock(Vector3i{ pos.x, pos.y + i, pos.z }, BlockType::Wood, false);
 
 		if (i == 3)
 		{
-			section->setBlock(Vector3i{ pos.x + 1, pos.y + i, pos.z }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x, pos.y + i, pos.z + 1 }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x - 1, pos.y + i, pos.z }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x, pos.y + i, pos.z - 1 }, BlockType::Leaves);
+			section->setBlock(Vector3i{ pos.x + 1, pos.y + i, pos.z }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x, pos.y + i, pos.z + 1 }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x - 1, pos.y + i, pos.z }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x, pos.y + i, pos.z - 1 }, BlockType::Leaves, false);
 
-			section->setBlock(Vector3i{ pos.x + 1, pos.y + i - 1, pos.z }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x, pos.y + i - 1, pos.z + 1 }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x - 1, pos.y + i - 1, pos.z }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x, pos.y + i - 1, pos.z - 1 }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x + 1, pos.y + i - 1, pos.z + 1 }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x - 1, pos.y + i - 1, pos.z + 1 }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x + 1, pos.y + i - 1, pos.z - 1 }, BlockType::Leaves);
-			section->setBlock(Vector3i{ pos.x - 1, pos.y + i - 1, pos.z - 1 }, BlockType::Leaves);
+			section->setBlock(Vector3i{ pos.x + 1, pos.y + i - 1, pos.z }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x, pos.y + i - 1, pos.z + 1 }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x - 1, pos.y + i - 1, pos.z }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x, pos.y + i - 1, pos.z - 1 }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x + 1, pos.y + i - 1, pos.z + 1 }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x - 1, pos.y + i - 1, pos.z + 1 }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x + 1, pos.y + i - 1, pos.z - 1 }, BlockType::Leaves, false);
+			section->setBlock(Vector3i{ pos.x - 1, pos.y + i - 1, pos.z - 1 }, BlockType::Leaves, false);
 
-			section->setBlock(Vector3i{ pos.x, pos.y + i + 1,pos.z }, BlockType::Leaves);
+			section->setBlock(Vector3i{ pos.x, pos.y + i + 1,pos.z }, BlockType::Leaves, false);
 		}
 	}
 }

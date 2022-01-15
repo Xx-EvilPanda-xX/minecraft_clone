@@ -14,14 +14,14 @@ ChunkManager::ChunkManager(World* world)
 
 ChunkManager::ChunkManager() = default;
 
-void ChunkManager::setWorldBlock(Vector3i loc, BlockType type)
+void ChunkManager::setWorldBlock(Vector3i loc, BlockType type, bool surface)
 {
 	int chunkIndex{};
 	int sectionIndex{};
 	Vector3i sectionLocal{};
 
 	if (getBlockAbsoluteIndex(loc, chunkIndex, sectionIndex, sectionLocal))
-		m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(sectionLocal, type);
+		m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(sectionLocal, type, surface);
 }
 
 Block ChunkManager::getWorldBlock(Vector3i loc)

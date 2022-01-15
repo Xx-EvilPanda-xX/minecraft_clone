@@ -16,7 +16,7 @@ ChunkSection::~ChunkSection()
 	m_Blocks = nullptr;
 }
 
-void ChunkSection::setBlock(Vector3i loc, BlockType type)
+void ChunkSection::setBlock(Vector3i loc, BlockType type, bool surface)
 {
 	int index{};
 
@@ -29,7 +29,7 @@ void ChunkSection::setBlock(Vector3i loc, BlockType type)
 		return;
 	}
 
-	Block block{ type };
+	Block block{ type, surface };
 
 	if (block.getType() == BlockType::Air && m_Blocks[index].getType() != BlockType::Air)
 		++m_AirBlocks;

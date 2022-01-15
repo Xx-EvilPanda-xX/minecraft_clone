@@ -117,7 +117,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	if (keyboard.isKeyDown(GLFW_KEY_9))
 		selectedBlock = BlockType::Planks;
 	if (keyboard.isKeyDown(GLFW_KEY_0))
-		selectedBlock = BlockType::QotBu;
+		selectedBlock = BlockType::DiamondBlock;
 
 	if (keyboard.isKeyDown(GLFW_KEY_R))
 		std::cout << "Address of first chunk: " << app.getWorld().getChunks()[0] << "\n";

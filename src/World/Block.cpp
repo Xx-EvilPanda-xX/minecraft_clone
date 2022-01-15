@@ -1,7 +1,8 @@
 #include "Block.h"
 
-Block::Block(BlockType type) 
-	: m_Type{ type }
+Block::Block(BlockType type, bool surface) 
+	: m_Type{ type },
+	m_Surface{ surface }
 {
 	m_Transparent = false;
 
@@ -38,4 +39,9 @@ BlockType Block::getType() const
 bool Block::isTransparent()
 {
 	return m_Transparent;
+}
+
+bool Block::isSurface()
+{
+	return m_Surface;
 }

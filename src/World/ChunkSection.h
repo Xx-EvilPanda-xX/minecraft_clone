@@ -17,7 +17,7 @@ public:
 
 	~ChunkSection();
 
-	void setBlock(Vector3i loc, BlockType type);
+	void setBlock(Vector3i loc, BlockType type, bool surface);
 
 	Block getBlock(Vector3i loc) const;
 

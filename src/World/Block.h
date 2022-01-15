@@ -18,7 +18,6 @@ enum BlockType
 	Planks,
 	DiamondBlock,
 	Water,
-	QotBu,
 
 	NUM_BLOCKS
 };
@@ -28,15 +27,18 @@ class Block
 private:
 	BlockType m_Type;
 	bool m_Transparent;
+	bool m_Surface;
 
 public:
-	Block(BlockType type);
+	Block(BlockType type, bool surface);
 
 	Block();
 
 	BlockType getType() const;
 
 	bool isTransparent();
+
+	bool isSurface();
 };
 
 #endif

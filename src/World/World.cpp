@@ -38,7 +38,7 @@ void World::worldRender(const Camera& camera)
 {
 	Vector3i playerPos{ getPlayerBlockPos(camera) };
 	m_Shader.bind();
-	m_Shader.setInt("playerUnderWater", m_Manager.getWorldBlock(playerPos).getType() == BlockType::Water ? 1 : 0);
+	m_Shader.setBool("playerUnderWater", m_Manager.getWorldBlock(playerPos).getType() == BlockType::Water);
 	m_Shader.unbind();
 
 	for (int i{}; i < m_Chunks.size(); ++i)

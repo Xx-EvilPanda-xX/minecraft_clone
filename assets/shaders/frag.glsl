@@ -5,7 +5,7 @@ out vec4 outColor;
 in float passLighting;
 
 uniform sampler2D tex;
-uniform int playerUnderWater;
+uniform bool playerUnderWater;
 
 void main(){
     vec4 texColor = texture(tex, passTexCoords);
@@ -18,8 +18,8 @@ void main(){
         discard;
     }
 
-    if (playerUnderWater == 1)
+    if (playerUnderWater)
     {
-        outColor += vec4(0.0, 0.2, 0.65, 0.0);
+        outColor += vec4(0.0, 0.0, 1.0, 0.0);
     }
 }
