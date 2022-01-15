@@ -21,6 +21,8 @@ private:
 	ChunkManager& m_Manager;
 	Player m_Player;
 
+	Vector3i getPlayerBlockPos(const Camera& camera);
+
 public:
 	World(Shader shader, Player player, ChunkManager& manager);
 

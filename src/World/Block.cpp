@@ -10,25 +10,14 @@ Block::Block(BlockType type)
 	case Air:
 		m_Transparent = true;
 		break;
-	case Grass:
-		break;
-	case Stone:
-		break;
-	case Dirt:
-		break;
-	case Sand:
-		break;
-	case CobbleStone:
-		break;
-	case Wood:
+	case Water:
+		m_Transparent = true;
 		break;
 	case Leaves:
 		m_Transparent = true;
 		break;
 	case Glass:
 		m_Transparent = true;
-		break;
-	case NUM_BLOCKS:
 		break;
 	default:
 		break;

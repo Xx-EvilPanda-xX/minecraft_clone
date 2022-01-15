@@ -41,7 +41,7 @@ void Application::runMainLoop()
 {
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
@@ -178,7 +178,7 @@ void Application::renderCrosshair()
 	m_GuiShader.unbind();
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 }
 
 Window& Application::getWindow()

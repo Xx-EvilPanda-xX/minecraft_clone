@@ -28,7 +28,7 @@ namespace constants
 	constexpr float playerSize{ 0.45f };
 
 	constexpr float gravity{ 60.0f };
-	constexpr float jumpHeight{ 1.75f };
+	constexpr float jumpHeight{ 1.65f };
 }
 
 #endif

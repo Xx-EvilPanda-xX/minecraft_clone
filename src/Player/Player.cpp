@@ -94,9 +94,6 @@ void Player::move()
 
 			if (intersects != 1)
 			{
-				if (!m_LastCollideX && !m_LastCollideY && !m_LastCollideZ)
-					m_Cam.setLocation(m_LastValidLoc);
-
 				if (tries == 0)
 				{
 					if (m_LastCollideX)
@@ -114,8 +111,10 @@ void Player::move()
 					if (m_LastCollideZ)
 						m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
 				}
+
+
 				else if (tries == 1)
-					m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+ 					m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
 				else if (tries == 2)
 				{
 					m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
@@ -124,22 +123,16 @@ void Player::move()
 					if (collisionType == CollsionType::PlayerLowerHalf)
 						onGround = true;
 				}
-				else if (tries == 4)
+				else if (tries == 3)
 					m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
-
 				else
-				{
 					std::cout << "shouldnt be possible\n";
-				}
-
 			}
 			else
 			{
 				if (collideX)
 				{
 					m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
-					collideY = false;
-					collideZ = false;
 				}
 
 				if (collideY)
@@ -149,16 +142,11 @@ void Player::move()
 
 					if (collisionType == CollsionType::PlayerLowerHalf)
 						onGround = true;
-
-					collideX = false;
-					collideZ = false;
 				}
 
 				if (collideZ)
 				{
 					m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
-					collideX = false;
-					collideY = false;
 				}
 			}
 
@@ -226,7 +214,7 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 			{
 				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager.getWorldBlock(Vector3i{ x, y, z }) };
-				if (blockAABB.intersects(playerAABB) && block.getType() != BlockType::Air)
+				if (blockAABB.intersects(playerAABB) && (block.getType() != BlockType::Air && block.getType() != BlockType::Water))
 				{
 					glm::vec3 blockCenter{ x + 0.5f, y + 0.5f, z + 0.5f };
 					glm::vec3 playerToCenter{ blockCenter - playerLowerHalf };
@@ -253,7 +241,7 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 			{
 				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager.getWorldBlock(Vector3i{ x, y, z }) };
-				if (blockAABB.intersects(playerAABB) && block.getType() != BlockType::Air)
+				if (blockAABB.intersects(playerAABB) && (block.getType() != BlockType::Air && block.getType() != BlockType::Water))
 				{
 					glm::vec3 blockCenter{ x + 0.5f, y + 0.5f, z + 0.5f };
 					glm::vec3 playerToCenter{ blockCenter - playerUpperHalf };
@@ -482,7 +470,7 @@ Vector3i* Player::breakIntersect()
 		if (currentPos.z < 0.0f)
 			blockPos.z -= 1;
 
-		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air)
+		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
 		{
 			breakPos = new Vector3i{ blockPos };
 			break;
@@ -512,7 +500,7 @@ glm::vec3* Player::placeIntersect()
 		if (currentPos.z < 0.0f)
 			blockPos.z -= 1.0f;
 
-		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air)
+		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
 		{
 			placePos = new glm::vec3{ currentPos };
 			break;
