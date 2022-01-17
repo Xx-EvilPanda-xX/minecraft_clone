@@ -33,7 +33,7 @@ float Application::s_Dt{};
 
 void Application::init()
 {
-	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_big.png");
+	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_20.png");
 	createCrosshair();
 }
 

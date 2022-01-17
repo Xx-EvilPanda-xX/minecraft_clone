@@ -113,9 +113,9 @@ void Player::move()
 				}
 
 
-				else if (tries == 1)
+				else if (tries % 3 == 1)
  					m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
-				else if (tries == 2)
+				else if (tries % 3 == 2)
 				{
 					m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
 					m_Velocity.y = 0.0f;
@@ -123,10 +123,8 @@ void Player::move()
 					if (collisionType == CollsionType::PlayerLowerHalf)
 						onGround = true;
 				}
-				else if (tries == 3)
+				else if (tries % 3 == 0)
 					m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
-				else
-					std::cout << "shouldnt be possible\n";
 			}
 			else
 			{

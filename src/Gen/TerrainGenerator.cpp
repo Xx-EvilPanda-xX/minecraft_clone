@@ -11,7 +11,7 @@ TerrainGenerator::TerrainGenerator()
 
 	std::mt19937 tempRand{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
-	int seed{ 214380478 };
+	int seed{ m_Die(m_Rand) };
 
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
@@ -43,7 +43,11 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 					else if (wY < currentHeight - 1 && wY >= currentHeight - 6)
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Dirt, false);
 					else if (wY < constants::waterLevel + 1 && wY <= currentHeight)
+					{
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Sand, false);
+						if (m_Die(m_Rand) < 32 && wY < constants::waterLevel - 10)
+							chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Gravel, false);
+					}
 					else if (wY < currentHeight && wY >= currentHeight - 1)
 						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Grass, false);
 					else if (wY < constants::waterLevel)

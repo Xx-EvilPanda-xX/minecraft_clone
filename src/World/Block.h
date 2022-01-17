@@ -10,6 +10,7 @@ enum BlockType
 	Stone,
 	Dirt,
 	Sand,
+	Gravel,
 	CobbleStone,
 	Wood,
 	Leaves,
