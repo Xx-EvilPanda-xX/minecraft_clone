@@ -98,6 +98,8 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		std::cout << "Chunk index: " << app.getWorld().getChunkIndex(chunkPos) << "\n";
 	}
 
+	if (keyboard.isKeyDown(GLFW_KEY_GRAVE_ACCENT))
+		selectedBlock = BlockType::Gravel;
 	if (keyboard.isKeyDown(GLFW_KEY_1))
 		selectedBlock = BlockType::Grass;
 	if (keyboard.isKeyDown(GLFW_KEY_2))
@@ -107,7 +109,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	if (keyboard.isKeyDown(GLFW_KEY_4))
 		selectedBlock = BlockType::CobbleStone;
 	if (keyboard.isKeyDown(GLFW_KEY_5))
-		selectedBlock = BlockType::Wood;
+		selectedBlock = BlockType::Grass;
 	if (keyboard.isKeyDown(GLFW_KEY_6))
 		selectedBlock = BlockType::Leaves;
 	if (keyboard.isKeyDown(GLFW_KEY_7))

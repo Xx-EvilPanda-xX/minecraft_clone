@@ -40,7 +40,6 @@ private:
 	static Texture s_TexAltas;
 	static BlockType s_AtlasIndices[];
 	const float m_FaceRatio;
-	Face m_CurrentFace;
 	Vector2i m_Pos;
 
 	void storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data);
@@ -74,6 +73,8 @@ private:
 	float* getTexCoordsFromStartPos(glm::vec2 startPos);
 
 	void checkTexCoordBounds(glm::vec2& faceStartCoords);
+
+	void deleteBuffers();
 
 public:
 	ChunkMesh(Vector2i pos, Shader& shader);

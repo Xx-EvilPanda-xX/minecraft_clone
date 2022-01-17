@@ -24,8 +24,6 @@ void ChunkMesh::createTextureAtlas(const char* path)
 
 void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 {
-	m_CurrentFace = face;
-
 	switch (face)
 	{
 	case Face::Up:
@@ -64,8 +62,6 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 
 float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 {
-	int e{};		
-
 	float index{};
 	for (int i{}; i < BlockType::NUM_BLOCKS; ++i)
 	{
@@ -308,12 +304,7 @@ void ChunkMesh::clear()
 	m_Lighting.resize(0);
 	m_Indices.resize(0);
 
-	glDeleteVertexArrays(1, &m_RenderData.vao);
-
-	glDeleteBuffers(1, &m_RenderData.vbo);
-	glDeleteBuffers(1, &m_RenderData.tbo);
-	glDeleteBuffers(1, &m_RenderData.ebo);
-	glDeleteBuffers(1, &m_RenderData.lbo);
+	deleteBuffers();
 
 	hasValidObjects = false;
 }
@@ -332,16 +323,21 @@ void ChunkMesh::disableAttribs() const
 	glDisableVertexAttribArray(2);
 }
 
+void ChunkMesh::deleteBuffers()
+{
+	glDeleteVertexArrays(1, &m_RenderData.vao);
+
+	glDeleteBuffers(1, &m_RenderData.vbo);
+	glDeleteBuffers(1, &m_RenderData.tbo);
+	glDeleteBuffers(1, &m_RenderData.ebo);
+	glDeleteBuffers(1, &m_RenderData.lbo);
+}
+
 void ChunkMesh::toBuffers()
 {
 	if (hasValidObjects)
 	{
-		glDeleteVertexArrays(1, &m_RenderData.vao);
-
-		glDeleteBuffers(1, &m_RenderData.vbo);
-		glDeleteBuffers(1, &m_RenderData.tbo);
-		glDeleteBuffers(1, &m_RenderData.ebo);
-		glDeleteBuffers(1, &m_RenderData.lbo);
+		deleteBuffers();
 	}
 
 	glGenVertexArrays(1, &m_RenderData.vao);
@@ -369,38 +365,18 @@ void ChunkMesh::storeFloatBuffer(int index, int size, int buffer, const std::vec
 {
 	glBindVertexArray(m_RenderData.vao);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-	float* dataArray{ new float[data.size()]{} };
-	for (int i{}; i < data.size(); ++i)
-	{
-		dataArray[i] = data[i];
-	}
-
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), dataArray, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, 0, 0);
-
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	delete[] dataArray;
 }
 
 void ChunkMesh::storeIndices(std::vector<int>& data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RenderData.ebo);
-
-	int* dataArray{ new int[data.size()]{} };
-	for (int i{}; i < data.size(); ++i)
-	{
-		dataArray[i] = data[i];
-	}
-	
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), dataArray, GL_STATIC_DRAW);
-
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), &data[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 	m_RenderData.indexCount = static_cast<int>(data.size());
-	delete[] dataArray;
 }
 
 const std::vector<float>& ChunkMesh::getVertices() const
