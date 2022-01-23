@@ -7,7 +7,6 @@ BlockType EventHandler::selectedBlock{ BlockType::Stone };
 void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& player)
 {
 	static float flyToggleCooldown{};
-	static float spectateToggleCooldown{};
 
 	if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(app.getWindow().getWindow(), true);
@@ -77,14 +76,6 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	}
 
 	flyToggleCooldown -= Application::s_Dt;
-	
-	if (keyboard.isKeyDown(GLFW_KEY_N) && spectateToggleCooldown <= 0.0f)
-	{
-		player.setSpectating(!player.isSpectating());
-		spectateToggleCooldown = 0.15f;
-	}
-	
-	spectateToggleCooldown -= Application::s_Dt;
 
 	if (keyboard.isKeyDown(GLFW_KEY_B))
 		std::cout << "XYZ: " << app.getCamera().getLocation().x << ", " << app.getCamera().getLocation().y << ", " << app.getCamera().getLocation().z << "\n";
@@ -109,7 +100,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	if (keyboard.isKeyDown(GLFW_KEY_4))
 		selectedBlock = BlockType::CobbleStone;
 	if (keyboard.isKeyDown(GLFW_KEY_5))
-		selectedBlock = BlockType::Grass;
+		selectedBlock = BlockType::Wood;
 	if (keyboard.isKeyDown(GLFW_KEY_6))
 		selectedBlock = BlockType::Leaves;
 	if (keyboard.isKeyDown(GLFW_KEY_7))
@@ -120,6 +111,11 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		selectedBlock = BlockType::Planks;
 	if (keyboard.isKeyDown(GLFW_KEY_0))
 		selectedBlock = BlockType::DiamondBlock;
+	if (keyboard.isKeyDown(GLFW_KEY_MINUS))
+		selectedBlock = BlockType::Water;
+	if (keyboard.isKeyDown(GLFW_KEY_EQUAL))
+		selectedBlock = BlockType::CraftingTable;
+
 
 	if (keyboard.isKeyDown(GLFW_KEY_R))
 		std::cout << "Address of first chunk: " << app.getWorld().getChunks()[0] << "\n";
