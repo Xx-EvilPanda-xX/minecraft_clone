@@ -83,47 +83,25 @@ void Player::move()
 			collideZ = false;
 
 			if (!m_LastMovedX && m_LastMovedY && m_LastMovedZ)
-			{
 				collideX = true;
-				collideY = false;
-				collideZ = false;
-			}
-				
 
 			if (m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
-			{
-				collideX = false;
 				collideY = true;
-				collideZ = false;
-			}
 
 			if (m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
-			{
-				collideX = false;
-				collideY = false;
 				collideZ = true;
-			}
 
 			if (!m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
-			{
-				collideX = false;
 				collideY = true;
-				collideZ = false;
-			}
 
 			if (m_LastMovedX && !m_LastMovedY && !m_LastMovedZ)
-			{
-				collideX = false;
 				collideY = true;
-				collideZ = false;
-			}
 
 			if (!m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
-			{
 				collideX = true;
-				collideY = false;
-				collideZ = false;
-			}
+
+			if (m_LastMovedX && m_LastMovedY && m_LastMovedZ)
+				collideX = true;
 		}
 
 		if (collideX)
