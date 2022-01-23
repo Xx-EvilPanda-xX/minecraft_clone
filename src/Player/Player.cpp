@@ -86,16 +86,25 @@ void Player::move()
 				collideX = true;
 
 			if (m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
-				collideY = true;
+			{
+				if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
+				{
+					m_LastMovedX = !m_LastMovedX;
+					m_LastMovedY = !m_LastMovedY;
+					m_LastMovedZ = !m_LastMovedZ;
+				}
+				else
+					collideY = true;
+			}	
 
 			if (m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
 				collideZ = true;
 
 			if (!m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
-				collideY = true;
+				collideX = true;
 
 			if (m_LastMovedX && !m_LastMovedY && !m_LastMovedZ)
-				collideY = true;
+				collideZ = true;
 
 			if (!m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
 				collideX = true;
