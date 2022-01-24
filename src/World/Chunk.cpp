@@ -99,19 +99,24 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 				Block NegY;
 				Block NegZ;
 
+				currentBlock = chunkSection->getBlock(Vector3i{ x, y, z });
+
 				if (x == 15 || x == 0 || y == 15 || y == 0 || z == 15 || z == 0)
 				{
-					currentBlock = manager.getWorldBlock(Vector3i{ wX, wY, wZ });
-					PosX = manager.getWorldBlock(Vector3i{ wX + 1, wY, wZ });
+					ChunkSection* sectionPosX{ manager.getChunk({ m_Location.x + 1, m_Location.y })->m_Sections[section] };
+					ChunkSection* sectionPosY{ manager.getChunk({ m_Location.x, m_Location.y + 1 })->m_Sections[section] };
+					ChunkSection* sectionNegX{ manager.getChunk({ m_Location.x - 1, m_Location.y })->m_Sections[section] };
+					ChunkSection* sectionNegY{ manager.getChunk({ m_Location.x, m_Location.y - 1 })->m_Sections[section] };
+
+					PosX = (x == 15 ? sectionPosX : chunkSection)->getBlock(Vector3i(x == 15 ? 0 : x + 1, y, z));
+					NegX = (x == 0 ? sectionNegX : chunkSection)->getBlock(Vector3i(x == 0 ? 15 : x - 1, y, z));
 					PosY = manager.getWorldBlock(Vector3i{ wX, wY + 1, wZ });
-					PosZ = manager.getWorldBlock(Vector3i{ wX, wY , wZ + 1 });
-					NegX = manager.getWorldBlock(Vector3i{ wX - 1, wY, wZ });
 					NegY = manager.getWorldBlock(Vector3i{ wX, wY - 1, wZ });
-					NegZ = manager.getWorldBlock(Vector3i{ wX, wY, wZ - 1 });
+					PosZ = (z == 15 ? sectionPosY : chunkSection)->getBlock(Vector3i(x, y, z == 15 ? 0 : z + 1));
+					NegZ = (z == 0 ? sectionNegY : chunkSection)->getBlock(Vector3i(x, y, z == 0 ? 15 : z - 1));
 				}
 				else
 				{
-					currentBlock = chunkSection->getBlock(Vector3i{ x, y, z });
 					PosX = chunkSection->getBlock(Vector3i{ x + 1, y, z });
 					PosY = chunkSection->getBlock(Vector3i{ x, y + 1, z });
 					PosZ = chunkSection->getBlock(Vector3i{ x, y, z + 1 });

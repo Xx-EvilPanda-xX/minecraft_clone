@@ -114,7 +114,7 @@ void Player::move()
 				collideX = true;
 		}
 
-		float targetDistance{ 0.5f + constants::playerSize + 0.001 };
+		const float targetDistance{ 0.5f + constants::playerSize + 0.0001 };
 
 		if (collideX)
 		{
