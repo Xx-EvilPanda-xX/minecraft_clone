@@ -33,7 +33,7 @@ private:
 	bool m_Flying;
 	float m_Reach;
 
-	const float vecPrecision{ 0.025f };
+	const float vecPrecision{ 0.01f };
 
 	Vector3i* breakIntersect();
 

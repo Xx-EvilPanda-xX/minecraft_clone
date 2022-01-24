@@ -16,11 +16,12 @@ Player::Player(Camera & cam, ChunkManager & manager, float reach)
 void Player::move()
 {
 	calculateVelocity();
-	m_Cam.handleKeyboard(m_Velocity, Application::s_Dt);
 
 	//gravity
 	if (!m_Flying && !m_Grounded)
 		m_Velocity.y -= Application::s_Dt * constants::gravity;
+
+	m_Cam.handleKeyboard(m_Velocity, Application::s_Dt);
 
 	Vector3i collsionPos{};
 	bool onGround{ false };
@@ -113,14 +114,20 @@ void Player::move()
 				collideX = true;
 		}
 
+		float targetDistance{ 0.5f + constants::playerSize + 0.001 };
+
 		if (collideX)
 		{
-			m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x, camPos.y, camPos.z });
+			float centerToPlayerDistance{ std::abs(blockCenter.x - lastValidLoc.x) };
+			float change{ centerToPlayerDistance - targetDistance };
+			m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x + (blockCenter.x < lastValidLoc.x ? -change : change), camPos.y, camPos.z });
 		}
 
 		if (collideY)
 		{
-			m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y, camPos.z });
+			float centerToPlayerDistance{ std::abs(blockCenter.y - lastValidLoc.y) };
+			float change{ centerToPlayerDistance - targetDistance };
+			m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y + (blockCenter.y < lastValidLoc.y ? -change : change), camPos.z });
 			m_Velocity.y = 0.0f;
 
 			if (collisionType == CollsionType::PlayerLowerHalf)
@@ -129,7 +136,9 @@ void Player::move()
 
 		if (collideZ)
 		{
-			m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z });
+			float centerToPlayerDistance{ std::abs(blockCenter.z - lastValidLoc.z) };
+			float change{ centerToPlayerDistance - targetDistance };
+			m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z + (blockCenter.z < lastValidLoc.z ? -change : change) });
 		}
 
 		m_Aabb = createPlayerAABB(m_Cam.getLocation());
@@ -151,8 +160,9 @@ void Player::move()
 AABB Player::createPlayerAABB(glm::vec3 playerPos)
 {
 	AABB aabb{};
-	aabb.min(glm::vec3{ playerPos.x - constants::playerSize, playerPos.y - (3.0f * constants::playerSize), playerPos.z - constants::playerSize });
-	aabb.max(glm::vec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize, playerPos.z + constants::playerSize });
+	// - 0.35f to make player's head appear higher
+	aabb.min(glm::vec3{ playerPos.x - constants::playerSize, playerPos.y - (3.0f * constants::playerSize) - 0.35f, playerPos.z - constants::playerSize });
+	aabb.max(glm::vec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize - 0.35f, playerPos.z + constants::playerSize });
 	return aabb;
 }
 
