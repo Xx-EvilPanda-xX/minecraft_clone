@@ -104,16 +104,28 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 				if (x == 15 || x == 0 || y == 15 || y == 0 || z == 15 || z == 0)
 				{
 					ChunkSection* sectionPosX{ manager.getChunk({ m_Location.x + 1, m_Location.y })->m_Sections[section] };
-					ChunkSection* sectionPosY{ manager.getChunk({ m_Location.x, m_Location.y + 1 })->m_Sections[section] };
+					ChunkSection* sectionPosY{ section != 15 ? m_Sections[section + 1] : nullptr };
+					ChunkSection* sectionPosZ{ manager.getChunk({ m_Location.x, m_Location.y + 1 })->m_Sections[section] };
 					ChunkSection* sectionNegX{ manager.getChunk({ m_Location.x - 1, m_Location.y })->m_Sections[section] };
-					ChunkSection* sectionNegY{ manager.getChunk({ m_Location.x, m_Location.y - 1 })->m_Sections[section] };
+					ChunkSection* sectionNegY{ section != 0 ? m_Sections[section - 1] : nullptr };
+					ChunkSection* sectionNegZ{ manager.getChunk({ m_Location.x, m_Location.y - 1 })->m_Sections[section] };
+					
 
 					PosX = (x == 15 ? sectionPosX : chunkSection)->getBlock(Vector3i(x == 15 ? 0 : x + 1, y, z));
 					NegX = (x == 0 ? sectionNegX : chunkSection)->getBlock(Vector3i(x == 0 ? 15 : x - 1, y, z));
-					PosY = manager.getWorldBlock(Vector3i{ wX, wY + 1, wZ });
-					NegY = manager.getWorldBlock(Vector3i{ wX, wY - 1, wZ });
-					PosZ = (z == 15 ? sectionPosY : chunkSection)->getBlock(Vector3i(x, y, z == 15 ? 0 : z + 1));
-					NegZ = (z == 0 ? sectionNegY : chunkSection)->getBlock(Vector3i(x, y, z == 0 ? 15 : z - 1));
+
+					if (sectionPosY)
+						PosY = (y == 15 ? sectionPosY : chunkSection)->getBlock(Vector3i(x, y == 15 ? 0 : y + 1, z));
+					else
+						PosY = manager.getWorldBlock(Vector3i{ wX, wY + 1, wZ });
+
+					if (sectionNegY)
+						NegY = (y == 0 ? sectionNegY : chunkSection)->getBlock(Vector3i(x, y == 0 ? 15 : y - 1, z));
+					else
+						NegY = manager.getWorldBlock(Vector3i{ wX, wY - 1, wZ });
+					
+					PosZ = (z == 15 ? sectionPosZ : chunkSection)->getBlock(Vector3i(x, y, z == 15 ? 0 : z + 1));
+					NegZ = (z == 0 ? sectionNegZ : chunkSection)->getBlock(Vector3i(x, y, z == 0 ? 15 : z - 1));
 				}
 				else
 				{

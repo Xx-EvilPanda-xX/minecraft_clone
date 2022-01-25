@@ -75,8 +75,6 @@ void Player::move()
 		if (collideZ)
 			++intersects;
 
-		glm::vec3 camPos{ m_Cam.getLocation() };
-
 		if (intersects != 1)
 		{
 			collideX = false;
@@ -114,6 +112,7 @@ void Player::move()
 				collideX = true;
 		}
 
+		glm::vec3 camPos{ m_Cam.getLocation() };
 		const float targetDistance{ 0.5f + constants::playerSize + 0.0001 };
 
 		if (collideX)
