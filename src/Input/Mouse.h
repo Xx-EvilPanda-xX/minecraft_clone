@@ -6,8 +6,8 @@
 class Mouse
 {
 private:
-	float m_xOffset;
-	float m_yOffset;
+	double m_xOffset;
+	double m_yOffset;
 
 	bool m_UsedX;
 	bool m_UsedY;
@@ -20,13 +20,13 @@ public:
 
 	Mouse();
 
-	float getXOffset();
+	double getXOffset();
 
-	float getYOffset();
+	double getYOffset();
 
-	void setXOffset(float x);
+	void setXOffset(double x);
 
-	void setYOffset(float y);
+	void setYOffset(double y);
 
 	bool isButtonDown(int button);
 };

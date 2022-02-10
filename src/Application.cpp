@@ -20,7 +20,7 @@
 Application::Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager)
 	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ m_Camera, chunkManager, constants::playerReach }, chunkManager },
 	m_Window{ windowWidth, windowHeight, title },
-	m_Camera{ glm::vec3{ 0.0f, 96.0f, 0.0f }, 0.0f, 0.0f, 90.0f, m_Window.getWindow() }
+	m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, m_Window.getWindow() }
 {
 	chunkManager.setWorld(&m_World);
 
@@ -29,7 +29,7 @@ Application::Application(int windowWidth, int windowHeight, const char* title, C
 	m_LastFrame = 0;
 }
 
-float Application::s_Dt{};
+double Application::s_Dt{};
 
 void Application::init()
 {
@@ -131,12 +131,12 @@ long Application::getCurrentTimeMillis()
 
 void Application::handleInput()
 {
-	float frame = static_cast<float>(glfwGetTime());
+	double frame = static_cast<double>(glfwGetTime());
 	s_Dt = frame - m_LastFrame;
 	m_LastFrame = frame;
 
-	if (s_Dt > 0.01f)
-		s_Dt = 0.01f;
+	if (s_Dt > 0.01)
+		s_Dt = 0.01;
 
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };
@@ -144,7 +144,7 @@ void Application::handleInput()
 	EventHandler::keyboardEvent(keyboard, *this, m_World.getPlayer());
 	EventHandler::mouseEvent(mouse, m_World.getPlayer());
 
-	m_Camera.handleMouse(glm::vec2{ mouse.getXOffset(), mouse.getYOffset() });
+	m_Camera.handleMouse(glm::dvec2{ mouse.getXOffset(), mouse.getYOffset() });
 }
 
 void Application::renderCrosshair()
@@ -157,10 +157,10 @@ void Application::renderCrosshair()
 
 	int width, height;
 	glfwGetWindowSize(m_Window.getWindow(), &width, &height);
-	glm::mat4 proj(glm::perspective(glm::radians(90.0f), static_cast<float>(width) / static_cast<float>(height), 0.001f, 10.0f));
+	glm::dmat4 proj(glm::perspective(glm::radians(90.0), static_cast<double>(width) / static_cast<double>(height), 0.001, 10.0));
 
-	glm::mat4 model(1.0f);
-	model = glm::scale(model, glm::vec3(0.05f, 0.05f, 1.0f));
+	glm::dmat4 model(1.0);
+	model = glm::scale(model, glm::dvec3(0.05, 0.05, 1.0));
 
 	m_GuiShader.setMat4("proj", proj);
 	m_GuiShader.setMat4("model", model);

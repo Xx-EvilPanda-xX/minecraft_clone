@@ -103,7 +103,7 @@ bool ChunkManager::chunkExsists(Vector2i chunkLoc) const
 
 void ChunkManager::updateGenQueue(const Camera& player)
 {
-	glm::vec3 pos{ player.getLocation() };
+	glm::dvec3 pos{ player.getLocation() };
 	Vector3i playerPos{ static_cast<int>(pos.x), static_cast<int>(pos.y), static_cast<int>(pos.z) };
 	Vector2i chunkPlayerPos{ playerPos.x / 16, playerPos.z / 16 };
 	

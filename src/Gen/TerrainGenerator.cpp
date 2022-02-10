@@ -133,7 +133,7 @@ int** TerrainGenerator::getHeightMap(Chunk* chunk)
 			}
 			else
 			{
-				float height{ (m_Noise.GetNoise(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0f + 0.5f) * 100.0f };
+				double height{ (m_Noise.GetNoise(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0f + 0.5f) * 100.0f };
 				heightMap[i][j] = height;
 			}
 		}

@@ -6,23 +6,23 @@
 class AABB
 {
 private:
-	glm::vec3 m_Min;
-	glm::vec3 m_Max;
+	glm::dvec3 m_Min;
+	glm::dvec3 m_Max;
 
 public:
-	AABB(glm::vec3 min, glm::vec3 max);
+	AABB(glm::dvec3 min, glm::dvec3 max);
 
 	AABB();
 
 	bool intersects(const AABB& other);
 
-	glm::vec3 min() const;
+	glm::dvec3 min() const;
 
-	glm::vec3 max() const;
+	glm::dvec3 max() const;
 
-	void min(glm::vec3 v);
+	void min(glm::dvec3 v);
 
-	void max(glm::vec3 v);
+	void max(glm::dvec3 v);
 };
 
 #endif

@@ -21,7 +21,7 @@ private:
 	RenderData m_CrossHair;
 	Shader m_GuiShader;
 
-	float m_LastFrame;
+	double m_LastFrame;
 
 	long frames;
 	long time;
@@ -37,7 +37,7 @@ private:
 	void createCrosshair();
 
 public:
-	static float s_Dt;
+	static double s_Dt;
 
 	Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager);
 

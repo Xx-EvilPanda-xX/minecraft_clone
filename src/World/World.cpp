@@ -176,11 +176,11 @@ Vector3i World::getPlayerBlockPos(const Camera& camera)
 {
 	Vector3i playerPos{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().y), static_cast<int>(camera.getLocation().z) };
 
-	if (camera.getLocation().x < 0.0f)
+	if (camera.getLocation().x < 0.0)
 		--playerPos.x;
-	if (camera.getLocation().y < 0.0f)
+	if (camera.getLocation().y < 0.0)
 		--playerPos.y;
-	if (camera.getLocation().z < 0.0f)
+	if (camera.getLocation().z < 0.0)
 		--playerPos.z;
 
 	return playerPos;

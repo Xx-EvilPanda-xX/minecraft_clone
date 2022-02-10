@@ -5,13 +5,13 @@
 #include "../Constants.h"
 #include <stack>
 
-Player::Player(Camera & cam, ChunkManager & manager, float reach)
+Player::Player(Camera & cam, ChunkManager & manager, double reach)
 	: m_Cam{ cam },
 	m_Manager{ manager },
 	m_Reach{ reach }
 {
-	m_Velocity = glm::vec3{};
-	m_LastValidLoc = glm::vec3{};
+	m_Velocity = glm::dvec3{};
+	m_LastValidLoc = glm::dvec3{};
 }
 
 void Player::move()
@@ -29,16 +29,16 @@ void Player::move()
 
 	m_Aabb = createPlayerAABB(m_Cam.getLocation());
 
-	glm::vec3 lowerPlayerHalf{ m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
-	glm::vec3 upperPlayerHalf{ m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
+	glm::dvec3 lowerPlayerHalf{ m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
+	glm::dvec3 upperPlayerHalf{ m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
 
 	CollsionType collisionType{};
 
 	//3 iters, one per axis
 	for (int i{}; testCollide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType) && i < 3; ++i)
 	{
-		glm::vec3 blockCenter{ collsionPos.x + 0.5f, collsionPos.y + 0.5f, collsionPos.z + 0.5f };
-		glm::vec3 lastValidLoc;
+		glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
+		glm::dvec3 lastValidLoc;
 
 		switch (collisionType)
 		{
@@ -50,15 +50,15 @@ void Player::move()
 			break;
 		}
 
-		glm::vec3 direction{ glm::normalize(lastValidLoc - blockCenter) * vecPrecision };
-		glm::vec3 center{ blockCenter };
-		Vector3i block{ static_cast<int>(center.x < 0.0f ? center.x - 1.0f : center.x), static_cast<int>(center.y < 0.0f ? center.y - 1.0f : center.y), static_cast<int>(center.z < 0.0f ? center.z - 1.0f : center.z) };
+		glm::dvec3 direction{ glm::normalize(lastValidLoc - blockCenter) * vecPrecision };
+		glm::dvec3 center{ blockCenter };
+		Vector3i block{ static_cast<int>(center.x < 0.0 ? center.x - 1.0 : center.x), static_cast<int>(center.y < 0.0 ? center.y - 1.0 : center.y), static_cast<int>(center.z < 0.0 ? center.z - 1.0 : center.z) };
 		while (block == collsionPos)
 		{
 			center += direction;
-			block.x = static_cast<int>(center.x < 0.0f ? center.x - 1.0f : center.x);
-			block.y = static_cast<int>(center.y < 0.0f ? center.y - 1.0f : center.y);
-			block.z = static_cast<int>(center.z < 0.0f ? center.z - 1.0f : center.z);
+			block.x = static_cast<int>(center.x < 0.0 ? center.x - 1.0 : center.x);
+			block.y = static_cast<int>(center.y < 0.0 ? center.y - 1.0 : center.y);
+			block.z = static_cast<int>(center.z < 0.0 ? center.z - 1.0 : center.z);
 		}
 
 		int intersects{};
@@ -113,30 +113,30 @@ void Player::move()
 				collideX = true;
 		}
 
-		glm::vec3 camPos{ m_Cam.getLocation() };
-		const float targetDistance{ 0.5f + constants::playerSize + 0.0001f };
+		glm::dvec3 camPos{ m_Cam.getLocation() };
+		const double targetDistance{ 0.5 + constants::playerSize + 0.0001 };
 
 		if (collideX)
 		{
-			float centerToPlayerDistance{ std::abs(blockCenter.x - lastValidLoc.x) };
-			float change{ centerToPlayerDistance - targetDistance };
+			double centerToPlayerDistance{ std::abs(blockCenter.x - lastValidLoc.x) };
+			double change{ centerToPlayerDistance - targetDistance };
 
-			if (change > 0.1f)
+			if (change > 0.1)
 				std::cout << "pum\n";
 
-			m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x + (blockCenter.x < lastValidLoc.x ? -change : change), camPos.y, camPos.z });
+			m_Cam.setLocation(glm::dvec3{ m_LastValidLoc.x + (blockCenter.x < lastValidLoc.x ? -change : change), camPos.y, camPos.z });
 		}
 
 		if (collideY)
 		{
-			float centerToPlayerDistance{ std::abs(blockCenter.y - lastValidLoc.y) };
-			float change{ centerToPlayerDistance - targetDistance };
+			double centerToPlayerDistance{ std::abs(blockCenter.y - lastValidLoc.y) };
+			double change{ centerToPlayerDistance - targetDistance };
 
-			if (change > 0.1f)
+			if (change > 0.1)
 				std::cout << "pum\n";
 
-			m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y + (blockCenter.y < lastValidLoc.y ? -change : change), camPos.z });
-			m_Velocity.y = 0.0f;
+			m_Cam.setLocation(glm::dvec3{ camPos.x, m_LastValidLoc.y + (blockCenter.y < lastValidLoc.y ? -change : change), camPos.z });
+			m_Velocity.y = 0.0;
 
 			if (collisionType == CollsionType::PlayerLowerHalf)
 				onGround = true;
@@ -144,13 +144,13 @@ void Player::move()
 
 		if (collideZ)
 		{
-			float centerToPlayerDistance{ std::abs(blockCenter.z - lastValidLoc.z) };
-			float change{ centerToPlayerDistance - targetDistance };
+			double centerToPlayerDistance{ std::abs(blockCenter.z - lastValidLoc.z) };
+			double change{ centerToPlayerDistance - targetDistance };
 
-			if (change > 0.1f)
+			if (change > 0.1)
 				std::cout << "pum\n";
 
-			m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z + (blockCenter.z < lastValidLoc.z ? -change : change) });
+			m_Cam.setLocation(glm::dvec3{ camPos.x, camPos.y, m_LastValidLoc.z + (blockCenter.z < lastValidLoc.z ? -change : change) });
 		}
 
 		m_Aabb = createPlayerAABB(m_Cam.getLocation());
@@ -169,41 +169,41 @@ void Player::move()
 	m_LastValidAABB = m_Aabb;
 }
 
-AABB Player::createPlayerAABB(glm::vec3 playerPos)
+AABB Player::createPlayerAABB(glm::dvec3 playerPos)
 {
 	AABB aabb{};
 	// - 0.35f to make player's head appear higher
-	aabb.min(glm::vec3{ playerPos.x - constants::playerSize, playerPos.y - (3.0f * constants::playerSize) - 0.35f, playerPos.z - constants::playerSize });
-	aabb.max(glm::vec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize - 0.35f, playerPos.z + constants::playerSize });
+	aabb.min(glm::dvec3{ playerPos.x - constants::playerSize, playerPos.y - (3.0 * constants::playerSize) - 0.35, playerPos.z - constants::playerSize });
+	aabb.max(glm::dvec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize - 0.35, playerPos.z + constants::playerSize });
 	return aabb;
 }
 
-bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType)
+bool Player::testCollide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType)
 {
 	Vector3i lowerBlock{ static_cast<int>(playerLowerHalf.x), static_cast<int>(playerLowerHalf.y), static_cast<int>(playerLowerHalf.z) };
 	Vector3i upperBlock{ static_cast<int>(playerUpperHalf.x), static_cast<int>(playerUpperHalf.y), static_cast<int>(playerUpperHalf.z) };
 
-	if (playerLowerHalf.x < 0.0f)
+	if (playerLowerHalf.x < 0.0)
 		--lowerBlock.x;
-	if (playerLowerHalf.y < 0.0f)
+	if (playerLowerHalf.y < 0.0)
 		--lowerBlock.y;
-	if (playerLowerHalf.z < 0.0f)
+	if (playerLowerHalf.z < 0.0)
 		--lowerBlock.z;
 
-	if (playerUpperHalf.x < 0.0f)
+	if (playerUpperHalf.x < 0.0)
 		--upperBlock.x;
-	if (playerUpperHalf.y < 0.0f)
+	if (playerUpperHalf.y < 0.0)
 		--upperBlock.y;
-	if (playerUpperHalf.z < 0.0f)
+	if (playerUpperHalf.z < 0.0)
 		--upperBlock.z;
 
 	bool collision{ false };
 
-	float lowerClosestCollision{ -1.0f };
+	double lowerClosestCollision{ -1.0 };
 	Vector3i lowerCollsionPos{};
 	AABB lowerAABB{};
 
-	float upperClosestCollision{ -1.0f };
+	double upperClosestCollision{ -1.0 };
 	Vector3i upperCollsionPos{};
 	AABB upperAABB{};
 
@@ -213,17 +213,17 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 		{
 			for (int z{ lowerBlock.z - 2 }; z < lowerBlock.z + 2; ++z)
 			{
-				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
+				AABB blockAABB{ glm::dvec3{ x, y, z }, glm::dvec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager.getWorldBlock(Vector3i{ x, y, z }) };
 				if (blockAABB.intersects(playerAABB) && (block.getType() != BlockType::Air && block.getType() != BlockType::Water))
 				{
-					glm::vec3 blockCenter{ x + 0.5f, y + 0.5f, z + 0.5f };
-					glm::vec3 playerToCenter{ blockCenter - playerLowerHalf };
-					float distance{ glm::length(playerToCenter) };
+					glm::dvec3 blockCenter{ x + 0.5, y + 0.5, z + 0.5 };
+					glm::dvec3 playerToCenter{ blockCenter - playerLowerHalf };
+					double distance{ glm::length(playerToCenter) };
 
 					collision = true;
 
-					if (distance < lowerClosestCollision || lowerClosestCollision == -1.0f)
+					if (distance < lowerClosestCollision || lowerClosestCollision == -1.0)
 					{
 						lowerClosestCollision = distance;
 						lowerCollsionPos = { x, y, z };
@@ -240,17 +240,17 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 		{
 			for (int z{ upperBlock.z - 2 }; z < upperBlock.z + 2; ++z)
 			{
-				AABB blockAABB{ glm::vec3{ x, y, z }, glm::vec3{ x + 1, y + 1, z + 1 } };
+				AABB blockAABB{ glm::dvec3{ x, y, z }, glm::dvec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager.getWorldBlock(Vector3i{ x, y, z }) };
 				if (blockAABB.intersects(playerAABB) && (block.getType() != BlockType::Air && block.getType() != BlockType::Water))
 				{
-					glm::vec3 blockCenter{ x + 0.5f, y + 0.5f, z + 0.5f };
-					glm::vec3 playerToCenter{ blockCenter - playerUpperHalf };
-					float distance{ glm::length(playerToCenter) };
+					glm::dvec3 blockCenter{ x + 0.5, y + 0.5, z + 0.5 };
+					glm::dvec3 playerToCenter{ blockCenter - playerUpperHalf };
+					double distance{ glm::length(playerToCenter) };
 
 					collision = true;
 
-					if (distance < upperClosestCollision || upperClosestCollision == -1.0f)
+					if (distance < upperClosestCollision || upperClosestCollision == -1.0)
 					{
 						upperClosestCollision = distance;
 						upperCollsionPos = { x, y, z };
@@ -261,7 +261,7 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 		}
 	}
 
-	if (lowerClosestCollision != -1.0f)
+	if (lowerClosestCollision != -1.0)
 	{
 		if (lowerClosestCollision <= upperClosestCollision)
 		{
@@ -275,7 +275,7 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 		}
 	}
 
-	else if (upperClosestCollision != -1.0f)
+	else if (upperClosestCollision != -1.0)
 	{
 		if (upperClosestCollision <= lowerClosestCollision)
 		{
@@ -294,51 +294,51 @@ bool Player::testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, A
 
 void Player::calculateVelocity()
 {
-	if (m_Velocity.x < 0.0f)
+	if (m_Velocity.x < 0.0)
 	{
 		m_Velocity.x += constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.x > 0.0f)
-			m_Velocity.x = 0.0f;
+		if (m_Velocity.x > 0.0)
+			m_Velocity.x = 0.0;
 	}
 	else
 	{
 		m_Velocity.x -= constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.x < 0.0f)
-			m_Velocity.x = 0.0f;
+		if (m_Velocity.x < 0.0)
+			m_Velocity.x = 0.0;
 	}
 
-	if (m_Velocity.y < 0.0f)
+	if (m_Velocity.y < 0.0)
 	{
 		m_Velocity.y += constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.y > 0.0f)
-			m_Velocity.y = 0.0f;
+		if (m_Velocity.y > 0.0)
+			m_Velocity.y = 0.0;
 	}
 	else
 	{
 		m_Velocity.y -= constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.y < 0.0f)
-			m_Velocity.y = 0.0f;
+		if (m_Velocity.y < 0.0)
+			m_Velocity.y = 0.0;
 	}
 
-	if (m_Velocity.z < 0.0f)
+	if (m_Velocity.z < 0.0)
 	{
 		m_Velocity.z += constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.z > 0.0f)
-			m_Velocity.z = 0.0f;
+		if (m_Velocity.z > 0.0)
+			m_Velocity.z = 0.0;
 	}
 	else
 	{
 		m_Velocity.z -= constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.z < 0.0f)
-			m_Velocity.z = 0.0f;
+		if (m_Velocity.z < 0.0)
+			m_Velocity.z = 0.0;
 	}
 
-	if ((m_Velocity.x < 0.01f && m_Velocity.x > 0.0f) || (m_Velocity.x > -0.01f && m_Velocity.x < 0.0f))
-		m_Velocity.x = 0.0f;
-	if ((m_Velocity.y < 0.01f && m_Velocity.y > 0.0f) || (m_Velocity.y > -0.01f && m_Velocity.y < 0.0f))
-		m_Velocity.y = 0.0f;
-	if ((m_Velocity.z < 0.01f && m_Velocity.z > 0.0f) || (m_Velocity.z > -0.01f && m_Velocity.z < 0.0f))
-		m_Velocity.z = 0.0f;
+	if ((m_Velocity.x < 0.01 && m_Velocity.x > 0.0) || (m_Velocity.x > -0.01 && m_Velocity.x < 0.0))
+		m_Velocity.x = 0.0;
+	if ((m_Velocity.y < 0.01 && m_Velocity.y > 0.0) || (m_Velocity.y > -0.01 && m_Velocity.y < 0.0))
+		m_Velocity.y = 0.0;
+	if ((m_Velocity.z < 0.01 && m_Velocity.z > 0.0) || (m_Velocity.z > -0.01 && m_Velocity.z < 0.0))
+		m_Velocity.z = 0.0;
 }
 
 void Player::breakBlock()
@@ -362,29 +362,29 @@ void Player::breakBlock()
 
 void Player::placeBlock(BlockType type)
 {
-	glm::vec3 camFront{ m_Cam.getFront() * vecPrecision };
-	glm::vec3* intersect{ placeIntersect() };
+	glm::dvec3 camFront{ m_Cam.getFront() * vecPrecision };
+	glm::dvec3* intersect{ placeIntersect() };
 
 	if (intersect != nullptr)
 	{
-		glm::vec3 pos{ *intersect };
-		Vector3i blockPos{ static_cast<int>(intersect->x < 0.0f ? intersect->x - 1.0f : intersect->x), static_cast<int>(intersect->y < 0.0f ? intersect->y - 1.0f : intersect->y), static_cast<int>(intersect->z < 0.0f ? intersect->z - 1.0f : intersect->z) };
-		Vector3i placePos{ static_cast<int>(intersect->x < 0.0f ? pos.x - 1.0f : pos.x), static_cast<int>(intersect->y < 0.0f ? pos.y - 1.0f : pos.y), static_cast<int>(intersect->z < 0.0f ? pos.z - 1.0f : pos.z) };
+		glm::dvec3 pos{ *intersect };
+		Vector3i blockPos{ static_cast<int>(intersect->x < 0.0 ? intersect->x - 1.0f : intersect->x), static_cast<int>(intersect->y < 0.0 ? intersect->y - 1.0f : intersect->y), static_cast<int>(intersect->z < 0.0 ? intersect->z - 1.0f : intersect->z) };
+		Vector3i placePos{ static_cast<int>(intersect->x < 0.0 ? pos.x - 1.0f : pos.x), static_cast<int>(intersect->y < 0.0 ? pos.y - 1.0f : pos.y), static_cast<int>(intersect->z < 0.0 ? pos.z - 1.0f : pos.z) };
 		while (placePos == blockPos)
 		{
 			pos -= camFront;
-			placePos.x = static_cast<int>(pos.x < 0.0f ? pos.x - 1.0f : pos.x);
-			placePos.y = static_cast<int>(pos.y < 0.0f ? pos.y - 1.0f : pos.y);
-			placePos.z = static_cast<int>(pos.z < 0.0f ? pos.z - 1.0f : pos.z);
+			placePos.x = static_cast<int>(pos.x < 0.0 ? pos.x - 1.0f : pos.x);
+			placePos.y = static_cast<int>(pos.y < 0.0 ? pos.y - 1.0f : pos.y);
+			placePos.z = static_cast<int>(pos.z < 0.0 ? pos.z - 1.0f : pos.z);
 		}
 
-		if (pos.y < 0.0f)
+		if (pos.y < 0.0)
 			return;
 
 		if (!m_Manager.chunkExsists(placePos))
 			return;
 
-		AABB blockAABB{ glm::vec3{ placePos.x, placePos.y, placePos.z }, glm::vec3{ placePos.x + 1, placePos.y + 1, placePos.z + 1 } };
+		AABB blockAABB{ glm::dvec3{ placePos.x, placePos.y, placePos.z }, glm::dvec3{ placePos.x + 1, placePos.y + 1, placePos.z + 1 } };
 		if (m_Aabb.intersects(blockAABB))
 			return;
 
@@ -455,21 +455,21 @@ void Player::updateMeshes(Vector3i editPos)
 
 Vector3i* Player::breakIntersect()
 {
-	glm::vec3 camFront{ m_Cam.getFront() * vecPrecision };
-	glm::vec3 currentPos{ m_Cam.getLocation() };
+	glm::dvec3 camFront{ m_Cam.getFront() * vecPrecision };
+	glm::dvec3 currentPos{ m_Cam.getLocation() };
 	Vector3i* breakPos{ nullptr };
 
 	while (glm::length((m_Cam.getLocation() - currentPos)) < m_Reach)
 	{
 		Vector3i blockPos{ static_cast<int>(currentPos.x), static_cast<int>(currentPos.y), static_cast<int>(currentPos.z) };
-		if (currentPos.x < 0.0f)
-			blockPos.x -= 1;
+		if (currentPos.x < 0.0)
+			blockPos.x -= 1.0;
 
-		if (currentPos.y < 0.0f)
-			blockPos.y -= 1;
+		if (currentPos.y < 0.0)
+			blockPos.y -= 1.0;
 
-		if (currentPos.z < 0.0f)
-			blockPos.z -= 1;
+		if (currentPos.z < 0.0)
+			blockPos.z -= 1.0;
 
 		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
 		{
@@ -483,27 +483,27 @@ Vector3i* Player::breakIntersect()
 	return breakPos;
 }
 
-glm::vec3* Player::placeIntersect()
+glm::dvec3* Player::placeIntersect()
 {
-	glm::vec3 camFront{ m_Cam.getFront() * vecPrecision };
-	glm::vec3 currentPos{ m_Cam.getLocation() };
-	glm::vec3* placePos{ nullptr };
+	glm::dvec3 camFront{ m_Cam.getFront() * vecPrecision };
+	glm::dvec3 currentPos{ m_Cam.getLocation() };
+	glm::dvec3* placePos{ nullptr };
 
 	while (glm::length((m_Cam.getLocation() - currentPos)) < m_Reach)
 	{
 		Vector3i blockPos{ static_cast<int>(currentPos.x), static_cast<int>(currentPos.y), static_cast<int>(currentPos.z) };
-		if (currentPos.x < 0.0f)
-			blockPos.x -= 1.0f;
+		if (currentPos.x < 0.0)
+			blockPos.x -= 1.0;
 
-		if (currentPos.y < 0.0f)
-			blockPos.y -= 1.0f;
+		if (currentPos.y < 0.0)
+			blockPos.y -= 1.0;
 
-		if (currentPos.z < 0.0f)
-			blockPos.z -= 1.0f;
+		if (currentPos.z < 0.0)
+			blockPos.z -= 1.0;
 
 		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
 		{
-			placePos = new glm::vec3{ currentPos };
+			placePos = new glm::dvec3{ currentPos };
 			break;
 		}
 
@@ -513,17 +513,17 @@ glm::vec3* Player::placeIntersect()
 	return placePos;
 }
 
-float Player::getReach() const
+double Player::getReach() const
 {
 	return m_Reach;
 }
 
-void Player::setReach(float reach)
+void Player::setReach(double reach)
 {
 	m_Reach = reach;
 }
 
-glm::vec3& Player::getVelocity()
+glm::dvec3& Player::getVelocity()
 {
 	return m_Velocity;
 }

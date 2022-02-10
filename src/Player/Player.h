@@ -18,10 +18,10 @@ class Player
 private:
 	Camera& m_Cam;
 	ChunkManager& m_Manager;
-	glm::vec3 m_Velocity;
+	glm::dvec3 m_Velocity;
 	AABB m_Aabb;
 
-	glm::vec3 m_LastValidLoc;
+	glm::dvec3 m_LastValidLoc;
 	AABB m_LastValidAABB;
 
 	bool m_LastMovedX;
@@ -31,24 +31,24 @@ private:
 	bool m_Sprinting;
 	bool m_Grounded;
 	bool m_Flying;
-	float m_Reach;
+	double m_Reach;
 
-	const float vecPrecision{ 0.01f };
+	const double vecPrecision{ 0.01 };
 
 	Vector3i* breakIntersect();
 
-	glm::vec3* placeIntersect();
+	glm::dvec3* placeIntersect();
 
 	void updateMeshes(Vector3i editPos);
 
 	void calculateVelocity();
 
-	bool testCollide(glm::vec3 playerLowerHalf, glm::vec3 playerUpperHalf, AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType);
+	bool testCollide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType);
 
-	AABB createPlayerAABB(glm::vec3 playerPos);
+	AABB createPlayerAABB(glm::dvec3 playerPos);
 
 public:
-	Player(Camera& cam, ChunkManager& manager, float reach);
+	Player(Camera& cam, ChunkManager& manager, double reach);
 
 	void move();
 
@@ -56,9 +56,9 @@ public:
 
 	void placeBlock(BlockType block);
 
-	float getReach() const;
+	double getReach() const;
 
-	glm::vec3& getVelocity();
+	glm::dvec3& getVelocity();
 
 	bool isSprinting();
 
@@ -66,7 +66,7 @@ public:
 
 	bool isFlying();
 
-	void setReach(float reach);
+	void setReach(double reach);
 
 	void setSprinting(bool sprinting);
 

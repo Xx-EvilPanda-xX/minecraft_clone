@@ -7,35 +7,35 @@ Mouse::Mouse(GLFWwindow* win)
 
 Mouse::Mouse() = default;
 
-float Mouse::getXOffset()
+double Mouse::getXOffset()
 {
 	if (m_UsedX)
 	{
-		return 0.0f;
+		return 0.0;
 	}
 
 	m_UsedX = true;
 	return m_xOffset;
 }
 
-float Mouse::getYOffset()
+double Mouse::getYOffset()
 {
 	if (m_UsedY)
 	{
-		return 0.0f;
+		return 0.0;
 	}
 
 	m_UsedY = true;
 	return m_yOffset;
 }
 
-void Mouse::setXOffset(float x)
+void Mouse::setXOffset(double x)
 {
 	m_xOffset = x;
 	m_UsedX = false;
 }
 
-void Mouse::setYOffset(float y)
+void Mouse::setYOffset(double y)
 {
 	m_yOffset = -y;
 	m_UsedY = false;

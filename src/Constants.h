@@ -11,24 +11,24 @@ namespace constants
 
 	constexpr bool fullscreen{ false };
 
-	constexpr float mouse_sensitivity{ 0.035f };
+	constexpr double mouse_sensitivity{ 0.035 };
 
 	constexpr bool flatWorld{ false };
 	constexpr int flatWorldHeight{ 64 };
 
 	constexpr int renderDistance{ 10 };
 
-	constexpr float playerReach{ 8.0f };
-	constexpr float blockBreakCooldown{ 0.15f };
-	constexpr float blockPlaceCooldown{ 0.15f };
+	constexpr double playerReach{ 8.0f };
+	constexpr double blockBreakCooldown{ 0.15 };
+	constexpr double blockPlaceCooldown{ 0.15 };
 
 	constexpr int waterLevel{ 48 };
 
-	constexpr float playerDrift{ 20.0f };
-	constexpr float playerSize{ 0.45f };
+	constexpr double playerDrift{ 20.0 };
+	constexpr double playerSize{ 0.45 };
 
-	constexpr float gravity{ 53.0f };
-	constexpr float jumpHeight{ 1.45f };
+	constexpr double gravity{ 53.0 };
+	constexpr double jumpHeight{ 1.45 };
 }
 
 #endif

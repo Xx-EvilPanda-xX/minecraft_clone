@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include "../Constants.h"
 
-Camera::Camera(glm::vec3 location, float yaw, float pitch, float fov, GLFWwindow* win)
+Camera::Camera(glm::dvec3 location, double yaw, double pitch, double fov, GLFWwindow* win)
 	: m_Location{ location },
 	m_Yaw{ yaw },
 	m_Pitch{ pitch },
@@ -14,51 +14,51 @@ Camera::Camera(glm::vec3 location, float yaw, float pitch, float fov, GLFWwindow
 
 Camera::Camera() = default;
 
-glm::mat4 Camera::getProjectionMat() const
+glm::dmat4 Camera::getProjectionMat() const
 {
 	int width, height;
 	glfwGetWindowSize(m_Win, &width, &height);
-	return glm::perspective(glm::radians(m_Fov), static_cast<float>(width) / static_cast<float>(height), 0.01f, 1000.0f);
+	return glm::perspective(glm::radians(m_Fov), static_cast<double>(width) / static_cast<double>(height), 0.01, 1000.0);
 }
 
-glm::mat4 Camera::getViewMat() const
+glm::dmat4 Camera::getViewMat() const
 {
 	return glm::lookAt(m_Location, m_Location + m_Front, m_Up);
 }
 
-void Camera::handleMouse(glm::vec2 offset)
+void Camera::handleMouse(glm::dvec2 offset)
 {
 	m_Yaw += offset.x * constants::mouse_sensitivity;
 	m_Pitch += offset.y * constants::mouse_sensitivity;
 
-	if (m_Pitch > 89.0f)
+	if (m_Pitch > 89.0)
 	{
-		m_Pitch = 89.0f;
+		m_Pitch = 89.0;
 	}
 
-	if (m_Pitch < -89.0f)
+	if (m_Pitch < -89.0)
 	{
-		m_Pitch = -89.0f;
+		m_Pitch = -89.0;
 	}
 
-	if (m_Yaw > 360.0f)
+	if (m_Yaw > 360.0)
 	{
-		m_Yaw = 0.0f;
+		m_Yaw = 0.0;
 	}
 
-	if (m_Yaw < 0.0f)
+	if (m_Yaw < 0.0)
 	{
-		m_Yaw = 360.0f;
+		m_Yaw = 360.0;
 	}
 
 	calculateVecs();
 }
 
-void Camera::handleKeyboard(glm::vec3 velocity, float dt)
+void Camera::handleKeyboard(glm::dvec3 velocity, double dt)
 {
 	velocity *= dt;
 
-	m_Location += glm::normalize(glm::vec3(m_Front.x, 0.0f, m_Front.z)) * velocity.z;
+	m_Location += glm::normalize(glm::dvec3(m_Front.x, 0.0, m_Front.z)) * velocity.z;
 	m_Location += m_WorldUp * velocity.y;
 	m_Location += m_Right * velocity.x;
 
@@ -67,7 +67,7 @@ void Camera::handleKeyboard(glm::vec3 velocity, float dt)
 
 void Camera::calculateVecs()
 {
-	glm::vec3 front{};
+	glm::dvec3 front{};
 
 	front.x = std::cos(glm::radians(m_Yaw)) * std::cos(glm::radians(m_Pitch));
 	front.y = std::sin(glm::radians(m_Pitch));
@@ -78,27 +78,27 @@ void Camera::calculateVecs()
 	m_Up = glm::normalize(glm::cross(m_Right, front));
 }
 
-glm::vec3 Camera::getLocation() const
+glm::dvec3 Camera::getLocation() const
 {
 	return m_Location;
 }
 
-float Camera::getYaw() const
+double Camera::getYaw() const
 {
 	return m_Yaw;
 }
 
-float Camera::getPitch() const
+double Camera::getPitch() const
 {
 	return m_Pitch;
 }
 
-glm::vec3 Camera::getFront() const
+glm::dvec3 Camera::getFront() const
 {
 	return m_Front;
 }
 
-void Camera::setLocation(glm::vec3 loc)
+void Camera::setLocation(glm::dvec3 loc)
 {
 	m_Location = loc;
 }

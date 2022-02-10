@@ -112,6 +112,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	g_Mouse.setXOffset(static_cast<float>(xpos));
-	g_Mouse.setYOffset(static_cast<float>(ypos));
+	g_Mouse.setXOffset(static_cast<double>(xpos));
+	g_Mouse.setYOffset(static_cast<double>(ypos));
 }

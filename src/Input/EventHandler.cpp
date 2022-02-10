@@ -6,7 +6,7 @@ BlockType EventHandler::selectedBlock{ BlockType::Stone };
 
 void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& player)
 {
-	static float flyToggleCooldown{};
+	static double flyToggleCooldown{};
 
 	if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(app.getWindow().getWindow(), true);
@@ -16,30 +16,30 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	else
 		player.setSprinting(false);
 
-	float velocityLimit{ player.isSprinting() ? 15.0f : 3.5f };
+	double velocityLimit{ player.isSprinting() ? 15.0 : 3.5 };
 
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
 		if (player.getVelocity().z < velocityLimit)
-			player.getVelocity().z += (constants::playerDrift * 10.0f) * Application::s_Dt;
+			player.getVelocity().z += (constants::playerDrift * 10.0) * Application::s_Dt;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_A))
 	{
 		if (player.getVelocity().x > -velocityLimit)
-			player.getVelocity().x -= (constants::playerDrift * 10.0f) * Application::s_Dt;
+			player.getVelocity().x -= (constants::playerDrift * 10.0) * Application::s_Dt;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_S))
 	{
 		if (player.getVelocity().z > -velocityLimit)
-			player.getVelocity().z -= (constants::playerDrift * 10.0f) * Application::s_Dt;
+			player.getVelocity().z -= (constants::playerDrift * 10.0) * Application::s_Dt;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_D))
 	{
 		if (player.getVelocity().x < velocityLimit)
-			player.getVelocity().x += (constants::playerDrift * 10.0f) * Application::s_Dt;
+			player.getVelocity().x += (constants::playerDrift * 10.0) * Application::s_Dt;
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
@@ -47,11 +47,11 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		if (player.isFlying())
 		{
 			if (player.getVelocity().y < velocityLimit)
-				player.getVelocity().y += (constants::playerDrift * 10.0f) * Application::s_Dt;
+				player.getVelocity().y += (constants::playerDrift * 10.0) * Application::s_Dt;
 		}
 		else if (player.isGrounded())
 		{
-			player.getVelocity().y += constants::jumpHeight * 10.0f;
+			player.getVelocity().y += constants::jumpHeight * 10.0;
 		}
 	}
 
@@ -60,7 +60,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 		if (player.isFlying())
 		{
 			if (player.getVelocity().y > -velocityLimit)
-				player.getVelocity().y -= (constants::playerDrift * 10.0f) * Application::s_Dt;
+				player.getVelocity().y -= (constants::playerDrift * 10.0) * Application::s_Dt;
 		}
 	}
 
@@ -69,7 +69,7 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	if (keyboard.isKeyDown(GLFW_KEY_F) && flyToggleCooldown <= 0.0f)
+	if (keyboard.isKeyDown(GLFW_KEY_F) && flyToggleCooldown <= 0.0)
 	{
 		player.setFlying(!player.isFlying());
 		flyToggleCooldown = 0.15f;
@@ -123,16 +123,16 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 
 void EventHandler::mouseEvent(Mouse& mouse, Player& player)
 {
-	static float breakCooldown{};
-	static float placeCooldown{};
+	static double breakCooldown{};
+	static double placeCooldown{};
 
-	if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_LEFT) && breakCooldown <= 0.0f)
+	if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_LEFT) && breakCooldown <= 0.0)
 	{
 		player.breakBlock();
 		breakCooldown = constants::blockBreakCooldown;
 	}
 
-	if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_RIGHT) && placeCooldown <= 0.0f)
+	if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_RIGHT) && placeCooldown <= 0.0)
 	{
 		player.placeBlock(selectedBlock);
 		placeCooldown = constants::blockPlaceCooldown;

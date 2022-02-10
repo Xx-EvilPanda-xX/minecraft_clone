@@ -10,43 +10,43 @@
 class Camera
 {
 private:
-	glm::vec3 m_Location;
-	float m_Yaw;
-	float m_Pitch;
+	glm::dvec3 m_Location;
+	double m_Yaw;
+	double m_Pitch;
 
-	float m_Fov;
+	double m_Fov;
 
-	const glm::vec3 m_WorldUp{ 0.0, 1.0, 0.0 };
-	glm::vec3 m_Up;
-	glm::vec3 m_Front;
-	glm::vec3 m_Right;
+	const glm::dvec3 m_WorldUp{ 0.0, 1.0, 0.0 };
+	glm::dvec3 m_Up;
+	glm::dvec3 m_Front;
+	glm::dvec3 m_Right;
 
 	GLFWwindow* m_Win;
 
 public:
-	Camera(glm::vec3 location, float yaw, float pitch, float fov, GLFWwindow* win);
+	Camera(glm::dvec3 location, double yaw, double pitch, double fov, GLFWwindow* win);
 
 	Camera();
 
-	glm::mat4 getProjectionMat() const;
+	glm::dmat4 getProjectionMat() const;
 
-	glm::mat4 getViewMat() const;
+	glm::dmat4 getViewMat() const;
 
 	void calculateVecs();
 
-	void handleMouse(glm::vec2 offset);
+	void handleMouse(glm::dvec2 offset);
 
-	void handleKeyboard(glm::vec3 velocity, float dt);
+	void handleKeyboard(glm::dvec3 velocity, double dt);
 
-	glm::vec3 getLocation() const;
+	glm::dvec3 getLocation() const;
 
-	float getYaw() const;
+	double getYaw() const;
 
-	float getPitch() const;
+	double getPitch() const;
 
-	glm::vec3 getFront() const;
+	glm::dvec3 getFront() const;
 
-	void setLocation(glm::vec3 loc);
+	void setLocation(glm::dvec3 loc);
 };
 
 #endif

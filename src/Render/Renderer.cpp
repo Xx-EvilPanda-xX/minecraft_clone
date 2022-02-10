@@ -27,8 +27,8 @@ namespace Renderer
 
 	static void prepare(const Camera& camera, const ChunkMesh& mesh)
 	{
-		glm::mat4 model(1.0f);
-		glm::vec3 chunkPostion{ static_cast<float>(mesh.getPostion().x), 0.0f, static_cast<float>(mesh.getPostion().y) };
+		glm::dmat4 model(1.0);
+		glm::dvec3 chunkPostion{ static_cast<double>(mesh.getPostion().x), 0.0, static_cast<double>(mesh.getPostion().y) };
 
 		model = glm::translate(model, chunkPostion);
 
