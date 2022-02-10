@@ -12,6 +12,10 @@ Player::Player(Camera & cam, ChunkManager & manager, double reach)
 {
 	m_Velocity = glm::dvec3{};
 	m_LastValidLoc = glm::dvec3{};
+
+	m_Sprinting = false;
+	m_Grounded = false;
+	m_Flying = false;
 }
 
 void Player::move()
@@ -368,14 +372,14 @@ void Player::placeBlock(BlockType type)
 	if (intersect != nullptr)
 	{
 		glm::dvec3 pos{ *intersect };
-		Vector3i blockPos{ static_cast<int>(intersect->x < 0.0 ? intersect->x - 1.0f : intersect->x), static_cast<int>(intersect->y < 0.0 ? intersect->y - 1.0f : intersect->y), static_cast<int>(intersect->z < 0.0 ? intersect->z - 1.0f : intersect->z) };
-		Vector3i placePos{ static_cast<int>(intersect->x < 0.0 ? pos.x - 1.0f : pos.x), static_cast<int>(intersect->y < 0.0 ? pos.y - 1.0f : pos.y), static_cast<int>(intersect->z < 0.0 ? pos.z - 1.0f : pos.z) };
+		Vector3i blockPos{ static_cast<int>(intersect->x < 0.0 ? intersect->x - 1.0 : intersect->x), static_cast<int>(intersect->y < 0.0 ? intersect->y - 1.0 : intersect->y), static_cast<int>(intersect->z < 0.0 ? intersect->z - 1.0 : intersect->z) };
+		Vector3i placePos{ static_cast<int>(intersect->x < 0.0 ? pos.x - 1.0f : pos.x), static_cast<int>(intersect->y < 0.0 ? pos.y - 1.0 : pos.y), static_cast<int>(intersect->z < 0.0 ? pos.z - 1.0 : pos.z) };
 		while (placePos == blockPos)
 		{
 			pos -= camFront;
-			placePos.x = static_cast<int>(pos.x < 0.0 ? pos.x - 1.0f : pos.x);
-			placePos.y = static_cast<int>(pos.y < 0.0 ? pos.y - 1.0f : pos.y);
-			placePos.z = static_cast<int>(pos.z < 0.0 ? pos.z - 1.0f : pos.z);
+			placePos.x = static_cast<int>(pos.x < 0.0 ? pos.x - 1.0 : pos.x);
+			placePos.y = static_cast<int>(pos.y < 0.0 ? pos.y - 1.0 : pos.y);
+			placePos.z = static_cast<int>(pos.z < 0.0 ? pos.z - 1.0 : pos.z);
 		}
 
 		if (pos.y < 0.0)
