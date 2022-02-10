@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 #include "../Application.h"
 #include "../Constants.h"
+#include <stack>
 
 Player::Player(Camera & cam, ChunkManager & manager, float reach)
 	: m_Cam{ cam },
@@ -113,12 +114,16 @@ void Player::move()
 		}
 
 		glm::vec3 camPos{ m_Cam.getLocation() };
-		const float targetDistance{ 0.5f + constants::playerSize + 0.0001 };
+		const float targetDistance{ 0.5f + constants::playerSize + 0.0001f };
 
 		if (collideX)
 		{
 			float centerToPlayerDistance{ std::abs(blockCenter.x - lastValidLoc.x) };
 			float change{ centerToPlayerDistance - targetDistance };
+
+			if (change > 0.1f)
+				std::cout << "pum\n";
+
 			m_Cam.setLocation(glm::vec3{ m_LastValidLoc.x + (blockCenter.x < lastValidLoc.x ? -change : change), camPos.y, camPos.z });
 		}
 
@@ -126,6 +131,10 @@ void Player::move()
 		{
 			float centerToPlayerDistance{ std::abs(blockCenter.y - lastValidLoc.y) };
 			float change{ centerToPlayerDistance - targetDistance };
+
+			if (change > 0.1f)
+				std::cout << "pum\n";
+
 			m_Cam.setLocation(glm::vec3{ camPos.x, m_LastValidLoc.y + (blockCenter.y < lastValidLoc.y ? -change : change), camPos.z });
 			m_Velocity.y = 0.0f;
 
@@ -137,6 +146,10 @@ void Player::move()
 		{
 			float centerToPlayerDistance{ std::abs(blockCenter.z - lastValidLoc.z) };
 			float change{ centerToPlayerDistance - targetDistance };
+
+			if (change > 0.1f)
+				std::cout << "pum\n";
+
 			m_Cam.setLocation(glm::vec3{ camPos.x, camPos.y, m_LastValidLoc.z + (blockCenter.z < lastValidLoc.z ? -change : change) });
 		}
 
