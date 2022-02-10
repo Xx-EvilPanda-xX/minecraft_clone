@@ -42,13 +42,13 @@ private:
 	const float m_FaceRatio;
 	Vector2i m_Pos;
 
-	void storeDoubleBuffer(int index, int size, int buffer, const std::vector<float>& data);
+	void storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data);
 
 	void storeIndices(std::vector<int>& data);
 
-	ChunkMesh& pushVertexdouble(float f);
+	ChunkMesh& pushVertexFloat(float f);
 
-	ChunkMesh& pushTexdouble(float f);
+	ChunkMesh& pushTexFloat(float f);
 
 	ChunkMesh& pushLighting(float f);
 
