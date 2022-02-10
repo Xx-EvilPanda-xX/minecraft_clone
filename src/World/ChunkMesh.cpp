@@ -6,7 +6,7 @@
 ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader)
 	: m_Pos{ pos },
 	m_RenderData{ 0, 0, 0, 0, 0, 0, &shader },
-	m_FaceRatio{ 1.0 / facesPerRow }
+	m_FaceRatio{ 1.0f / facesPerRow }
 {
 	hasValidObjects = false;
 }
@@ -51,7 +51,7 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 		break;
 	}
 
-	double* tex{ calcTexCoords(block.getType(), face) };
+	float* tex{ calcTexCoords(block.getType(), face) };
 	for (int i{}; i < 8; ++i)
 	{
 		m_TexCoords.push_back(tex[i]);
@@ -60,7 +60,7 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 	delete[] tex;
 }
 
-double* ChunkMesh::calcTexCoords(BlockType block, Face face)
+float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 {
 	double index{};
 	for (int i{}; i < BlockType::NUM_BLOCKS; ++i)
@@ -85,55 +85,55 @@ double* ChunkMesh::calcTexCoords(BlockType block, Face face)
 	{
 		case Face::Up:
 		{
-			glm::dvec2 faceStartCoords{ startCoord };
+			glm::vec2 faceStartCoords{ startCoord };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}	
 		case Face::North:
 		{
-			glm::dvec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio, 0.0 } };
+			glm::vec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::East:
 		{
-			glm::dvec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio * 2.0, 0.0 } };
+			glm::vec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio * 2.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::South:
 		{
-			glm::dvec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio * 3.0, 0.0 } };
+			glm::vec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio * 3.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::West:
 		{
-			glm::dvec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio * 4.0, 0.0 } };
+			glm::vec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio * 4.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 		case Face::Down:
 		{
-			glm::dvec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio * 5.0, 0.0 } };
+			glm::vec2 faceStartCoords{ startCoord + glm::dvec2{ m_FaceRatio * 5.0f, 0.0f } };
 			checkTexCoordBounds(faceStartCoords);
 			return getTexCoordsFromStartPos(faceStartCoords);
 		}
 	}
 }
 
-void ChunkMesh::checkTexCoordBounds(glm::dvec2& faceStartCoords)
+void ChunkMesh::checkTexCoordBounds(glm::vec2& faceStartCoords)
 {
-	if (faceStartCoords.x >= 1.0)
+	if (faceStartCoords.x >= 1.0f)
 	{
 		faceStartCoords.y += m_FaceRatio;
-		faceStartCoords.x = faceStartCoords.x - 1.0;
+		faceStartCoords.x = faceStartCoords.x - 1.0f;
 	}
 }
 
-double* ChunkMesh::getTexCoordsFromStartPos(glm::dvec2 startPos)
+float* ChunkMesh::getTexCoordsFromStartPos(glm::vec2 startPos)
 {
-	double* coords{ new double[8]{} };
+	float* coords{ new float[8]{} };
 	
 	coords[0] = startPos.x + m_FaceRatio;
 	coords[1] = startPos.y + m_FaceRatio;
@@ -154,12 +154,12 @@ void ChunkMesh::pushUp(Vector3i loc, Block block)
 {
 	int size{ static_cast<int>(m_Vertices.size()) / 3 };
 	glm::dvec3 doubles{ static_cast<double>(loc.x), static_cast<double>(loc.y) , static_cast<double>(loc.z) };
-	double height{ block.isSurface() ? 0.9 : 1.0 };
+	double height{ block.isSurface() ? 0.9f : 1.0f };
 
 	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //2
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //5
-	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0); //6
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0); //7
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //5
+	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0f); //6
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0f); //7
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -173,10 +173,10 @@ void ChunkMesh::pushDown(Vector3i loc)
 {
 	int size{ static_cast<int>(m_Vertices.size()) / 3 };
 	glm::dvec3 doubles{ static_cast<double>(loc.x), static_cast<double>(loc.y) , static_cast<double>(loc.z) };
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //1
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //1
 	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //0
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0); //4
-	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0); //3
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0f); //4
+	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0f); //3
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -190,12 +190,12 @@ void ChunkMesh::pushNorth(Vector3i loc, Block block)
 {
 	int size{ static_cast<int>(m_Vertices.size()) / 3 };
 	glm::dvec3 doubles{ static_cast<double>(loc.x), static_cast<double>(loc.y) , static_cast<double>(loc.z) };
-	double height{ block.isSurface() ? 0.9 : 1.0 };
+	double height{ block.isSurface() ? 0.9f : 1.0f };
 
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //1
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0); //4
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //5
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0); //7
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //1
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0f); //4
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //5
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0f); //7
 	
 	for (int i{}; i < 4; ++i)
 	{
@@ -210,11 +210,11 @@ void ChunkMesh::pushSouth(Vector3i loc, Block block)
 	int size{ static_cast<int>(m_Vertices.size()) / 3 };
 	glm::dvec3 doubles{ static_cast<double>(loc.x), static_cast<double>(loc.y) , static_cast<double>(loc.z) };
 
-	double height{ block.isSurface() ? 0.9 : 1.0 };
+	double height{ block.isSurface() ? 0.9f : 1.0f };
 
-	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0); //3
+	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0f); //3
 	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //0
-	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0); //6
+	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0f); //6
 	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //2
 
 	for (int i{}; i < 4; ++i)
@@ -229,12 +229,12 @@ void ChunkMesh::pushEast(Vector3i loc, Block block)
 {
 	int size{ static_cast<int>(m_Vertices.size()) / 3 };
 	glm::dvec3 doubles{ static_cast<double>(loc.x), static_cast<double>(loc.y) , static_cast<double>(loc.z) };
-	double height{ block.isSurface() ? 0.9 : 1.0 };
+	double height{ block.isSurface() ? 0.9f : 1.0f };
 
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0); //4
-	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0); //3
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0); //7
-	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0); //6
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0f); //4
+	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z + 1.0f); //3
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0f); //7
+	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z + 1.0f); //6
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -248,12 +248,12 @@ void ChunkMesh::pushWest(Vector3i loc, Block block)
 {
 	glm::dvec3 doubles{ static_cast<double>(loc.x), static_cast<double>(loc.y) , static_cast<double>(loc.z) };
 	int size{ static_cast<int>(m_Vertices.size()) / 3 };
-	double height{ block.isSurface() ? 0.9 : 1.0 };
+	double height{ block.isSurface() ? 0.9f : 1.0f };
 
 	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //0
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //1
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y).pushVertexdouble(doubles.z); //1
 	pushVertexdouble(doubles.x).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //2
-	pushVertexdouble(doubles.x + 1.0).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //5
+	pushVertexdouble(doubles.x + 1.0f).pushVertexdouble(doubles.y + height).pushVertexdouble(doubles.z); //5
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -273,19 +273,19 @@ void ChunkMesh::pushNewIndices(int size)
 	pushIndex(s1).pushIndex(s2).pushIndex(s3).pushIndex(s0).pushIndex(s2).pushIndex(s1);
 }
 
-ChunkMesh& ChunkMesh::pushVertexdouble(double f)
+ChunkMesh& ChunkMesh::pushVertexdouble(float f)
 {
 	m_Vertices.push_back(f);
 	return *this;
 }
 
-ChunkMesh& ChunkMesh::pushTexdouble(double f)
+ChunkMesh& ChunkMesh::pushTexdouble(float f)
 {
 	m_TexCoords.push_back(f);
 	return *this;
 }
 
-ChunkMesh& ChunkMesh::pushLighting(double f)
+ChunkMesh& ChunkMesh::pushLighting(float f)
 {
 	m_Lighting.push_back(f);
 	return *this;
@@ -361,18 +361,11 @@ void ChunkMesh::toBuffers()
 	hasValidObjects = true;
 }
 
-void ChunkMesh::storeDoubleBuffer(int index, int size, int buffer, const std::vector<double>& data)
+void ChunkMesh::storeDoubleBuffer(int index, int size, int buffer, const std::vector<float>& data)
 {
 	glBindVertexArray(m_RenderData.vao);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	float* uploadableData{ new float[data.size()]{} };
-
-	for (int i{}; i < data.size(); ++i)
-	{
-		uploadableData[i] = static_cast<float>(data[i]);
-	}
-
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &uploadableData[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -386,12 +379,12 @@ void ChunkMesh::storeIndices(std::vector<int>& data)
 	m_RenderData.indexCount = static_cast<int>(data.size());
 }
 
-const std::vector<double>& ChunkMesh::getVertices() const
+const std::vector<float>& ChunkMesh::getVertices() const
 {
 	return m_Vertices;
 }
 
-const std::vector<double>& ChunkMesh::getTexCoords() const
+const std::vector<float>& ChunkMesh::getTexCoords() const
 {
 	return m_TexCoords;
 }

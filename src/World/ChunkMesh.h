@@ -11,12 +11,12 @@
 
 constexpr int facesPerRow{ 16 };
 
-constexpr double upAmbient{ 1.0 };
-constexpr double northAmbient{ 0.9 };
-constexpr double eastAmbient{ 0.8 };
-constexpr double southAmbient{ 0.9 };
-constexpr double westAmbient{ 0.8 };
-constexpr double downAmbient{ 0.6 };
+constexpr float upAmbient{ 1.0f };
+constexpr float northAmbient{ 0.9f };
+constexpr float eastAmbient{ 0.8f };
+constexpr float southAmbient{ 0.9f };
+constexpr float westAmbient{ 0.8f };
+constexpr float downAmbient{ 0.6f };
 
 enum class Face
 {
@@ -32,25 +32,25 @@ class ChunkMesh
 {
 private:
 	RenderData m_RenderData;
-	std::vector<double> m_Vertices;
-	std::vector<double> m_TexCoords;
-	std::vector<double> m_Lighting;
+	std::vector<float> m_Vertices;
+	std::vector<float> m_TexCoords;
+	std::vector<float> m_Lighting;
 	std::vector<int> m_Indices;
 	bool hasValidObjects;
 	static Texture s_TexAltas;
 	static BlockType s_AtlasIndices[];
-	const double m_FaceRatio;
+	const float m_FaceRatio;
 	Vector2i m_Pos;
 
-	void storeDoubleBuffer(int index, int size, int buffer, const std::vector<double>& data);
+	void storeDoubleBuffer(int index, int size, int buffer, const std::vector<float>& data);
 
 	void storeIndices(std::vector<int>& data);
 
-	ChunkMesh& pushVertexdouble(double f);
+	ChunkMesh& pushVertexdouble(float f);
 
-	ChunkMesh& pushTexdouble(double f);
+	ChunkMesh& pushTexdouble(float f);
 
-	ChunkMesh& pushLighting(double f);
+	ChunkMesh& pushLighting(float f);
 
 	ChunkMesh& pushIndex(int i);
 
@@ -68,11 +68,11 @@ private:
 
 	void pushNewIndices(int size);
 
-	double* calcTexCoords(BlockType block, Face face);
+	float* calcTexCoords(BlockType block, Face face);
 
-	double* getTexCoordsFromStartPos(glm::dvec2 startPos);
+	float* getTexCoordsFromStartPos(glm::vec2 startPos);
 
-	void checkTexCoordBounds(glm::dvec2& faceStartCoords);
+	void checkTexCoordBounds(glm::vec2& faceStartCoords);
 
 	void deleteBuffers();
 
@@ -91,9 +91,9 @@ public:
 
 	void disableAttribs() const;
 
-	const std::vector<double>& getVertices() const;
+	const std::vector<float>& getVertices() const;
 
-	const std::vector<double>& getTexCoords() const;
+	const std::vector<float>& getTexCoords() const;
 
 	const std::vector<int>& getIndices() const;
 
