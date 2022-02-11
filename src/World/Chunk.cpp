@@ -74,12 +74,15 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 		{
 			m_Mesh.toBuffers();
 			m_IsBuilt = true;
+			m_Building = false;
+			resetRemaining();
 		}
 
 		return;
 	}
 
 	ChunkSection* chunkSection{ m_Sections[section] };
+	m_Building = true;
 
 	for (int x{}; x < 16; ++x)
 	{
@@ -193,6 +196,8 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 	{
 		m_Mesh.toBuffers();
 		m_IsBuilt = true;
+		m_Building = false;
+		resetRemaining();
 	}
 }
 
@@ -200,6 +205,14 @@ void Chunk::clearMesh()
 {
 	m_Mesh.clear();
 	m_IsBuilt = false;
+}
+
+void Chunk::resetRemaining()
+{
+	for (int i{}; i < g_ChunkCap; ++i)
+	{
+		m_RemainingSections.push_back(i);
+	}
 }
 
 int Chunk::getCurrentSectionIndex() const

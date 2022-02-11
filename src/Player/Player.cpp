@@ -125,7 +125,7 @@ void Player::move()
 			double centerToPlayerDistance{ std::abs(blockCenter.x - lastValidLoc.x) };
 			double change{ centerToPlayerDistance - targetDistance };
 
-			if (change > 0.1)
+			if (change > 0.9)
 				std::cout << "pum\n";
 
 			m_Cam.setLocation(glm::dvec3{ m_LastValidLoc.x + (blockCenter.x < lastValidLoc.x ? -change : change), camPos.y, camPos.z });
@@ -136,7 +136,7 @@ void Player::move()
 			double centerToPlayerDistance{ std::abs(blockCenter.y - lastValidLoc.y) };
 			double change{ centerToPlayerDistance - targetDistance };
 
-			if (change > 0.1)
+			if (change > 0.9)
 				std::cout << "pum\n";
 
 			m_Cam.setLocation(glm::dvec3{ camPos.x, m_LastValidLoc.y + (blockCenter.y < lastValidLoc.y ? -change : change), camPos.z });
@@ -151,7 +151,7 @@ void Player::move()
 			double centerToPlayerDistance{ std::abs(blockCenter.z - lastValidLoc.z) };
 			double change{ centerToPlayerDistance - targetDistance };
 
-			if (change > 0.1)
+			if (change > 0.9)
 				std::cout << "pum\n";
 
 			m_Cam.setLocation(glm::dvec3{ camPos.x, camPos.y, m_LastValidLoc.z + (blockCenter.z < lastValidLoc.z ? -change : change) });

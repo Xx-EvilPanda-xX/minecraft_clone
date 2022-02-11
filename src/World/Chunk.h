@@ -17,8 +17,11 @@ private:
 	int m_CurrentSectionIndex;
 	bool m_Complete;
 	bool m_IsBuilt;
+	bool m_Building;
 	Vector2i m_Location;
 	std::vector<int> m_RemainingSections;
+
+	void resetRemaining();
 
 public:
 	Chunk(Vector2i loc, Shader& shader);
