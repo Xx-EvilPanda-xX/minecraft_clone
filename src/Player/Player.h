@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "../World/ChunkManager.h"
 #include "../Math/Vector3i.h"
+#include "../Input/Keyboard.h"
 
 enum class CollsionType
 {
@@ -20,6 +21,7 @@ private:
 	ChunkManager& m_Manager;
 	glm::dvec3 m_Velocity;
 	AABB m_Aabb;
+	Keyboard& m_Keyboard;
 
 	glm::dvec3 m_LastValidLoc;
 	AABB m_LastValidAABB;
@@ -34,6 +36,7 @@ private:
 	double m_Reach;
 
 	const double vecPrecision{ 0.001 };
+	const double cameraHeightDiff{ 0.35 };
 
 	Vector3i* breakIntersect();
 
@@ -48,7 +51,7 @@ private:
 	AABB createPlayerAABB(glm::dvec3 playerPos);
 
 public:
-	Player(Camera& cam, ChunkManager& manager, double reach);
+	Player(Camera& cam, ChunkManager& manager, Keyboard& keyboard, double reach);
 
 	void move();
 

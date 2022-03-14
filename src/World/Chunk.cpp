@@ -6,7 +6,6 @@ Chunk::Chunk(Vector2i loc, Shader& shader)
 	: m_Location{ loc },
 	m_Mesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader }
 {
-
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
 		m_Sections[i] = nullptr;

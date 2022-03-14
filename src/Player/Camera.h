@@ -47,6 +47,13 @@ public:
 	glm::dvec3 getFront() const;
 
 	void setLocation(glm::dvec3 loc);
+
+	void setX(double x);
+
+	void setY(double y);
+
+	void setZ(double z);
+
 };
 
 #endif

@@ -5,9 +5,10 @@
 #include "../Constants.h"
 #include <stack>
 
-Player::Player(Camera & cam, ChunkManager & manager, double reach)
+Player::Player(Camera & cam, ChunkManager & manager, Keyboard& keyboard, double reach)
 	: m_Cam{ cam },
 	m_Manager{ manager },
+	m_Keyboard{ keyboard },
 	m_Reach{ reach }
 {
 	m_Velocity = glm::dvec3{};
@@ -25,7 +26,7 @@ void Player::move()
 	//gravity
 	if (!m_Flying && !m_Grounded)
 		m_Velocity.y -= Application::s_Dt * constants::gravity;
-
+	
 	m_Cam.handleKeyboard(m_Velocity, Application::s_Dt);
 
 	Vector3i collsionPos{};
@@ -39,128 +40,109 @@ void Player::move()
 	CollsionType collisionType{};
 
 	//3 iters, one per axis
-	for (int i{}; testCollide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType) && i < 3; ++i)
+	for (int i{}; i < 3; ++i)
 	{
-		glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
-		glm::dvec3 lastValidLoc;
-
-		switch (collisionType)
+		if (testCollide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType))
 		{
-		case CollsionType::PlayerUpperHalf:
-			lastValidLoc = { m_LastValidLoc.x, m_LastValidAABB.max().y - constants::playerSize, m_LastValidLoc.z };
-			break;
-		case CollsionType::PlayerLowerHalf:
-			lastValidLoc = { m_LastValidLoc.x, m_LastValidAABB.min().y + constants::playerSize, m_LastValidLoc.z };
-			break;
-		}
+			glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
+			glm::dvec3 lastValidLoc;
 
-		glm::dvec3 direction{ glm::normalize(lastValidLoc - blockCenter) * vecPrecision };
-		glm::dvec3 center{ blockCenter };
-		Vector3i block{ static_cast<int>(center.x < 0.0 ? center.x - 1.0 : center.x), static_cast<int>(center.y < 0.0 ? center.y - 1.0 : center.y), static_cast<int>(center.z < 0.0 ? center.z - 1.0 : center.z) };
-		while (block == collsionPos)
-		{
-			center += direction;
-			block.x = static_cast<int>(center.x < 0.0 ? center.x - 1.0 : center.x);
-			block.y = static_cast<int>(center.y < 0.0 ? center.y - 1.0 : center.y);
-			block.z = static_cast<int>(center.z < 0.0 ? center.z - 1.0 : center.z);
-		}
-
-		int intersects{};
-
-		bool collideX{ block.x != collsionPos.x };
-		bool collideY{ block.y != collsionPos.y };
-		bool collideZ{ block.z != collsionPos.z };
-
-		if (collideX)
-			++intersects;
-
-		if (collideY)
-			++intersects;
-
-		if (collideZ)
-			++intersects;
-
-		if (intersects != 1)
-		{
-			collideX = false;
-			collideY = false;
-			collideZ = false;
-
-			if (!m_LastMovedX && m_LastMovedY && m_LastMovedZ)
-				collideX = true;
-
-			if (m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
+			switch (collisionType)
 			{
-				if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
+			case CollsionType::PlayerUpperHalf:
+				lastValidLoc = { m_LastValidLoc.x, m_LastValidAABB.max().y - constants::playerSize, m_LastValidLoc.z };
+				break;
+			case CollsionType::PlayerLowerHalf:
+				lastValidLoc = { m_LastValidLoc.x, m_LastValidAABB.min().y + constants::playerSize, m_LastValidLoc.z };
+				break;
+			}
+
+			glm::dvec3 direction{ glm::normalize(lastValidLoc - blockCenter) * vecPrecision };
+			glm::dvec3 center{ blockCenter };
+			Vector3i block{ static_cast<int>(center.x < 0.0 ? center.x - 1.0 : center.x), static_cast<int>(center.y < 0.0 ? center.y - 1.0 : center.y), static_cast<int>(center.z < 0.0 ? center.z - 1.0 : center.z) };
+			while (block == collsionPos)
+			{
+				center += direction;
+				block.x = static_cast<int>(center.x < 0.0 ? center.x - 1.0 : center.x);
+				block.y = static_cast<int>(center.y < 0.0 ? center.y - 1.0 : center.y);
+				block.z = static_cast<int>(center.z < 0.0 ? center.z - 1.0 : center.z);
+			}
+
+			int intersects{};
+
+			bool collideX{ block.x != collsionPos.x };
+			bool collideY{ block.y != collsionPos.y };
+			bool collideZ{ block.z != collsionPos.z };
+
+			if (collideX)
+				++intersects;
+
+			if (collideY)
+				++intersects;
+
+			if (collideZ)
+				++intersects;
+
+			if (intersects != 1)
+			{
+				collideX = false;
+				collideY = false;
+				collideZ = false;
+
+				if (!m_LastMovedX && m_LastMovedY && m_LastMovedZ)
+					collideX = true;
+
+				if (m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
 				{
-					m_LastMovedX = !m_LastMovedX;
-					m_LastMovedY = !m_LastMovedY;
-					m_LastMovedZ = !m_LastMovedZ;
+					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
+					{
+						m_LastMovedX = !m_LastMovedX;
+						m_LastMovedY = !m_LastMovedY;
+						m_LastMovedZ = !m_LastMovedZ;
+					}
+					else
+						collideY = true;
 				}
-				else
-					collideY = true;
-			}	
 
-			if (m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
-				collideZ = true;
+				if (m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
+					collideZ = true;
 
-			if (!m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
-				collideX = true;
+				if (!m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
+					collideX = true;
 
-			if (m_LastMovedX && !m_LastMovedY && !m_LastMovedZ)
-				collideZ = true;
+				if (m_LastMovedX && !m_LastMovedY && !m_LastMovedZ)
+					collideZ = true;
 
-			if (!m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
-				collideX = true;
+				if (!m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
+					collideX = true;
 
-			if (m_LastMovedX && m_LastMovedY && m_LastMovedZ)
-				collideX = true;
+				if (m_LastMovedX && m_LastMovedY && m_LastMovedZ)
+					collideX = true;
+			}
+
+			glm::dvec3 camPos{ m_Cam.getLocation() };
+			const double targetDistance{ 0.5 + constants::playerSize + 0.0000001 };
+
+			if (collideX)
+				m_Cam.setX(blockCenter.x < lastValidLoc.x ? (blockCenter.x + targetDistance) : (blockCenter.x - targetDistance));
+
+			if (collideY)
+			{
+				m_Cam.setY(blockCenter.y < lastValidLoc.y ? (blockCenter.y + targetDistance) + (constants::playerSize * 2) + cameraHeightDiff : (blockCenter.y - targetDistance) + cameraHeightDiff);
+				m_Velocity.y = 0.0;
+
+				if (collisionType == CollsionType::PlayerLowerHalf)
+					onGround = true;
+			}
+
+			if (collideZ)
+				m_Cam.setZ(blockCenter.z < lastValidLoc.z ? (blockCenter.z + targetDistance) : (blockCenter.z - targetDistance));
+
+			m_Aabb = createPlayerAABB(m_Cam.getLocation());
+
+			lowerPlayerHalf = { m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
+			upperPlayerHalf = { m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
 		}
-
-		glm::dvec3 camPos{ m_Cam.getLocation() };
-		const double targetDistance{ 0.5 + constants::playerSize + 0.0001 };
-
-		if (collideX)
-		{
-			double centerToPlayerDistance{ std::abs(blockCenter.x - lastValidLoc.x) };
-			double change{ centerToPlayerDistance - targetDistance };
-
-			if (change > 0.9)
-				std::cout << "pum\n";
-
-			m_Cam.setLocation(glm::dvec3{ m_LastValidLoc.x + (blockCenter.x < lastValidLoc.x ? -change : change), camPos.y, camPos.z });
-		}
-
-		if (collideY)
-		{
-			double centerToPlayerDistance{ std::abs(blockCenter.y - lastValidLoc.y) };
-			double change{ centerToPlayerDistance - targetDistance };
-
-			if (change > 0.9)
-				std::cout << "pum\n";
-
-			m_Cam.setLocation(glm::dvec3{ camPos.x, m_LastValidLoc.y + (blockCenter.y < lastValidLoc.y ? -change : change), camPos.z });
-			m_Velocity.y = 0.0;
-
-			if (collisionType == CollsionType::PlayerLowerHalf)
-				onGround = true;
-		}
-
-		if (collideZ)
-		{
-			double centerToPlayerDistance{ std::abs(blockCenter.z - lastValidLoc.z) };
-			double change{ centerToPlayerDistance - targetDistance };
-
-			if (change > 0.9)
-				std::cout << "pum\n";
-
-			m_Cam.setLocation(glm::dvec3{ camPos.x, camPos.y, m_LastValidLoc.z + (blockCenter.z < lastValidLoc.z ? -change : change) });
-		}
-
-		m_Aabb = createPlayerAABB(m_Cam.getLocation());
-
-		lowerPlayerHalf = { m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
-		upperPlayerHalf = { m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
 	}
 
 	m_Grounded = onGround;
@@ -168,6 +150,9 @@ void Player::move()
 	m_LastMovedX = m_LastValidLoc.x != m_Cam.getLocation().x;
 	m_LastMovedY = m_LastValidLoc.y != m_Cam.getLocation().y;
 	m_LastMovedZ = m_LastValidLoc.z != m_Cam.getLocation().z;
+
+	//if (m_LastValidLoc.x != m_Cam.getLocation().x)
+		//std::cout << "pum: diff: " << m_LastValidLoc.x - m_Cam.getLocation().x << "\n";
 
 	m_LastValidLoc = m_Cam.getLocation();
 	m_LastValidAABB = m_Aabb;
@@ -177,8 +162,8 @@ AABB Player::createPlayerAABB(glm::dvec3 playerPos)
 {
 	AABB aabb{};
 	// - 0.35f to make player's head appear higher
-	aabb.min(glm::dvec3{ playerPos.x - constants::playerSize, playerPos.y - (3.0 * constants::playerSize) - 0.35, playerPos.z - constants::playerSize });
-	aabb.max(glm::dvec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize - 0.35, playerPos.z + constants::playerSize });
+	aabb.min(glm::dvec3{ playerPos.x - constants::playerSize, playerPos.y - (3.0 * constants::playerSize) - cameraHeightDiff, playerPos.z - constants::playerSize });
+	aabb.max(glm::dvec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize - cameraHeightDiff, playerPos.z + constants::playerSize });
 	return aabb;
 }
 
@@ -298,43 +283,52 @@ bool Player::testCollide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf,
 
 void Player::calculateVelocity()
 {
-	if (m_Velocity.x < 0.0)
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_A) && !m_Keyboard.isKeyDown(GLFW_KEY_D))
 	{
-		m_Velocity.x += constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.x > 0.0)
-			m_Velocity.x = 0.0;
-	}
-	else
-	{
-		m_Velocity.x -= constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.x < 0.0)
-			m_Velocity.x = 0.0;
+		{
+			m_Velocity.x += constants::playerDrift * Application::s_Dt;
+			if (m_Velocity.x > 0.0)
+				m_Velocity.x = 0.0;
+		}
+		else
+		{
+			m_Velocity.x -= constants::playerDrift * Application::s_Dt;
+			if (m_Velocity.x < 0.0)
+				m_Velocity.x = 0.0;
+		}
 	}
-
-	if (m_Velocity.y < 0.0)
+	
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_SPACE) && !m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
 	{
-		m_Velocity.y += constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.y > 0.0)
-			m_Velocity.y = 0.0;
-	}
-	else
-	{
-		m_Velocity.y -= constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.y < 0.0)
-			m_Velocity.y = 0.0;
+		{
+			m_Velocity.y += constants::playerDrift * Application::s_Dt;
+			if (m_Velocity.y > 0.0)
+				m_Velocity.y = 0.0;
+		}
+		else
+		{
+			m_Velocity.y -= constants::playerDrift * Application::s_Dt;
+			if (m_Velocity.y < 0.0)
+				m_Velocity.y = 0.0;
+		}
 	}
-
-	if (m_Velocity.z < 0.0)
+	
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_W) && !m_Keyboard.isKeyDown(GLFW_KEY_S))
 	{
-		m_Velocity.z += constants::playerDrift * Application::s_Dt;
-		if (m_Velocity.z > 0.0)
-			m_Velocity.z = 0.0;
-	}
-	else
-	{
-		m_Velocity.z -= constants::playerDrift * Application::s_Dt;
 		if (m_Velocity.z < 0.0)
-			m_Velocity.z = 0.0;
+		{
+			m_Velocity.z += constants::playerDrift * Application::s_Dt;
+			if (m_Velocity.z > 0.0)
+				m_Velocity.z = 0.0;
+		}
+		else
+		{
+			m_Velocity.z -= constants::playerDrift * Application::s_Dt;
+			if (m_Velocity.z < 0.0)
+				m_Velocity.z = 0.0;
+		}
 	}
 
 	if ((m_Velocity.x < 0.01 && m_Velocity.x > 0.0) || (m_Velocity.x > -0.01 && m_Velocity.x < 0.0))

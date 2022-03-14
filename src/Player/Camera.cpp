@@ -102,3 +102,18 @@ void Camera::setLocation(glm::dvec3 loc)
 {
 	m_Location = loc;
 }
+
+void Camera::setX(double x)
+{
+	m_Location.x = x;
+}
+
+void Camera::setY(double y)
+{
+	m_Location.y = y;
+}
+
+void Camera::setZ(double z)
+{
+	m_Location.z = z;
+}
