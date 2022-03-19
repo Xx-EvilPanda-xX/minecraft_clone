@@ -46,7 +46,9 @@ private:
 
 	void calculateVelocity();
 
-	bool testCollide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType);
+	bool collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, const AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType);
+
+	Vector3i* test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_ClosestCollision);
 
 	AABB createPlayerAABB(glm::dvec3 playerPos);
 
