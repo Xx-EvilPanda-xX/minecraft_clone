@@ -9,7 +9,7 @@ namespace constants
 	constexpr int fullscreenWidth{ 1920 };
 	constexpr int fullscreenHeight{ 1080 };
 
-	constexpr bool fullscreen{ false };
+	constexpr bool fullscreen{ true };
 
 	constexpr double mouse_sensitivity{ 0.035 };
 

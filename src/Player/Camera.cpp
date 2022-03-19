@@ -26,7 +26,7 @@ glm::dmat4 Camera::getViewMat() const
 	return glm::lookAt(m_Location, m_Location + m_Front, m_Up);
 }
 
-void Camera::handleMouse(glm::dvec2 offset)
+void Camera::handleLook(glm::dvec2 offset)
 {
 	m_Yaw += offset.x * constants::mouse_sensitivity;
 	m_Pitch += offset.y * constants::mouse_sensitivity;
@@ -54,7 +54,7 @@ void Camera::handleMouse(glm::dvec2 offset)
 	calculateVecs();
 }
 
-void Camera::handleKeyboard(glm::dvec3 velocity, double dt)
+void Camera::handleMove(glm::dvec3 velocity, double dt)
 {
 	velocity *= dt;
 

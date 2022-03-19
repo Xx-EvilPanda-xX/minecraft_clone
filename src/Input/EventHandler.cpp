@@ -1,10 +1,14 @@
 #include <glad/glad.h>
 #include "EventHandler.h"
+#include "../Application.h"
 #include "../Constants.h"
 
-BlockType EventHandler::selectedBlock{ BlockType::Stone };
+EventHandler::EventHandler()
+	: m_SelectedBlock{ BlockType::Stone }
+{
+}
 
-void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& player)
+void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app, Player& player)
 {
 	static double flyToggleCooldown{};
 
@@ -90,38 +94,38 @@ void EventHandler::keyboardEvent(Keyboard& keyboard, Application& app, Player& p
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_GRAVE_ACCENT))
-		selectedBlock = BlockType::Gravel;
+		m_SelectedBlock = BlockType::Gravel;
 	if (keyboard.isKeyDown(GLFW_KEY_1))
-		selectedBlock = BlockType::Grass;
+		m_SelectedBlock = BlockType::Grass;
 	if (keyboard.isKeyDown(GLFW_KEY_2))
-		selectedBlock = BlockType::Stone;
+		m_SelectedBlock = BlockType::Stone;
 	if (keyboard.isKeyDown(GLFW_KEY_3))
-		selectedBlock = BlockType::Dirt;
+		m_SelectedBlock = BlockType::Dirt;
 	if (keyboard.isKeyDown(GLFW_KEY_4))
-		selectedBlock = BlockType::CobbleStone;
+		m_SelectedBlock = BlockType::CobbleStone;
 	if (keyboard.isKeyDown(GLFW_KEY_5))
-		selectedBlock = BlockType::Wood;
+		m_SelectedBlock = BlockType::Wood;
 	if (keyboard.isKeyDown(GLFW_KEY_6))
-		selectedBlock = BlockType::Leaves;
+		m_SelectedBlock = BlockType::Leaves;
 	if (keyboard.isKeyDown(GLFW_KEY_7))
-		selectedBlock = BlockType::Glass;
+		m_SelectedBlock = BlockType::Glass;
 	if (keyboard.isKeyDown(GLFW_KEY_8))
-		selectedBlock = BlockType::Sand;
+		m_SelectedBlock = BlockType::Sand;
 	if (keyboard.isKeyDown(GLFW_KEY_9))
-		selectedBlock = BlockType::Planks;
+		m_SelectedBlock = BlockType::Planks;
 	if (keyboard.isKeyDown(GLFW_KEY_0))
-		selectedBlock = BlockType::DiamondBlock;
+		m_SelectedBlock = BlockType::DiamondBlock;
 	if (keyboard.isKeyDown(GLFW_KEY_MINUS))
-		selectedBlock = BlockType::Water;
+		m_SelectedBlock = BlockType::Water;
 	if (keyboard.isKeyDown(GLFW_KEY_EQUAL))
-		selectedBlock = BlockType::CraftingTable;
+		m_SelectedBlock = BlockType::CraftingTable;
 
 
 	if (keyboard.isKeyDown(GLFW_KEY_R))
 		std::cout << "Address of first chunk: " << app.getWorld().getChunks()[0] << "\n";
 }
 
-void EventHandler::mouseEvent(Mouse& mouse, Player& player)
+void EventHandler::handleMouse(Mouse& mouse, Player& player)
 {
 	static double breakCooldown{};
 	static double placeCooldown{};
@@ -134,7 +138,7 @@ void EventHandler::mouseEvent(Mouse& mouse, Player& player)
 
 	if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_RIGHT) && placeCooldown <= 0.0)
 	{
-		player.placeBlock(selectedBlock);
+		player.placeBlock(m_SelectedBlock);
 		placeCooldown = constants::blockPlaceCooldown;
 	}
 

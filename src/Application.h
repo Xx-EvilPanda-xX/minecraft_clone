@@ -10,6 +10,7 @@
 #include "World/ChunkManager.h"
 #include "Player/Camera.h"
 #include "Render/RenderData.h"
+#include "Input/EventHandler.h"
 
 class Application
 {
@@ -20,6 +21,7 @@ private:
 
 	RenderData m_CrossHair;
 	Shader m_GuiShader;
+	EventHandler m_Handler;
 
 	double m_LastFrame;
 
@@ -43,7 +45,7 @@ public:
 
 	void init();
 
-	void runMainLoop();
+	void run();
 
 	Window& getWindow();
 

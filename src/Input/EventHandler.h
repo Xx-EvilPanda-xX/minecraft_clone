@@ -2,22 +2,27 @@
 #define EVENT_HANDLER_H
 
 #include "Keyboard.h"
-#include "../Application.h"
 #include "../Player/Player.h"
+#include "Mouse.h"
+#include "Keyboard.h"
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+class Application;
+
 class EventHandler
 {
 private:
-	static BlockType selectedBlock;
+	BlockType m_SelectedBlock;
 
 public:
-	static void keyboardEvent(Keyboard& keyboard, Application& app, Player& player);
+	EventHandler();
 
-	static void mouseEvent(Mouse& mouse, Player& player);
+	void handleKeyboard(Keyboard& keyboard, Application& app, Player& player);
+
+	void handleMouse(Mouse& mouse, Player& player);
 };
 
 #endif

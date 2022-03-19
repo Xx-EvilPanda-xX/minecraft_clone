@@ -34,9 +34,9 @@ public:
 
 	void calculateVecs();
 
-	void handleMouse(glm::dvec2 offset);
+	void handleLook(glm::dvec2 offset);
 
-	void handleKeyboard(glm::dvec3 velocity, double dt);
+	void handleMove(glm::dvec3 velocity, double dt);
 
 	glm::dvec3 getLocation() const;
 

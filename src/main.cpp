@@ -13,6 +13,6 @@ int main()
 
 	std::cout << "done!\n";
 
-	app.runMainLoop();
+	app.run();
 }
 

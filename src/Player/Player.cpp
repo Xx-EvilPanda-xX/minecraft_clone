@@ -27,7 +27,7 @@ void Player::move()
 	if (!m_Flying && !m_Grounded)
 		m_Velocity.y -= Application::s_Dt * constants::gravity;
 	
-	m_Cam.handleKeyboard(m_Velocity, Application::s_Dt);
+	m_Cam.handleMove(m_Velocity, Application::s_Dt);
 
 	Vector3i collsionPos{};
 	bool onGround{ false };

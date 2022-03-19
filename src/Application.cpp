@@ -13,14 +13,14 @@
 
 #include "Application.h"
 #include "World/ChunkMesh.h"
-#include "Input/EventHandler.h"
 #include "Render/Texture.h"
 #include "Constants.h"
 
 Application::Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager)
 	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ m_Camera, chunkManager, m_Window.getKeyboard(), constants::playerReach }, chunkManager },
 	m_Window{ windowWidth, windowHeight, title },
-	m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, m_Window.getWindow() }
+	m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, m_Window.getWindow() },
+	m_Handler{}
 {
 	chunkManager.setWorld(&m_World);
 
@@ -37,7 +37,7 @@ void Application::init()
 	createCrosshair();
 }
 
-void Application::runMainLoop()
+void Application::run()
 {
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -141,10 +141,10 @@ void Application::handleInput()
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };
 
-	EventHandler::keyboardEvent(keyboard, *this, m_World.getPlayer());
-	EventHandler::mouseEvent(mouse, m_World.getPlayer());
+	m_Handler.handleKeyboard(keyboard, *this, m_World.getPlayer());
+	m_Handler.handleMouse(mouse, m_World.getPlayer());
 
-	m_Camera.handleMouse(glm::dvec2{ mouse.getXOffset(), mouse.getYOffset() });
+	m_Camera.handleLook(glm::dvec2{ mouse.getXOffset(), mouse.getYOffset() });
 }
 
 void Application::renderCrosshair()
