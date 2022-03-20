@@ -34,6 +34,7 @@ private:
 	bool m_Grounded;
 	bool m_Flying;
 	double m_Reach;
+	double m_JumpCoolDown;
 
 	const double vecPrecision{ 0.001 };
 	const double cameraHeightDiff{ 0.35 };

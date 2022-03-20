@@ -14,6 +14,7 @@ Player::Player(Camera & cam, ChunkManager & manager, Keyboard& keyboard, double 
 	m_Velocity = glm::dvec3{};
 	m_LastValidLoc = glm::dvec3{};
 
+	m_JumpCoolDown = 0.25;
 	m_Sprinting = false;
 	m_Grounded = false;
 	m_Flying = false;
@@ -29,7 +30,7 @@ void Player::move()
 	//gravity
 	if (!m_Flying && !m_Grounded)
 		m_Velocity.y -= Application::s_Dt * constants::gravity;
-
+	
 	m_Cam.handleMove(m_Velocity, Application::s_Dt);
 	m_Aabb = createPlayerAABB(m_Cam.getLocation());
 
@@ -45,7 +46,7 @@ void Player::move()
 	{
 		if (collide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType))
 		{
-			glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
+     			glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
 			glm::dvec3 lastValidLoc;
 
 			switch (collisionType)
@@ -130,8 +131,12 @@ void Player::move()
 				m_Cam.setY(blockCenter.y < lastValidLoc.y ? (blockCenter.y + targetDistance) + (constants::playerSize * 2.0) + cameraHeightDiff : (blockCenter.y - targetDistance) + cameraHeightDiff);
 				m_Velocity.y = 0.0;
 
-				if (collisionType == CollsionType::PlayerLowerHalf)
+				if (collisionType == CollsionType::PlayerLowerHalf && m_JumpCoolDown <= 0.0)
+				{
 					onGround = true;
+					if (m_Keyboard.isKeyDown(GLFW_KEY_SPACE))
+						m_JumpCoolDown = 0.25;
+				}
 			}
 
 			if (collideZ)
@@ -145,6 +150,7 @@ void Player::move()
 	}
 
 	m_Grounded = onGround;
+	m_JumpCoolDown -= Application::s_Dt;
 
 	m_LastMovedX = m_LastValidLoc.x != m_Cam.getLocation().x;
 	m_LastMovedY = m_LastValidLoc.y != m_Cam.getLocation().y;
