@@ -58,6 +58,9 @@ void Window::createWindow()
 	glfwSetCursorPosCallback(m_Window, mouse_move_callback);
 
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	if (glfwRawMouseMotionSupported())
+		glfwSetInputMode(m_Window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 }
 
 void Window::loadGL()

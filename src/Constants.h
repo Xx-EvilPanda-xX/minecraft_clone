@@ -11,7 +11,7 @@ namespace constants
 
 	constexpr bool fullscreen{ true };
 
-	constexpr double mouse_sensitivity{ 0.035 };
+	constexpr double mouse_sensitivity{ 0.025 };
 
 	constexpr bool flatWorld{ false };
 	constexpr int flatWorldHeight{ 64 };

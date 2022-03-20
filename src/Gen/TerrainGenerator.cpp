@@ -111,7 +111,7 @@ void TerrainGenerator::genTree(ChunkSection* section, Vector3i pos)
 
 int** TerrainGenerator::getHeightMap(Chunk* chunk)
 {
-	m_Rand.seed(std::pow(chunk->getLocation().x, chunk->getLocation().y));
+	m_Rand.seed(static_cast<unsigned int>(std::pow(chunk->getLocation().x, chunk->getLocation().y)));
 
 	int** heightMap = new int*[16];
 
@@ -133,8 +133,8 @@ int** TerrainGenerator::getHeightMap(Chunk* chunk)
 			}
 			else
 			{
-				double height{ (m_Noise.GetNoise(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0f + 0.5f) * 100.0f };
-				heightMap[i][j] = height;
+				double height{ (static_cast<double>(m_Noise.GetNoise(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0 };
+				heightMap[i][j] = static_cast<int>(height);
 			}
 		}
 	}

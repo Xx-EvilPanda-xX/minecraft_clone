@@ -37,6 +37,9 @@ private:
 
 	const double vecPrecision{ 0.001 };
 	const double cameraHeightDiff{ 0.35 };
+	const int collsionSearchRadiusX{ 2 };
+	const int collsionSearchRadiusY{ 3 };
+	const int collsionSearchRadiusZ{ 2 };
 
 	Vector3i* breakIntersect();
 

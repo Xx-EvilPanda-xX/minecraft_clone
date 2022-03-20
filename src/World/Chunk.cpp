@@ -14,6 +14,7 @@ Chunk::Chunk(Vector2i loc, Shader& shader)
 	m_CurrentSectionIndex = 0;
 	m_Complete = false;
 	m_IsBuilt = false;
+	m_Building = false;
 
 	for (int i{}; i < g_ChunkCap; ++i)
 	{

@@ -17,6 +17,9 @@ Player::Player(Camera & cam, ChunkManager & manager, Keyboard& keyboard, double 
 	m_Sprinting = false;
 	m_Grounded = false;
 	m_Flying = false;
+	m_LastMovedX = false;
+	m_LastMovedY = false;
+	m_LastMovedZ = false;
 }
 
 void Player::move()
@@ -26,7 +29,7 @@ void Player::move()
 	//gravity
 	if (!m_Flying && !m_Grounded)
 		m_Velocity.y -= Application::s_Dt * constants::gravity;
-	
+
 	m_Cam.handleMove(m_Velocity, Application::s_Dt);
 	m_Aabb = createPlayerAABB(m_Cam.getLocation());
 
@@ -124,7 +127,7 @@ void Player::move()
 
 			if (collideY)
 			{
-				m_Cam.setY(blockCenter.y < lastValidLoc.y ? (blockCenter.y + targetDistance) + (constants::playerSize * 2) + cameraHeightDiff : (blockCenter.y - targetDistance) + cameraHeightDiff);
+				m_Cam.setY(blockCenter.y < lastValidLoc.y ? (blockCenter.y + targetDistance) + (constants::playerSize * 2.0) + cameraHeightDiff : (blockCenter.y - targetDistance) + cameraHeightDiff);
 				m_Velocity.y = 0.0;
 
 				if (collisionType == CollsionType::PlayerLowerHalf)
@@ -172,7 +175,7 @@ bool Player::collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, con
 
 	if (lowerCollsionPos && upperCollsionPos)
 	{
-		if (lowerClosestCollision <= upperClosestCollision)
+        if (lowerClosestCollision <= upperClosestCollision)
 		{
 			o_Pos = *lowerCollsionPos;
 			o_CollisionType = CollsionType::PlayerLowerHalf;
@@ -205,11 +208,11 @@ Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_C
 	double closestCollision{ -1.0 };
 	Vector3i* collisionPos{ nullptr };
 
-	for (int x{ playerBlockPos.x - 2 }; x < playerBlockPos.x + 2; ++x)
+	for (int x{ playerBlockPos.x - collsionSearchRadiusX }; x < playerBlockPos.x + collsionSearchRadiusX; ++x)
 	{
-		for (int y{ playerBlockPos.y - 2 }; y < playerBlockPos.y + 2; ++y)
+		for (int y{ playerBlockPos.y - collsionSearchRadiusY }; y < playerBlockPos.y + collsionSearchRadiusY; ++y)
 		{
-			for (int z{ playerBlockPos.z - 2 }; z < playerBlockPos.z + 2; ++z)
+			for (int z{ playerBlockPos.z - collsionSearchRadiusZ }; z < playerBlockPos.z + collsionSearchRadiusZ; ++z)
 			{
 				AABB blockAABB{ glm::dvec3{ x, y, z }, glm::dvec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager.getWorldBlock(Vector3i{ x, y, z }) };
@@ -415,13 +418,13 @@ Vector3i* Player::breakIntersect()
 	{
 		Vector3i blockPos{ static_cast<int>(currentPos.x), static_cast<int>(currentPos.y), static_cast<int>(currentPos.z) };
 		if (currentPos.x < 0.0)
-			blockPos.x -= 1.0;
+			blockPos.x -= 1;
 
 		if (currentPos.y < 0.0)
-			blockPos.y -= 1.0;
+			blockPos.y -= 1;
 
 		if (currentPos.z < 0.0)
-			blockPos.z -= 1.0;
+			blockPos.z -= 1;
 
 		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
 		{
@@ -445,13 +448,13 @@ glm::dvec3* Player::placeIntersect()
 	{
 		Vector3i blockPos{ static_cast<int>(currentPos.x), static_cast<int>(currentPos.y), static_cast<int>(currentPos.z) };
 		if (currentPos.x < 0.0)
-			blockPos.x -= 1.0;
+			blockPos.x -= 1;
 
 		if (currentPos.y < 0.0)
-			blockPos.y -= 1.0;
+			blockPos.y -= 1;
 
 		if (currentPos.z < 0.0)
-			blockPos.z -= 1.0;
+			blockPos.z -= 1;
 
 		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
 		{
