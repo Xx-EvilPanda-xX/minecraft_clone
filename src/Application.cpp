@@ -19,7 +19,7 @@
 Application::Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager)
 	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ m_Camera, chunkManager, m_Window.getKeyboard(), constants::playerReach }, chunkManager },
 	m_Window{ windowWidth, windowHeight, title },
-	m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, m_Window.getWindow() },
+	m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, constants::mouse_sensitivity, m_Window.getWindow() },
 	m_Handler{}
 {
 	chunkManager.setWorld(&m_World);

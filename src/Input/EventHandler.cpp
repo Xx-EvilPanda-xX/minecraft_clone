@@ -79,9 +79,7 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app, Player& 
 		flyToggleCooldown = 0.15f;
 	}
 
-	flyToggleCooldown -= Application::s_Dt;
-
-	if (keyboard.isKeyDown(GLFW_KEY_B))
+	if (keyboard.isKeyDown(GLFW_KEY_R))
 		std::cout << "XYZ: " << app.getCamera().getLocation().x << ", " << app.getCamera().getLocation().y << ", " << app.getCamera().getLocation().z << "\n";
 
 	if (keyboard.isKeyDown(GLFW_KEY_O))
@@ -91,6 +89,17 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app, Player& 
 	{
 		Vector2i chunkPos{ static_cast<int>(app.getCamera().getLocation().x) / 16, static_cast<int>(app.getCamera().getLocation().z) / 16 };
 		std::cout << "Chunk index: " << app.getWorld().getChunkIndex(chunkPos) << "\n";
+	}
+
+	if (keyboard.isKeyDown(GLFW_KEY_LEFT_ALT))
+	{
+		app.getCamera().setFov(20.0);
+		app.getCamera().setMouseSens(constants::mouse_sensitivity / 5.0);
+	}
+	else
+	{
+		app.getCamera().setFov(90.0);
+		app.getCamera().setMouseSens(constants::mouse_sensitivity);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_GRAVE_ACCENT))
@@ -120,9 +129,7 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app, Player& 
 	if (keyboard.isKeyDown(GLFW_KEY_EQUAL))
 		m_SelectedBlock = BlockType::CraftingTable;
 
-
-	if (keyboard.isKeyDown(GLFW_KEY_R))
-		std::cout << "Address of first chunk: " << app.getWorld().getChunks()[0] << "\n";
+	flyToggleCooldown -= Application::s_Dt;
 }
 
 void EventHandler::handleMouse(Mouse& mouse, Player& player)

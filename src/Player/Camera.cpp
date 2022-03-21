@@ -2,11 +2,12 @@
 #include "Camera.h"
 #include "../Constants.h"
 
-Camera::Camera(glm::dvec3 location, double yaw, double pitch, double fov, GLFWwindow* win)
+Camera::Camera(glm::dvec3 location, double yaw, double pitch, double fov, double sens, GLFWwindow* win)
 	: m_Location{ location },
 	m_Yaw{ yaw },
 	m_Pitch{ pitch },
 	m_Fov{ fov },
+	m_MouseSens{ sens },
 	m_Win{ win }
 {
 	calculateVecs();
@@ -28,8 +29,8 @@ glm::dmat4 Camera::getViewMat() const
 
 void Camera::handleLook(glm::dvec2 offset)
 {
-	m_Yaw += offset.x * constants::mouse_sensitivity;
-	m_Pitch += offset.y * constants::mouse_sensitivity;
+	m_Yaw += offset.x * m_MouseSens;
+	m_Pitch += offset.y * m_MouseSens;
 
 	if (m_Pitch > 89.0)
 	{
@@ -83,19 +84,19 @@ glm::dvec3 Camera::getLocation() const
 	return m_Location;
 }
 
-double Camera::getYaw() const
-{
-	return m_Yaw;
-}
-
-double Camera::getPitch() const
-{
-	return m_Pitch;
-}
-
 glm::dvec3 Camera::getFront() const
 {
 	return m_Front;
+}
+
+double Camera::getFov() const
+{
+	return m_Fov;
+}
+
+double Camera::getMouseSens() const
+{
+	return m_MouseSens;
 }
 
 void Camera::setLocation(glm::dvec3 loc)
@@ -116,4 +117,14 @@ void Camera::setY(double y)
 void Camera::setZ(double z)
 {
 	m_Location.z = z;
+}
+
+void Camera::setFov(double fov)
+{
+	m_Fov = fov;
+}
+
+void Camera::setMouseSens(double sens)
+{
+	m_MouseSens = sens;
 }

@@ -15,6 +15,7 @@ private:
 	double m_Pitch;
 
 	double m_Fov;
+	double m_MouseSens;
 
 	const glm::dvec3 m_WorldUp{ 0.0, 1.0, 0.0 };
 	glm::dvec3 m_Up;
@@ -24,7 +25,7 @@ private:
 	GLFWwindow* m_Win;
 
 public:
-	Camera(glm::dvec3 location, double yaw, double pitch, double fov, GLFWwindow* win);
+	Camera(glm::dvec3 location, double yaw, double pitch, double fov, double sens, GLFWwindow* win);
 
 	Camera();
 
@@ -40,11 +41,11 @@ public:
 
 	glm::dvec3 getLocation() const;
 
-	double getYaw() const;
-
-	double getPitch() const;
+	double getFov() const;
 
 	glm::dvec3 getFront() const;
+
+	double getMouseSens() const;
 
 	void setLocation(glm::dvec3 loc);
 
@@ -54,6 +55,9 @@ public:
 
 	void setZ(double z);
 
+	void setFov(double fov);
+
+	void setMouseSens(double sens);
 };
 
 #endif
