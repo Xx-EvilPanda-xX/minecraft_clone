@@ -11,6 +11,9 @@
 #include "Player/Camera.h"
 #include "Render/RenderData.h"
 #include "Input/EventHandler.h"
+#include "Render/TextRenderer.h"
+
+constexpr int numTextComponents{ 4 };
 
 class Application
 {
@@ -21,12 +24,17 @@ private:
 
 	RenderData m_CrossHair;
 	Shader m_GuiShader;
+	Shader m_TextShader;
 	EventHandler m_Handler;
 
+	TextRenderer m_TextComponents[numTextComponents];
+
 	double m_LastFrame;
+	double guiUpdateCooldown;
 
 	long frames;
 	long time;
+	int currentFps;
 
 	long doDeletePass;
 
@@ -46,6 +54,10 @@ public:
 	void init();
 
 	void run();
+
+	void renderGui();
+
+	void updateGui();
 
 	Window& getWindow();
 

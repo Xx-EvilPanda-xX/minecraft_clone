@@ -19,7 +19,7 @@ BlockType ChunkMesh::s_AtlasIndices[]{ BlockType::Grass, BlockType::Stone, Block
 
 void ChunkMesh::createTextureAtlas(const char* path)
 {
-	s_TexAltas = Texture{ path };
+	s_TexAltas = Texture{ path, false };
 }
 
 void ChunkMesh::addFace(Vector3i loc, Block block, Face face)

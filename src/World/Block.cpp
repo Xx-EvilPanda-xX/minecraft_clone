@@ -45,3 +45,40 @@ bool Block::isSurface()
 {
 	return m_Surface;
 }
+
+std::string Block::getName()
+{
+	switch (m_Type)
+	{
+	case Air:
+		return "Air";
+	case Grass:
+		return "Grass";
+	case Stone:
+		return "Stone";
+	case Dirt:
+		return "Dirt";
+	case Sand:
+		return "Sand";
+	case Gravel:
+		return "Gravel";
+	case CobbleStone:
+		return "CobbleStone";
+	case Wood:
+		return "Wood";
+	case Leaves:
+		return "Leaves";
+	case Glass:
+		return "Glass";
+	case CraftingTable:
+		return "CraftingTable";
+	case Planks:
+		return "Planks";
+	case DiamondBlock:
+		return "DiamondBlock";
+	case Water:
+		return "Water";
+	default:
+		return "Unknown";
+	}
+}

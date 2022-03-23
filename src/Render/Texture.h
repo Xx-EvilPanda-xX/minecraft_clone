@@ -7,10 +7,10 @@ private:
 	unsigned int m_Id;
 	const char* m_Path;
 
-	void load();
+	void load(bool flip);
 
 public:
-	Texture(const char* path);
+	Texture(const char* path, bool flip);
 
 	Texture();
 

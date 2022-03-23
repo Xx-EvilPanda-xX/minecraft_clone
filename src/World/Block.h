@@ -2,6 +2,7 @@
 #define BLOCK_H
 
 #include "../Player/AABB.h"
+#include <string>
 
 enum BlockType
 {
@@ -40,6 +41,8 @@ public:
 	bool isTransparent();
 
 	bool isSurface();
+
+	std::string getName();
 };
 
 #endif

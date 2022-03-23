@@ -15,14 +15,18 @@ class Application;
 class EventHandler
 {
 private:
-	BlockType m_SelectedBlock;
+	Block m_SelectedBlock;
 
 public:
+	bool IsWireFrame;
+
 	EventHandler();
 
 	void handleKeyboard(Keyboard& keyboard, Application& app, Player& player);
 
 	void handleMouse(Mouse& mouse, Player& player);
+
+	Block& getSelectedBlock();
 };
 
 #endif

@@ -1,12 +1,5 @@
 #include <iostream>
-#include <iomanip>
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <chrono>
-#include <ctime>
-#include <windows.h>
 #include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -26,25 +19,33 @@ Application::Application(int windowWidth, int windowHeight, const char* title, C
 
 	frames = 0;
 	time = 0;
-	m_LastFrame = 0;
+	m_LastFrame = 0.0;
+	guiUpdateCooldown = 0.0;
 }
 
 double Application::s_Dt{};
 
 void Application::init()
 {
+	m_GuiShader = Shader("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl");
 	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_20.png");
+	TextRenderer::createChars();
 	createCrosshair();
-}
+	m_TextComponents[0] = TextRenderer{ "FPS: ", -1.0, 1.0, 0.1, 0.15, m_GuiShader };
+	m_TextComponents[1] = TextRenderer{ "XYZ: ", -1.0, 0.975, 0.1, 0.15, m_GuiShader };
+	m_TextComponents[2] = TextRenderer{ "Chunk Index: ", -1.0, 0.95, 0.1, 0.15, m_GuiShader };
+	m_TextComponents[3] = TextRenderer{ "Selected Block: ", -1.0, 0.75, 0.1, 0.15, m_GuiShader };
+	//m_TextComponents[4] = TextRenderer{ "[`]: Gravel, [1]: Grass, [2]: Stone, [3]: Dirt, [4]: CobbleStone, [5]: Wood, [6]: Leaves, [7]: Glass, [8]: Sand, [9]: Planks, [0]: DiamondBlock, [-]: Water, [=]: CraftingTable", -1.0, -0.075, 0.075, 0.15, m_GuiShader };
 
-void Application::run()
-{
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
+}
 
+void Application::run()
+{
 	while (!glfwWindowShouldClose(m_Window.getWindow()))
 	{
 		glfwSetCursorPos(m_Window.getWindow(), 0.0, 0.0);
@@ -62,19 +63,48 @@ void Application::run()
 
 		m_World.worldUpdate(m_Camera, deletePass);
 		m_World.worldRender(m_Camera);
-		renderCrosshair();
+		updateGui();
+		renderGui();
 
 		glfwSwapBuffers(m_Window.getWindow());
 		glfwPollEvents();
 	}
 }
 
+void Application::renderGui()
+{
+	renderCrosshair();
+	for (int i{}; i < numTextComponents; ++i)
+	{
+		m_TextComponents[i].render(m_Handler, m_Window);
+	}
+}
+
+void Application::updateGui()
+{
+	if (guiUpdateCooldown <= 0.0)
+	{
+		m_TextComponents[0].update(std::string{ "FPS: " } + std::to_string(currentFps), -1.0, 1.0, 0.1, 0.15);
+
+		glm::dvec3 pos{ m_Camera.getLocation() };
+		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", " + std::to_string(pos.z), -1.0, 0.975, 0.1, 0.15);
+
+		Vector2i chunkPos{ static_cast<int>(m_Camera.getLocation().x) / 16, static_cast<int>(m_Camera.getLocation().z) / 16 };
+		m_TextComponents[2].update(std::string{ "Chunk index: " } + std::to_string(m_World.getChunkIndex(chunkPos)), -1.0, 0.95, 0.1, 0.15);
+
+		m_TextComponents[3].update(std::string{ "Selected block: " } + m_Handler.getSelectedBlock().getName(), -1.0, 0.75, 0.1, 0.15);
+
+		guiUpdateCooldown = 0.05;
+	}
+
+	guiUpdateCooldown -= s_Dt;
+}
+
 void Application::createCrosshair()
 {
-	m_GuiShader = Shader("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl");
 	m_CrossHair.shader = &m_GuiShader;
 
-	Texture crosshairTex{ "assets/textures/crosshair.png" };
+	Texture crosshairTex{ "assets/textures/crosshair.png", false };
 	m_CrossHair.texture = crosshairTex.getId();
 
 	float vertices[]{ -1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
@@ -115,10 +145,7 @@ void Application::updateFPS()
 	++frames;
 	if (getCurrentTimeMillis() > (time + 1000))
 	{
-		std::string title("Minecraft! | FPS: ");
-		std::string fps(std::to_string(frames));
-		m_Window.setTitle((title + fps).c_str());
-	
+		currentFps = frames;
 		time = getCurrentTimeMillis();
 		frames = 0;
 	}
@@ -157,7 +184,8 @@ void Application::renderCrosshair()
 
 	int width, height;
 	glfwGetWindowSize(m_Window.getWindow(), &width, &height);
-	glm::dmat4 proj(glm::perspective(glm::radians(90.0), static_cast<double>(width) / static_cast<double>(height), 0.001, 10.0));
+	double aspect{ static_cast<double>(width) / static_cast<double>(height) };
+	glm::dmat4 proj{ glm::ortho(-aspect, aspect, 1.0, -1.0, -1.0, 1.0) };
 
 	glm::dmat4 model(1.0);
 	model = glm::scale(model, glm::dvec3(0.05, 0.05, 1.0));

@@ -6,11 +6,11 @@
 
 #include <glad/glad.h>
 
-Texture::Texture(const char* path) 
+Texture::Texture(const char* path, bool flip) 
 	: m_Id{},
 	m_Path{ path }
 {
-	load();
+	load(flip);
 }
 
 Texture::Texture() = default;
@@ -20,9 +20,9 @@ unsigned int Texture::getId() const
 	return m_Id;
 }
 
-void Texture::load()
+void Texture::load(bool flip)
 {
-	stbi_set_flip_vertically_on_load(false);
+	stbi_set_flip_vertically_on_load(flip);
 
 	int width, height, channels;
 	unsigned char* data{ stbi_load(m_Path, &width, &height, &channels, 0) };

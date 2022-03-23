@@ -4,7 +4,8 @@
 #include "../Constants.h"
 
 EventHandler::EventHandler()
-	: m_SelectedBlock{ BlockType::Stone }
+	: m_SelectedBlock{ BlockType::Stone, false },
+	IsWireFrame{ false }
 {
 }
 
@@ -69,27 +70,24 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app, Player& 
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_C))
+	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		IsWireFrame = true;
+	}
 	else
+	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+		IsWireFrame = false;
+	}
+		
 	if (keyboard.isKeyDown(GLFW_KEY_F) && flyToggleCooldown <= 0.0)
 	{
 		player.setFlying(!player.isFlying());
 		flyToggleCooldown = 0.15f;
 	}
 
-	if (keyboard.isKeyDown(GLFW_KEY_R))
-		std::cout << "XYZ: " << app.getCamera().getLocation().x << ", " << app.getCamera().getLocation().y << ", " << app.getCamera().getLocation().z << "\n";
-
 	if (keyboard.isKeyDown(GLFW_KEY_O))
 		app.getWorld().reloadChunks(app.getCamera());
-
-	if (keyboard.isKeyDown(GLFW_KEY_V))
-	{
-		Vector2i chunkPos{ static_cast<int>(app.getCamera().getLocation().x) / 16, static_cast<int>(app.getCamera().getLocation().z) / 16 };
-		std::cout << "Chunk index: " << app.getWorld().getChunkIndex(chunkPos) << "\n";
-	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_ALT))
 	{
@@ -103,31 +101,31 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app, Player& 
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_GRAVE_ACCENT))
-		m_SelectedBlock = BlockType::Gravel;
+		m_SelectedBlock = Block{ BlockType::Gravel, false };
 	if (keyboard.isKeyDown(GLFW_KEY_1))
-		m_SelectedBlock = BlockType::Grass;
+		m_SelectedBlock = Block{ BlockType::Grass, false };
 	if (keyboard.isKeyDown(GLFW_KEY_2))
-		m_SelectedBlock = BlockType::Stone;
+		m_SelectedBlock = Block{ BlockType::Stone, false };
 	if (keyboard.isKeyDown(GLFW_KEY_3))
-		m_SelectedBlock = BlockType::Dirt;
+		m_SelectedBlock = Block{ BlockType::Dirt, false };
 	if (keyboard.isKeyDown(GLFW_KEY_4))
-		m_SelectedBlock = BlockType::CobbleStone;
+		m_SelectedBlock = Block{ BlockType::CobbleStone, false };
 	if (keyboard.isKeyDown(GLFW_KEY_5))
-		m_SelectedBlock = BlockType::Wood;
+		m_SelectedBlock = Block{ BlockType::Wood, false };
 	if (keyboard.isKeyDown(GLFW_KEY_6))
-		m_SelectedBlock = BlockType::Leaves;
+		m_SelectedBlock = Block{ BlockType::Leaves, false };
 	if (keyboard.isKeyDown(GLFW_KEY_7))
-		m_SelectedBlock = BlockType::Glass;
+		m_SelectedBlock = Block{ BlockType::Glass, false };
 	if (keyboard.isKeyDown(GLFW_KEY_8))
-		m_SelectedBlock = BlockType::Sand;
+		m_SelectedBlock = Block{ BlockType::Sand, false };
 	if (keyboard.isKeyDown(GLFW_KEY_9))
-		m_SelectedBlock = BlockType::Planks;
+		m_SelectedBlock = Block{ BlockType::Planks, false };
 	if (keyboard.isKeyDown(GLFW_KEY_0))
-		m_SelectedBlock = BlockType::DiamondBlock;
+		m_SelectedBlock = Block{ BlockType::DiamondBlock, false };
 	if (keyboard.isKeyDown(GLFW_KEY_MINUS))
-		m_SelectedBlock = BlockType::Water;
+		m_SelectedBlock = Block{ BlockType::Water, false };
 	if (keyboard.isKeyDown(GLFW_KEY_EQUAL))
-		m_SelectedBlock = BlockType::CraftingTable;
+		m_SelectedBlock = Block{ BlockType::CraftingTable, false };
 
 	flyToggleCooldown -= Application::s_Dt;
 }
@@ -145,10 +143,15 @@ void EventHandler::handleMouse(Mouse& mouse, Player& player)
 
 	if (mouse.isButtonDown(GLFW_MOUSE_BUTTON_RIGHT) && placeCooldown <= 0.0)
 	{
-		player.placeBlock(m_SelectedBlock);
+		player.placeBlock(m_SelectedBlock.getType());
 		placeCooldown = constants::blockPlaceCooldown;
 	}
 
 	breakCooldown -= Application::s_Dt;
 	placeCooldown -= Application::s_Dt;
+}
+
+Block& EventHandler::getSelectedBlock()
+{
+	return m_SelectedBlock;
 }
