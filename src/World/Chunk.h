@@ -23,6 +23,8 @@ private:
 
 	void resetRemaining();
 
+	void finishBuilding();
+
 public:
 	Chunk(Vector2i loc, Shader& shader);
 
@@ -30,7 +32,7 @@ public:
 
 	void addSection(ChunkSection* section);
 
-	void buildMesh(ChunkManager& manager, int section);
+	void buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[4]);
 
 	int getCurrentSectionIndex() const;
 

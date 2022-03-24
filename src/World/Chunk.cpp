@@ -51,7 +51,7 @@ void Chunk::addSection(ChunkSection* section)
 	}
 }
 
-void Chunk::buildMesh(ChunkManager& manager, int section)
+void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[4])
 {	
 	if (section < 0 || section > 16)
 	{
@@ -68,17 +68,29 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 		}
 	}
 
+	bool adjacentSectionsFull{ true };
+	for (int i{}; i < 4; ++i)
+	{
+		if (!adjacentChunks[i]->m_Sections[section]->isFull())
+		{
+			adjacentSectionsFull = false;
+			break;
+		}
+	}
+
 	if (m_Sections[section]->isEmpty())
 	{
-		if (m_RemainingSections.size() == 0)
-		{
-			m_Mesh.toBuffers();
-			m_IsBuilt = true;
-			m_Building = false;
-			resetRemaining();
-		}
-
+		finishBuilding();
 		return;
+	}
+
+	if (m_Sections[section]->isFull() && adjacentSectionsFull && !(section == 0 || section == 15))
+	{
+		if (m_Sections[section + 1]->isFull() && m_Sections[section - 1]->isFull())
+		{
+			finishBuilding();
+			return;
+		}
 	}
 
 	ChunkSection* chunkSection{ m_Sections[section] };
@@ -192,6 +204,11 @@ void Chunk::buildMesh(ChunkManager& manager, int section)
 		}
 	}
 	
+	finishBuilding();
+}
+
+void Chunk::finishBuilding()
+{
 	if (m_RemainingSections.size() == 0)
 	{
 		m_Mesh.toBuffers();

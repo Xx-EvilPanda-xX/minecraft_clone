@@ -330,7 +330,7 @@ void Player::placeBlock(BlockType type)
 	{
 		glm::dvec3 pos{ *intersect };
 		Vector3i blockPos{ static_cast<int>(intersect->x < 0.0 ? intersect->x - 1.0 : intersect->x), static_cast<int>(intersect->y < 0.0 ? intersect->y - 1.0 : intersect->y), static_cast<int>(intersect->z < 0.0 ? intersect->z - 1.0 : intersect->z) };
-		Vector3i placePos{ static_cast<int>(intersect->x < 0.0 ? pos.x - 1.0f : pos.x), static_cast<int>(intersect->y < 0.0 ? pos.y - 1.0 : pos.y), static_cast<int>(intersect->z < 0.0 ? pos.z - 1.0 : pos.z) };
+		Vector3i placePos{ static_cast<int>(intersect->x < 0.0 ? pos.x - 1.0 : pos.x), static_cast<int>(intersect->y < 0.0 ? pos.y - 1.0 : pos.y), static_cast<int>(intersect->z < 0.0 ? pos.z - 1.0 : pos.z) };
 		while (placePos == blockPos)
 		{
 			pos -= camFront;
@@ -362,9 +362,11 @@ void Player::updateMeshes(Vector3i editPos)
 	Chunk* chunk{ m_Manager.getChunk(editPos) };
 
 	chunk->clearMesh();
+	Chunk* adjacentChunks[4]{};
+	m_Manager.getAdjacentChunks(chunk->getLocation(), adjacentChunks);
 	for (int i{}; i < 16; ++i)
 	{
-		chunk->buildMesh(m_Manager, i);
+		chunk->buildMesh(m_Manager, i, adjacentChunks);
 	}
 
 	Vector3i local{ m_Manager.toSectionLocal(editPos) };
@@ -374,9 +376,10 @@ void Player::updateMeshes(Vector3i editPos)
 		Chunk* chunkPosX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x + 1, chunk->getLocation().y }) };
 
 		chunkPosX->clearMesh();
+		m_Manager.getAdjacentChunks(chunkPosX->getLocation(), adjacentChunks);
 		for (int i{}; i < 16; ++i)
 		{
-			chunkPosX->buildMesh(m_Manager, i);
+			chunkPosX->buildMesh(m_Manager, i, adjacentChunks);
 		}
 	}
 
@@ -385,9 +388,10 @@ void Player::updateMeshes(Vector3i editPos)
 		Chunk* chunkNegX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x - 1, chunk->getLocation().y }) };
 
 		chunkNegX->clearMesh();
+		m_Manager.getAdjacentChunks(chunkNegX->getLocation(), adjacentChunks);
 		for (int i{}; i < 16; ++i)
 		{
-			chunkNegX->buildMesh(m_Manager, i);
+			chunkNegX->buildMesh(m_Manager, i, adjacentChunks);
 		}
 	}
 
@@ -396,9 +400,10 @@ void Player::updateMeshes(Vector3i editPos)
 		Chunk* chunkPosY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y + 1 }) };
 
 		chunkPosY->clearMesh();
+		m_Manager.getAdjacentChunks(chunkPosY->getLocation(), adjacentChunks);
 		for (int i{}; i < 16; ++i)
 		{
-			chunkPosY->buildMesh(m_Manager, i);
+			chunkPosY->buildMesh(m_Manager, i, adjacentChunks);
 		}
 	}
 
@@ -407,9 +412,10 @@ void Player::updateMeshes(Vector3i editPos)
 		Chunk* chunkNegY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y - 1 }) };
 
 		chunkNegY->clearMesh();
+		m_Manager.getAdjacentChunks(chunkNegY->getLocation(), adjacentChunks);
 		for (int i{}; i < 16; ++i)
 		{
-			chunkNegY->buildMesh(m_Manager, i);
+			chunkNegY->buildMesh(m_Manager, i, adjacentChunks);
 		}
 	}
 }

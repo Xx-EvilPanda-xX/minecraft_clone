@@ -37,9 +37,20 @@ void ChunkSection::setBlock(Vector3i loc, BlockType type, bool surface)
 		--m_AirBlocks;
 
 	if (m_AirBlocks == 4096)
+	{
 		m_Empty = true;
-	else
+		m_Full = false;
+	}
+	else if (m_AirBlocks == 0)
+	{
 		m_Empty = false;
+		m_Full = true;
+	}
+	else
+	{
+		m_Empty = false;
+		m_Full = false;
+	}
 
 	m_Blocks[index] = block;
 }
@@ -63,4 +74,9 @@ Block ChunkSection::getBlock(Vector3i loc) const
 bool ChunkSection::isEmpty() const
 {
 	return m_Empty;
+}
+
+bool ChunkSection::isFull() const
+{
+	return m_Full;
 }

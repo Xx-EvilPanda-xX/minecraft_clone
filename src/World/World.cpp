@@ -131,7 +131,9 @@ void World::buildPass()
 
 	if (currentChunk != nullptr && shouldGen >= genInterval)
 	{
-		currentChunk->buildMesh(m_Manager, sectionPtr);
+		Chunk* adjacentChunks[4];
+		m_Manager.getAdjacentChunks(currentChunk->getLocation(), adjacentChunks);
+		currentChunk->buildMesh(m_Manager, sectionPtr, adjacentChunks);
 		++sectionPtr;
 
 		if (sectionPtr == g_ChunkCap)

@@ -79,47 +79,38 @@ float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 	float x{ fullIndex - y };
 	y *= m_FaceRatio;
 	
-	glm::vec2 startCoord{ x, y };
+	glm::vec2 startCoords{ x, y };
+	glm::vec2 faceCoords{};
 
 	switch (face)
 	{
 		case Face::Up:
-		{
-			glm::vec2 faceStartCoords{ startCoord };
-			checkTexCoordBounds(faceStartCoords);
-			return getTexCoordsFromStartPos(faceStartCoords);
-		}	
+			faceCoords = { startCoords };
+			break;
+
 		case Face::North:
-		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio, 0.0f } };
-			checkTexCoordBounds(faceStartCoords);
-			return getTexCoordsFromStartPos(faceStartCoords);
-		}
+			faceCoords = { startCoords + glm::vec2{ m_FaceRatio, 0.0f } };
+			break;
+
 		case Face::East:
-		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio * 2.0f, 0.0f } };
-			checkTexCoordBounds(faceStartCoords);
-			return getTexCoordsFromStartPos(faceStartCoords);
-		}
+			faceCoords = { startCoords + glm::vec2{ m_FaceRatio * 2.0f, 0.0f } };
+			break;
+
 		case Face::South:
-		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio * 3.0f, 0.0f } };
-			checkTexCoordBounds(faceStartCoords);
-			return getTexCoordsFromStartPos(faceStartCoords);
-		}
+			faceCoords = { startCoords + glm::vec2{ m_FaceRatio * 3.0f, 0.0f } };
+			break;
+
 		case Face::West:
-		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio * 4.0f, 0.0f } };
-			checkTexCoordBounds(faceStartCoords);
-			return getTexCoordsFromStartPos(faceStartCoords);
-		}
+			faceCoords = { startCoords + glm::vec2{ m_FaceRatio * 4.0f, 0.0f } };
+			break;
+
 		case Face::Down:
-		{
-			glm::vec2 faceStartCoords{ startCoord + glm::vec2{ m_FaceRatio * 5.0f, 0.0f } };
-			checkTexCoordBounds(faceStartCoords);
-			return getTexCoordsFromStartPos(faceStartCoords);
-		}
+			faceCoords = { startCoords + glm::vec2{ m_FaceRatio * 5.0f, 0.0f } };
+			break;
 	}
+
+	checkTexCoordBounds(faceCoords);
+	return getTexCoordsFromStartPos(faceCoords);
 }
 
 void ChunkMesh::checkTexCoordBounds(glm::vec2& faceStartCoords)

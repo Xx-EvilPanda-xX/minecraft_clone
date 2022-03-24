@@ -248,6 +248,14 @@ Chunk* ChunkManager::getChunk(Vector2i chunkLoc) const
 	return nullptr;
 }
 
+void ChunkManager::getAdjacentChunks(Vector2i chunkLoc, Chunk* o_AdjacentChunks[4]) const
+{
+	o_AdjacentChunks[0] = getChunk(Vector2i{ chunkLoc.x + 1, chunkLoc.y });
+	o_AdjacentChunks[1] = getChunk(Vector2i{ chunkLoc.x, chunkLoc.y + 1 });
+	o_AdjacentChunks[2] = getChunk(Vector2i{ chunkLoc.x - 1, chunkLoc.y });
+	o_AdjacentChunks[3] = getChunk(Vector2i{ chunkLoc.x, chunkLoc.y - 1 });
+}
+
 void ChunkManager::clearQueues()
 {
 	m_GenQueue.clear();

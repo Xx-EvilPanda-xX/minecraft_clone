@@ -11,6 +11,7 @@ private:
 	Block* m_Blocks;
 	int m_AirBlocks;
 	bool m_Empty;
+	bool m_Full;
 
 public:
 	ChunkSection();
@@ -22,6 +23,8 @@ public:
 	Block getBlock(Vector3i loc) const;
 
 	bool isEmpty() const;
+
+	bool isFull() const;
 };
 
 #endif

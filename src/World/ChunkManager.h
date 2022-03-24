@@ -56,6 +56,8 @@ public:
 
 	Chunk* getChunk(Vector2i chunkLoc) const;
 
+	void getAdjacentChunks(Vector2i chunkLoc, Chunk* o_AdjacentChunks[4]) const;
+
 	void clearQueues();
 
 	void setWorld(World* world);
