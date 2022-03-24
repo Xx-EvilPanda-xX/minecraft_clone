@@ -495,17 +495,17 @@ glm::dvec3& Player::getVelocity()
 	return m_Velocity;
 }
 
-bool Player::isSprinting()
+bool Player::isSprinting() const
 {
 	return m_Sprinting;
 }
 
-bool Player::isGrounded()
+bool Player::isGrounded() const
 {
 	return m_Grounded;
 }
 
-bool Player::isFlying()
+bool Player::isFlying() const
 {
 	return m_Flying;
 }

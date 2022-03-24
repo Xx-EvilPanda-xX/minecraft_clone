@@ -69,11 +69,11 @@ public:
 
 	glm::dvec3& getVelocity();
 
-	bool isSprinting();
+	bool isSprinting() const;
 
-	bool isGrounded();
+	bool isGrounded() const;
 
-	bool isFlying();
+	bool isFlying() const;
 
 	void setReach(double reach);
 

@@ -9,6 +9,7 @@ class ChunkSection
 {
 private:
 	Block* m_Blocks;
+	int m_OpaqueBlocks;
 	int m_AirBlocks;
 	bool m_Empty;
 	bool m_Full;
