@@ -9,6 +9,7 @@
 #include "../Constants.h"
 
 //#define DEBUG
+constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
 
 World::World(Shader shader, Player player, ChunkManager& manager)
 	: m_Shader{ shader },
@@ -26,12 +27,14 @@ void World::worldUpdate(const Camera& camera, bool deletePass)
 
 	m_Manager.updateQueues(camera);
 
-	genPass();
+	for (int i{}; i < chunkBuildsPerFrame; ++i)
+	{
+		genPass();
+		buildPass();
+	}
 
 	if (deletePass)
 		destroyPass(Vector2i{ playerPos.x, playerPos.z });
-
-	buildPass();
 }
 
 void World::worldRender(const Camera& camera)

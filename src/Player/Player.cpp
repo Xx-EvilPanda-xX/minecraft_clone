@@ -181,7 +181,7 @@ bool Player::collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, con
 
 	if (lowerCollsionPos && upperCollsionPos)
 	{
-        if (lowerClosestCollision <= upperClosestCollision)
+		if (lowerClosestCollision <= upperClosestCollision)
 		{
 			o_Pos = *lowerCollsionPos;
 			o_CollisionType = CollsionType::PlayerLowerHalf;
