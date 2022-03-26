@@ -54,17 +54,17 @@ private:
 
 	ChunkMesh& pushIndex(int i);
 
-	void pushUp(Vector3i loc, Block block);
+	void pushUp(int size, glm::vec3& floats, float height);
 
-	void pushDown(Vector3i loc);
+	void pushDown(int size, glm::vec3& floats);
 
-	void pushNorth(Vector3i loc, Block block);
+	void pushNorth(int size, glm::vec3& floats, float height);
 
-	void pushSouth(Vector3i loc, Block block);
+	void pushSouth(int size, glm::vec3& floats, float height);
 
-	void pushEast(Vector3i loc, Block block);
+	void pushEast(int size, glm::vec3& floats, float height);
 
-	void pushWest(Vector3i loc, Block block);
+	void pushWest(int size, glm::vec3& floats, float height);
 
 	void pushNewIndices(int size);
 

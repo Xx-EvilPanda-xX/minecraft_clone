@@ -37,7 +37,7 @@ private:
 	double m_JumpCoolDown;
 
 	const double vecPrecision{ 0.001 };
-	const double cameraHeightDiff{ 0.35 };
+	const double cameraHeightDiff{ 0.3 };
 	const int collsionSearchRadiusX{ 2 };
 	const int collsionSearchRadiusY{ 3 };
 	const int collsionSearchRadiusZ{ 2 };

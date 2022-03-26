@@ -19,7 +19,7 @@ glm::dmat4 Camera::getProjectionMat() const
 {
 	int width, height;
 	glfwGetWindowSize(m_Win, &width, &height);
-	return glm::perspective(glm::radians(m_Fov), static_cast<double>(width) / static_cast<double>(height), 0.01, 1000.0);
+	return glm::perspective(glm::radians(m_Fov), static_cast<double>(width) / static_cast<double>(height), 0.1, 1000.0);
 }
 
 glm::dmat4 Camera::getViewMat() const

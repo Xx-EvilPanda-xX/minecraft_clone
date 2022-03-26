@@ -24,30 +24,34 @@ void ChunkMesh::createTextureAtlas(const char* path)
 
 void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 {
+	int size{ static_cast<int>(m_Vertices.size()) / 3 };
+	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
+	float height{ block.isSurface() ? 0.9f : 1.0f };
+
 	switch (face)
 	{
 	case Face::Up:
-		pushUp(loc, block);
+		pushUp(size, floats, height);
 		break;
 
 	case Face::Down:
-		pushDown(loc);
+		pushDown(size, floats);
 		break;
 
 	case Face::North:
-		pushNorth(loc, block);
+		pushNorth(size, floats, height);
 		break;
 
 	case Face::South:
-		pushSouth(loc, block);
+		pushSouth(size, floats, height);
 		break;
 
 	case Face::East:
-		pushEast(loc, block);
+		pushEast(size, floats, height);
 		break;
 
 	case Face::West:
-		pushWest(loc, block);
+		pushWest(size, floats, height);
 		break;
 	}
 
@@ -141,15 +145,13 @@ float* ChunkMesh::getTexCoordsFromStartPos(glm::vec2 startPos)
 	return coords;
 }
 
-void ChunkMesh::pushUp(Vector3i loc, Block block)
+void ChunkMesh::pushUp(int size, glm::vec3& floats, float height)
 {
-	int size{ static_cast<int>(m_Vertices.size()) / 3 };
-	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
-	float height{ block.isSurface() ? 0.9f : 1.0f };
+	float add{ 1.0f };
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //2
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + 1.0f); //6
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + 1.0f); //7
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //6
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //7
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -159,14 +161,13 @@ void ChunkMesh::pushUp(Vector3i loc, Block block)
 	pushNewIndices(size);
 }
 
-void ChunkMesh::pushDown(Vector3i loc)
+void ChunkMesh::pushDown(int size, glm::vec3& floats)
 {
-	int size{ static_cast<int>(m_Vertices.size()) / 3 };
-	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
+	float add{ 1.0f };
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //3
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -176,15 +177,13 @@ void ChunkMesh::pushDown(Vector3i loc)
 	pushNewIndices(size);
 }
 
-void ChunkMesh::pushNorth(Vector3i loc, Block block)
+void ChunkMesh::pushNorth(int size, glm::vec3& floats, float height)
 {
-	int size{ static_cast<int>(m_Vertices.size()) / 3 };
-	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
-	float height{ block.isSurface() ? 0.9f : 1.0f };
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + 1.0f); //7
+	float add{ 1.0f };
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //7
 	
 	for (int i{}; i < 4; ++i)
 	{
@@ -194,14 +193,12 @@ void ChunkMesh::pushNorth(Vector3i loc, Block block)
 	pushNewIndices(size);
 }
 
-void ChunkMesh::pushSouth(Vector3i loc, Block block)
+void ChunkMesh::pushSouth(int size, glm::vec3& floats, float height)
 {
-	int size{ static_cast<int>(m_Vertices.size()) / 3 };
-	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
-	float height{ block.isSurface() ? 0.9f : 1.0f };
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //3
+	float add{ 1.0f };
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + 1.0f); //6
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //6
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //2
 
 	for (int i{}; i < 4; ++i)
@@ -212,15 +209,13 @@ void ChunkMesh::pushSouth(Vector3i loc, Block block)
 	pushNewIndices(size);
 }
 
-void ChunkMesh::pushEast(Vector3i loc, Block block)
+void ChunkMesh::pushEast(int size, glm::vec3& floats, float height)
 {
-	int size{ static_cast<int>(m_Vertices.size()) / 3 };
-	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
-	float height{ block.isSurface() ? 0.9f : 1.0f };
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //4
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + 1.0f); //3
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + 1.0f); //7
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + 1.0f); //6
+	float add{ 1.0f };
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //7
+	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //6
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -230,15 +225,13 @@ void ChunkMesh::pushEast(Vector3i loc, Block block)
 	pushNewIndices(size);
 }
 
-void ChunkMesh::pushWest(Vector3i loc, Block block)
+void ChunkMesh::pushWest(int size, glm::vec3& floats, float height)
 {
-	int size{ static_cast<int>(m_Vertices.size()) / 3 };
-	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
-	float height{ block.isSurface() ? 0.9f : 1.0f };
+	float add{ 1.0f };
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //2
-	pushVertexFloat(floats.x + 1.0f).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
+	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
 
 	for (int i{}; i < 4; ++i)
 	{
