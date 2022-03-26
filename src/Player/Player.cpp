@@ -21,6 +21,8 @@ Player::Player(Camera & cam, ChunkManager & manager, Keyboard& keyboard, double 
 	m_LastMovedX = false;
 	m_LastMovedY = false;
 	m_LastMovedZ = false;
+	m_CtrlLastDown = false;
+	m_DecreasingVel = false;
 }
 
 void Player::move()
@@ -194,6 +196,7 @@ void Player::move()
 
 	m_LastValidLoc = m_Cam.getLocation();
 	m_LastValidAABB = m_Aabb;
+	m_CtrlLastDown = m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 }
 
 AABB Player::createPlayerAABB(glm::dvec3 playerPos)
@@ -282,7 +285,10 @@ Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_C
 
 void Player::calculateVelocity()
 {
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_A) && !m_Keyboard.isKeyDown(GLFW_KEY_D))
+	if (!m_DecreasingVel)
+		m_DecreasingVel = m_CtrlLastDown && !m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL);
+
+	if ((!m_Keyboard.isKeyDown(GLFW_KEY_A) && !m_Keyboard.isKeyDown(GLFW_KEY_D)) || m_DecreasingVel)
 	{
 		if (m_Velocity.x < 0.0)
 		{
@@ -298,7 +304,7 @@ void Player::calculateVelocity()
 		}
 	}
 	
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_SPACE) && !m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT))
+	if ((!m_Keyboard.isKeyDown(GLFW_KEY_SPACE) && !m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT)) || m_DecreasingVel)
 	{
 		if (m_Velocity.y < 0.0)
 		{
@@ -313,8 +319,8 @@ void Player::calculateVelocity()
 				m_Velocity.y = 0.0;
 		}
 	}
-	
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_W) && !m_Keyboard.isKeyDown(GLFW_KEY_S))
+
+	if ((!m_Keyboard.isKeyDown(GLFW_KEY_W) && !m_Keyboard.isKeyDown(GLFW_KEY_S)) || m_DecreasingVel)
 	{
 		if (m_Velocity.z < 0.0)
 		{
@@ -329,6 +335,10 @@ void Player::calculateVelocity()
 				m_Velocity.z = 0.0;
 		}
 	}
+
+	double speed{ constants::walkSpeed };
+	if ((m_Velocity.x <= speed && m_Velocity.y <= speed && m_Velocity.z <= speed) && (m_Velocity.x >= -speed && m_Velocity.y >= -speed && m_Velocity.z >= -speed))
+		m_DecreasingVel = false;
 
 	if ((m_Velocity.x < 0.01 && m_Velocity.x > 0.0) || (m_Velocity.x > -0.01 && m_Velocity.x < 0.0))
 		m_Velocity.x = 0.0;

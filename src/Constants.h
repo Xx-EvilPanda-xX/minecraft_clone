@@ -24,6 +24,8 @@ namespace constants
 
 	constexpr int waterLevel{ 48 };
 
+	constexpr double walkSpeed{ 3.5 };
+	constexpr double sprintSpeed{ 15.0 };
 	constexpr double playerDrift{ 20.0 };
 	constexpr double playerSize{ 0.45 };
 

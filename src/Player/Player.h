@@ -33,6 +33,8 @@ private:
 	bool m_Sprinting;
 	bool m_Grounded;
 	bool m_Flying;
+	bool m_CtrlLastDown;
+	bool m_DecreasingVel;
 	double m_Reach;
 	double m_JumpCoolDown;
 
