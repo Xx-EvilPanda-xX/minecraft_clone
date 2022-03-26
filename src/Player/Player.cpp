@@ -46,7 +46,13 @@ void Player::move()
 	{
 		if (collide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType))
 		{
-     			glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
+			//@TODO: implement new method of figuring out which side the player is colliding with. Likely
+			//something to do with moving the player in all 6 cardinal diretions and seeing which one took
+			//the least amount of time iterations to eliminate the collsion. This would dissolve the need 
+			//for upper and lower halves of the player and eliminate the need for the player to be two squares
+			//on top of eachother.
+
+     		glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
 			glm::dvec3 lastValidLoc;
 
 			switch (collisionType)
@@ -73,6 +79,8 @@ void Player::move()
 			bool collideX{ block.x != collsionPos.x };
 			bool collideY{ block.y != collsionPos.y };
 			bool collideZ{ block.z != collsionPos.z };
+			//end @TODO
+
 			int intersects{};
 
 			if (collideX)
@@ -91,34 +99,62 @@ void Player::move()
 				collideZ = false;
 
 				if (!m_LastMovedX && m_LastMovedY && m_LastMovedZ)
-					collideX = true;
+				{
+					if (blockCenter.y < m_Aabb.min().y || blockCenter.y > m_Aabb.max().y)
+						collideY = true;
+					else
+						collideX = true;
+				}
+					
 
 				if (m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
 				{
 					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
-					{
-						m_LastMovedX = !m_LastMovedX;
-						m_LastMovedY = !m_LastMovedY;
-						m_LastMovedZ = !m_LastMovedZ;
-					}
+						collideX = true;
 					else
 						collideY = true;
 				}
 
 				if (m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
-					collideZ = true;
+				{
+					if (blockCenter.y < m_Aabb.min().y || blockCenter.y > m_Aabb.max().y)
+						collideY = true;
+					else
+						collideZ = true;
+				}
 
 				if (!m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
-					collideX = true;
+				{
+					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
+						collideX = true;
+					else
+						collideY = true;
+				}
+					
 
 				if (m_LastMovedX && !m_LastMovedY && !m_LastMovedZ)
-					collideZ = true;
+				{
+					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
+						collideZ = true;
+					else
+						collideY = true;
+				}
 
 				if (!m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
-					collideX = true;
+				{
+					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
+						collideX = true;
+					else
+						collideY = true;
+				}
 
 				if (m_LastMovedX && m_LastMovedY && m_LastMovedZ)
-					collideX = true;
+				{
+					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
+						collideX = true;
+					else
+						collideY = true;
+				}
 			}
 
 			const double targetDistance{ 0.5 + constants::playerSize + 0.0000001 };

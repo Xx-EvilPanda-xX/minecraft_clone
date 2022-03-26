@@ -162,8 +162,8 @@ void Application::handleInput()
 	s_Dt = frame - m_LastFrame;
 	m_LastFrame = frame;
 
-	if (s_Dt > 0.01)
-		s_Dt = 0.01;
+	if (s_Dt > 0.1)
+		s_Dt = 0.1;
 
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };
