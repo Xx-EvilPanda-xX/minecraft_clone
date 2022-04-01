@@ -43,6 +43,7 @@ private:
 	const int collsionSearchRadiusX{ 2 };
 	const int collsionSearchRadiusY{ 3 };
 	const int collsionSearchRadiusZ{ 2 };
+	const double worldBottom{ -40.0 };
 
 	Vector3i* breakIntersect();
 
@@ -51,6 +52,8 @@ private:
 	void updateMeshes(Vector3i editPos);
 
 	void calculateVelocity();
+
+	void collsionDetection();
 
 	bool collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, const AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType);
 

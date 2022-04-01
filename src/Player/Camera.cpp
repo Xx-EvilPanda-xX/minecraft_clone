@@ -32,14 +32,14 @@ void Camera::handleLook(glm::dvec2 offset)
 	m_Yaw += offset.x * m_MouseSens;
 	m_Pitch += offset.y * m_MouseSens;
 
-	if (m_Pitch > 89.0)
+	if (m_Pitch > 89.99)
 	{
-		m_Pitch = 89.0;
+		m_Pitch = 89.99;
 	}
 
-	if (m_Pitch < -89.0)
+	if (m_Pitch < -89.99)
 	{
-		m_Pitch = -89.0;
+		m_Pitch = -89.99;
 	}
 
 	if (m_Yaw > 360.0)

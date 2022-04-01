@@ -35,7 +35,29 @@ void Player::move()
 	
 	m_Cam.handleMove(m_Velocity, Application::s_Dt);
 	m_Aabb = createPlayerAABB(m_Cam.getLocation());
+	
+	collsionDetection();
 
+	m_JumpCoolDown -= Application::s_Dt;
+
+	m_LastMovedX = m_LastValidLoc.x != m_Cam.getLocation().x;
+	m_LastMovedY = m_LastValidLoc.y != m_Cam.getLocation().y;
+	m_LastMovedZ = m_LastValidLoc.z != m_Cam.getLocation().z;
+
+	m_LastValidLoc = m_Cam.getLocation();
+	m_LastValidAABB = m_Aabb;
+	m_CtrlLastDown = m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL);
+
+	if (m_Cam.getLocation().y <= worldBottom)
+	{
+		m_Cam.setY(worldBottom);
+		m_Velocity.y = 0.0;
+		m_Grounded = true;
+	}
+}
+
+void Player::collsionDetection()
+{
 	glm::dvec3 lowerPlayerHalf{ m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
 	glm::dvec3 upperPlayerHalf{ m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
 
@@ -48,13 +70,7 @@ void Player::move()
 	{
 		if (collide(lowerPlayerHalf, upperPlayerHalf, m_Aabb, collsionPos, collisionType))
 		{
-			//@TODO: implement new method of figuring out which side the player is colliding with. Likely
-			//something to do with moving the player in all 6 cardinal diretions and seeing which one took
-			//the least amount of time iterations to eliminate the collsion. This would dissolve the need 
-			//for upper and lower halves of the player and eliminate the need for the player to be two squares
-			//on top of eachother.
-
-     		glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
+			glm::dvec3 blockCenter{ collsionPos.x + 0.5, collsionPos.y + 0.5, collsionPos.z + 0.5 };
 			glm::dvec3 lastValidLoc;
 
 			switch (collisionType)
@@ -81,18 +97,11 @@ void Player::move()
 			bool collideX{ block.x != collsionPos.x };
 			bool collideY{ block.y != collsionPos.y };
 			bool collideZ{ block.z != collsionPos.z };
-			//end @TODO
-
 			int intersects{};
 
-			if (collideX)
-				++intersects;
-
-			if (collideY)
-				++intersects;
-
-			if (collideZ)
-				++intersects;
+			if (collideX) ++intersects;
+			if (collideY) ++intersects;
+			if (collideZ) ++intersects;
 
 			if (intersects != 1)
 			{
@@ -107,7 +116,7 @@ void Player::move()
 					else
 						collideX = true;
 				}
-					
+
 
 				if (m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
 				{
@@ -132,7 +141,7 @@ void Player::move()
 					else
 						collideY = true;
 				}
-					
+
 
 				if (m_LastMovedX && !m_LastMovedY && !m_LastMovedZ)
 				{
@@ -188,15 +197,6 @@ void Player::move()
 	}
 
 	m_Grounded = onGround;
-	m_JumpCoolDown -= Application::s_Dt;
-
-	m_LastMovedX = m_LastValidLoc.x != m_Cam.getLocation().x;
-	m_LastMovedY = m_LastValidLoc.y != m_Cam.getLocation().y;
-	m_LastMovedZ = m_LastValidLoc.z != m_Cam.getLocation().z;
-
-	m_LastValidLoc = m_Cam.getLocation();
-	m_LastValidAABB = m_Aabb;
-	m_CtrlLastDown = m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 }
 
 AABB Player::createPlayerAABB(glm::dvec3 playerPos)
