@@ -44,10 +44,11 @@ void World::worldRender(const Camera& camera)
 	m_Shader.setBool("playerUnderWater", m_Manager.getWorldBlock(playerPos).getType() == BlockType::Water);
 	m_Shader.unbind();
 
-	for (int i{}; i < m_Chunks.size(); ++i)
+	for (std::pair<Vector2i, Chunk*> p : m_Chunks)
 	{
-		if (m_Chunks[i]->isBuilt())
-			Renderer::drawMesh(camera, m_Chunks[i]->getMesh());
+		Chunk* chunk{ p.second };
+		if (chunk->isBuilt())
+			Renderer::drawMesh(camera, chunk->getMesh());
 	}
 }
 
@@ -79,7 +80,7 @@ void World::genPass()
 
 		delete[] heightMap;
 
-		m_Chunks.push_back(chunk);
+		m_Chunks.insert({ chunkPos, chunk });
 	}
 }
 
@@ -88,18 +89,19 @@ void World::destroyPass(Vector2i playerPos)
 	playerPos.x /= 16;
 	playerPos.y /= 16;
 
-	for (int i{}; i < m_Chunks.size(); ++i)
+	for (std::pair<Vector2i, Chunk*> p : m_Chunks)
 	{
-		Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
+		Vector2i chunkLoc{ p.first };
+		Chunk* chunk{ p.second };
 
 		//+ 1 becuase otherwise chunks that had just been generated got deleted
 		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance + 1 || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance + 1)
 		{
 			int index;
-			if (m_Manager.isInBuildQueue(m_Chunks[i], index))
+			if (m_Manager.isInBuildQueue(chunk, index))
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
 
-			Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
+			Vector2i chunkLoc{ chunk->getLocation() };
 
 			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x + 1, chunkLoc.y }), index))
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
@@ -113,11 +115,8 @@ void World::destroyPass(Vector2i playerPos)
 			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }), index))
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
 
-			delete m_Chunks[i];
-			m_Chunks.erase(m_Chunks.begin() + i);
-
-			//erasing an element from the middle of the vec shifts all elements beyond that one down once, essentially incrementing i
-			--i;
+			delete chunk;
+			m_Chunks.erase(chunkLoc);
 		}
 	}
 }
@@ -155,26 +154,15 @@ void World::buildPass()
 
 void World::reloadChunks(const Camera& camera)
 {
-	for (int i{}; i < m_Chunks.size(); ++i)
+	for (std::pair<Vector2i, Chunk*> p : m_Chunks)
 	{
-		delete m_Chunks[i];
-		m_Chunks[i] = nullptr;
+		delete p.second;
+		m_Chunks[p.first] = nullptr;
 	}
 
 	m_Chunks.clear();
 	m_Manager.clearQueues();
 	m_Manager.updateQueues(camera);
-}
-
-int World::getChunkIndex(Vector2i chunkPos) const
-{
-	for (int i{}; i < m_Chunks.size(); ++i)
-	{
-		if (m_Chunks[i]->getLocation() == chunkPos)
-			return i;
-	}
-
-	return -1;
 }
 
 Vector3i World::getPlayerBlockPos(const Camera& camera)
@@ -191,7 +179,7 @@ Vector3i World::getPlayerBlockPos(const Camera& camera)
 	return playerPos;
 }
 
-std::vector<Chunk*>& World::getChunks()
+std::unordered_map<Vector2i, Chunk*>& World::getChunks()
 {
 	return m_Chunks;
 }

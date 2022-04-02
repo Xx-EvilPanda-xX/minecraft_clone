@@ -12,10 +12,22 @@
 
 constexpr int genInterval{ 0 };
 
+namespace std
+{
+	template<>
+	struct hash<Vector2i>
+	{
+		size_t operator()(const Vector2i& key) const
+		{
+			return hash<int>{}(key.x) ^ hash<int>{}(key.y);
+		}
+	};
+}
+
 class World
 {
 private:
-	std::vector<Chunk*> m_Chunks;
+	std::unordered_map<Vector2i, Chunk*> m_Chunks;
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
 	ChunkManager& m_Manager;
@@ -38,9 +50,7 @@ public:
 
 	void reloadChunks(const Camera& camera);
 
-	int getChunkIndex(Vector2i chunkPos) const;
-
-	std::vector<Chunk*>& getChunks();
+	std::unordered_map<Vector2i, Chunk*>& getChunks();
 
 	ChunkManager& getManager();
 
