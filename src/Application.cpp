@@ -33,7 +33,7 @@ void Application::init()
 	createCrosshair();
 	m_TextComponents[0] = TextRenderer{ "FPS: ", -1.0, 1.0, 0.1, 0.15, m_GuiShader };
 	m_TextComponents[1] = TextRenderer{ "XYZ: ", -1.0, 0.975, 0.1, 0.15, m_GuiShader };
-	m_TextComponents[2] = TextRenderer{ "Chunk Index: ", -1.0, 0.95, 0.1, 0.15, m_GuiShader };
+	m_TextComponents[2] = TextRenderer{ "Chunk adress: ", -1.0, 0.95, 0.1, 0.15, m_GuiShader };
 	m_TextComponents[3] = TextRenderer{ "Selected Block: ", -1.0, 0.75, 0.1, 0.15, m_GuiShader };
 	//m_TextComponents[4] = TextRenderer{ "[`]: Gravel, [1]: Grass, [2]: Stone, [3]: Dirt, [4]: CobbleStone, [5]: Wood, [6]: Leaves, [7]: Glass, [8]: Sand, [9]: Planks, [0]: DiamondBlock, [-]: Water, [=]: CraftingTable", -1.0, -0.075, 0.075, 0.15, m_GuiShader };
 
@@ -90,7 +90,7 @@ void Application::updateGui()
 		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", " + std::to_string(pos.z), -1.0, 0.975, 0.1, 0.15);
 
 		Vector2i chunkPos{ static_cast<int>(m_Camera.getLocation().x) / 16, static_cast<int>(m_Camera.getLocation().z) / 16 };
-		m_TextComponents[2].update(std::string{ "Chunk index: " } + std::to_string((long) m_World.getChunks().at(chunkPos)), -1.0, 0.95, 0.1, 0.15);
+		m_TextComponents[2].update(std::string{ "Chunk adress: " } + std::to_string((unsigned long) m_World.getChunks().at(chunkPos)), -1.0, 0.95, 0.1, 0.15);
 
 		m_TextComponents[3].update(std::string{ "Selected block: " } + m_Handler.getSelectedBlock().getName(), -1.0, 0.75, 0.1, 0.15);
 

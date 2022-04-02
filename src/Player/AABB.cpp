@@ -20,6 +20,16 @@ bool operator> (const glm::dvec3& v1, const glm::dvec3& v2)
 	return (v1.x > v2.x) && (v1.y > v2.y) && (v1.z > v2.z);
 }
 
+bool operator<= (const glm::dvec3& v1, const glm::dvec3& v2)
+{
+	return (v1.x <= v2.x) && (v1.y <= v2.y) && (v1.z <= v2.z);
+}
+
+bool operator>= (const glm::dvec3& v1, const glm::dvec3& v2)
+{
+	return (v1.x >= v2.x) && (v1.y >= v2.y) && (v1.z >= v2.z);
+}
+
 bool AABB::intersects(const AABB& other)
 {
 	return (m_Min < other.max() && m_Max > other.min());

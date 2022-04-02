@@ -35,43 +35,60 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, int section)
 			{
 				int wY = (section * 16) + y;
 				int currentHeight{ heightMap[x][z] };
+				Vector3i pos{ x, y, z };
 
-				if (chunkSection->getBlock(Vector3i{ x, y, z }).getType() == BlockType::Air)
+				if (chunkSection->getBlock(pos).getType() == BlockType::Air)
 				{
 					if (wY < currentHeight - 6)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Stone, false);
+						chunkSection->setBlock(pos, BlockType::Stone, false);
 					else if (wY < currentHeight - 1 && wY >= currentHeight - 6)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Dirt, false);
+						chunkSection->setBlock(pos, BlockType::Dirt, false);
 					else if (wY < constants::waterLevel + 1 && wY <= currentHeight)
 					{
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Sand, false);
+						chunkSection->setBlock(pos, BlockType::Sand, false);
 						if (m_Die(m_Rand) < 32 && wY < constants::waterLevel - 10)
-							chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Gravel, false);
+							chunkSection->setBlock(pos, BlockType::Gravel, false);
 					}
 					else if (wY < currentHeight && wY >= currentHeight - 1)
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Grass, false);
+						chunkSection->setBlock(pos, BlockType::Grass, false);
 					else if (wY < constants::waterLevel)
 					{
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Water, false);
+						chunkSection->setBlock(pos, BlockType::Water, false);
 						if (wY == constants::waterLevel - 1)
-							chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Water, true);
+							chunkSection->setBlock(pos, BlockType::Water, true);
 					}
 					else
-						chunkSection->setBlock(Vector3i{ x, y, z }, BlockType::Air, false);
+						chunkSection->setBlock(pos, BlockType::Air, false);
 				}
+			}
+		}
+	}
 
-				if (wY == currentHeight && wY > constants::waterLevel)
+	for (int x{}; x < 16; ++x)
+	{
+		for (int y{}; y < 16; ++y)
+		{
+			for (int z{}; z < 16; ++z)
+			{
+				int wY = (section * 16) + y;
+				int currentHeight{ heightMap[x][z] };
+				Vector3i pos{ x, y, z };
+
+				if (chunkSection->getBlock(pos).getType() == BlockType::Air)
 				{
-					if (m_Die(m_Rand) == 0)
+					if (wY == currentHeight && wY > constants::waterLevel)
 					{
-						if (y + 4 > 15 || x >= 14 || x <= 1 || z >= 14 || z <= 1 )
-							//invalid tree position
-							continue;
-
-						if (trees <= m_MaxTreesPerChunk)
+						if (m_Die(m_Rand) == 0)
 						{
-							genTree(chunkSection, Vector3i{ x, y, z });
-							++trees;
+							//if (y + 4 > 15 || x >= 14 || x <= 1 || z >= 14 || z <= 1 )
+								//invalid tree position
+								//continue;
+
+							if (trees <= m_MaxTreesPerChunk)
+							{
+								genTree(chunkSection, pos);
+								++trees;
+							}
 						}
 					}
 				}

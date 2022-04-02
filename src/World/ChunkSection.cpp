@@ -22,14 +22,15 @@ void ChunkSection::setBlock(Vector3i loc, BlockType type, bool surface)
 {
 	int index{};
 
-	index += loc.z;
-	index += loc.y * 16;
-	index += loc.x * (16 * 16);
-
-	if (index >= 4096 || index < 0)
+	if (loc.x > 15 || loc.y > 15 || loc.z > 15 ||
+		loc.x < 0 || loc.y < 0 || loc.z < 0)
 	{
 		return;
 	}
+
+	index += loc.z;
+	index += loc.y * 16;
+	index += loc.x * (16 * 16);
 
 	Block block{ type, surface };
 
@@ -60,14 +61,15 @@ Block ChunkSection::getBlock(Vector3i loc) const
 {
 	int index{};
 
-	index += loc.z;
-	index += loc.y * 16;
-	index += loc.x * (16 * 16);
-
-	if (index >= 4096 || index < 0)
+	if (loc.x > 15 || loc.y > 15 || loc.z > 15 ||
+		loc.x < 0 || loc.y < 0 || loc.z < 0)
 	{
 		return Block{};
 	}
+
+	index += loc.z;
+	index += loc.y * 16;
+	index += loc.x * (16 * 16);
 
 	return m_Blocks[index];
 }

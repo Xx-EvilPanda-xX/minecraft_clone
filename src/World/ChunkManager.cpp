@@ -21,7 +21,7 @@ void ChunkManager::setWorldBlock(Vector3i loc, BlockType type, bool surface)
 	Vector3i sectionLocal{};
 
 	if (getBlockAbsoluteIndex(loc, chunkPos, sectionIndex, sectionLocal))
-		m_World->getChunks()[chunkPos]->getSection(sectionIndex)->setBlock(sectionLocal, type, surface);
+		m_World->getChunks().at(chunkPos)->getSection(sectionIndex)->setBlock(sectionLocal, type, surface);
 }
 
 Block ChunkManager::getWorldBlock(Vector3i loc)
@@ -31,7 +31,7 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 	Vector3i sectionLocal{};
 
 	if (getBlockAbsoluteIndex(loc, chunkPos, sectionIndex, sectionLocal))
-		return m_World->getChunks()[chunkPos]->getSection(sectionIndex)->getBlock(sectionLocal);
+		return m_World->getChunks().at(chunkPos)->getSection(sectionIndex)->getBlock(sectionLocal);
 	else
 		return Block{};
 }

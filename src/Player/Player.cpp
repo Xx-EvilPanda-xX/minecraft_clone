@@ -3,7 +3,7 @@
 #include <glm/vec3.hpp>
 #include "../Application.h"
 #include "../Constants.h"
-#include <stack>
+#include <cmath>
 
 Player::Player(Camera & cam, ChunkManager & manager, Keyboard& keyboard, double reach)
 	: m_Cam{ cam },
@@ -84,14 +84,14 @@ void Player::collsionDetection()
 			}
 
 			glm::dvec3 direction{ glm::normalize(lastValidLoc - blockCenter) * vecPrecision };
-			glm::dvec3 center{ blockCenter };
-			Vector3i block{ static_cast<int>(center.x < 0.0 ? center.x - 1.0 : center.x), static_cast<int>(center.y < 0.0 ? center.y - 1.0 : center.y), static_cast<int>(center.z < 0.0 ? center.z - 1.0 : center.z) };
+			glm::dvec3 testLoc{ blockCenter };
+			Vector3i block{ static_cast<int>(std::floor(testLoc.x)), static_cast<int>(std::floor(testLoc.y)), static_cast<int>(std::floor(testLoc.z)) };
 			while (block == collsionPos)
 			{
-				center += direction;
-				block.x = static_cast<int>(center.x < 0.0 ? center.x - 1.0 : center.x);
-				block.y = static_cast<int>(center.y < 0.0 ? center.y - 1.0 : center.y);
-				block.z = static_cast<int>(center.z < 0.0 ? center.z - 1.0 : center.z);
+				testLoc += direction;
+				block.x = static_cast<int>(std::floor(testLoc.x));
+				block.y = static_cast<int>(std::floor(testLoc.y));
+				block.z = static_cast<int>(std::floor(testLoc.z));
 			}
 
 			bool collideX{ block.x != collsionPos.x };
