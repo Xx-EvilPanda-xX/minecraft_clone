@@ -27,7 +27,7 @@ namespace std
 class World
 {
 private:
-	std::unordered_map<Vector2i, Chunk*> m_Chunks;
+	std::vector<Chunk*> m_Chunks;
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
 	ChunkManager& m_Manager;
@@ -50,7 +50,9 @@ public:
 
 	void reloadChunks(const Camera& camera);
 
-	std::unordered_map<Vector2i, Chunk*>& getChunks();
+	int getChunkIndex(Vector2i chunkPos) const;
+
+	std::vector<Chunk*>& getChunks();
 
 	ChunkManager& getManager();
 

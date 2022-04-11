@@ -14,7 +14,8 @@ constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
 World::World(Shader shader, Player player, ChunkManager& manager)
 	: m_Shader{ shader },
 	m_Manager{ manager },
-	m_Player{ player }
+	m_Player{ player },
+	m_WorldGen{ manager }
 {
 }
 
@@ -35,6 +36,18 @@ void World::worldUpdate(const Camera& camera, bool deletePass)
 
 	if (deletePass)
 		destroyPass(Vector2i{ playerPos.x, playerPos.z });
+
+	std::vector<QueueBlock>& blockQueue{ m_WorldGen.getBlockQueue() };
+	for (int i{}; i < blockQueue.size(); ++i)
+	{
+		QueueBlock queueBlock{ blockQueue.at(i) };
+		if (m_Manager.chunkExsists(queueBlock.loc.worldPos))
+		{
+			m_Manager.getChunk(queueBlock.loc.worldPos)->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
+			blockQueue.erase(blockQueue.begin() + i);
+			--i;
+		}
+	}
 }
 
 void World::worldRender(const Camera& camera)
@@ -44,11 +57,10 @@ void World::worldRender(const Camera& camera)
 	m_Shader.setBool("playerUnderWater", m_Manager.getWorldBlock(playerPos).getType() == BlockType::Water);
 	m_Shader.unbind();
 
-	for (std::pair<Vector2i, Chunk*> p : m_Chunks)
+	for (int i{}; i < m_Chunks.size(); ++i)
 	{
-		Chunk* chunk{ p.second };
-		if (chunk->isBuilt())
-			Renderer::drawMesh(camera, chunk->getMesh());
+		if (m_Chunks[i]->isBuilt())
+			Renderer::drawMesh(camera, m_Chunks[i]->getMesh());
 	}
 }
 
@@ -68,9 +80,10 @@ void World::genPass()
 		Chunk* chunk{ new Chunk(chunkPos, m_Shader) };
 
 		int** heightMap{ m_WorldGen.getHeightMap(chunk) };
-		for (int k{}; k < g_ChunkCap; ++k)
+		for (int i{}; i < g_ChunkCap; ++i)
 		{
-			chunk->addSection(m_WorldGen.genSection(heightMap, k));
+			SectionLocation section{ i, chunkPos };
+			chunk->addSection(m_WorldGen.genSection(heightMap, section));
 		}
 
 		for (int i{}; i < 16; ++i)
@@ -80,7 +93,7 @@ void World::genPass()
 
 		delete[] heightMap;
 
-		m_Chunks.insert({ chunkPos, chunk });
+		m_Chunks.push_back(chunk);
 	}
 }
 
@@ -89,19 +102,16 @@ void World::destroyPass(Vector2i playerPos)
 	playerPos.x /= 16;
 	playerPos.y /= 16;
 
-	for (std::pair<Vector2i, Chunk*> p : m_Chunks)
+	for (int i{}; i < m_Chunks.size(); ++i)
 	{
-		Vector2i chunkLoc{ p.first };
-		Chunk* chunk{ p.second };
+		Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
 
 		//+ 1 becuase otherwise chunks that had just been generated got deleted
 		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance + 1 || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance + 1)
 		{
 			int index;
-			if (m_Manager.isInBuildQueue(chunk, index))
+			if (m_Manager.isInBuildQueue(m_Chunks[i], index))
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
-
-			Vector2i chunkLoc{ chunk->getLocation() };
 
 			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x + 1, chunkLoc.y }), index))
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
@@ -115,8 +125,11 @@ void World::destroyPass(Vector2i playerPos)
 			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }), index))
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
 
-			delete chunk;
-			m_Chunks.erase(chunkLoc);
+			delete m_Chunks[i];
+			m_Chunks.erase(m_Chunks.begin() + i);
+
+			//erasing an element from the middle of the vec shifts all elements beyond that one down once, essentially incrementing i
+			--i;
 		}
 	}
 }
@@ -154,15 +167,26 @@ void World::buildPass()
 
 void World::reloadChunks(const Camera& camera)
 {
-	for (std::pair<Vector2i, Chunk*> p : m_Chunks)
+	for (int i{}; i < m_Chunks.size(); ++i)
 	{
-		delete p.second;
-		m_Chunks[p.first] = nullptr;
+		delete m_Chunks[i];
+		m_Chunks[i] = nullptr;
 	}
 
 	m_Chunks.clear();
 	m_Manager.clearQueues();
 	m_Manager.updateQueues(camera);
+}
+
+int World::getChunkIndex(Vector2i chunkPos) const
+{
+	for (int i{}; i < m_Chunks.size(); ++i)
+	{
+		if (m_Chunks[i]->getLocation() == chunkPos)
+			return i;
+	}
+
+	return -1;
 }
 
 Vector3i World::getPlayerBlockPos(const Camera& camera)
@@ -179,7 +203,7 @@ Vector3i World::getPlayerBlockPos(const Camera& camera)
 	return playerPos;
 }
 
-std::unordered_map<Vector2i, Chunk*>& World::getChunks()
+std::vector<Chunk*>& World::getChunks()
 {
 	return m_Chunks;
 }

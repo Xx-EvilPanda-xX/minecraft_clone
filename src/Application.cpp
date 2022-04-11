@@ -90,7 +90,7 @@ void Application::updateGui()
 		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", " + std::to_string(pos.z), -1.0, 0.975, 0.1, 0.15);
 
 		Vector2i chunkPos{ static_cast<int>(m_Camera.getLocation().x) / 16, static_cast<int>(m_Camera.getLocation().z) / 16 };
-		m_TextComponents[2].update(std::string{ "Chunk adress: " } + std::to_string((unsigned long) m_World.getChunks().at(chunkPos)), -1.0, 0.95, 0.1, 0.15);
+		m_TextComponents[2].update(std::string{ "Chunk index: " } + std::to_string(m_World.getChunkIndex(chunkPos)), -1.0, 0.95, 0.1, 0.15);
 
 		m_TextComponents[3].update(std::string{ "Selected block: " } + m_Handler.getSelectedBlock().getName(), -1.0, 0.75, 0.1, 0.15);
 
