@@ -7,6 +7,7 @@
 #include "../World/ChunkManager.h"
 #include "../noise.h"
 #include <unordered_map>
+#include "Tree.h"
 
 struct SectionLocation
 {
@@ -32,13 +33,11 @@ private:
 
 	const int m_MaxTreesPerChunk{ 16 };
 
-	void genTree(ChunkSection* section, Vector3i pos, const SectionLocation& treeSection);
+	void genTree(Tree* tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection);
 
 	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& section, Block block);
 
 public:
-	static Vector3i treeLeaves[13];
-
 	TerrainGenerator(ChunkManager& manager);
 
 	ChunkSection* genSection(int** heightMap, SectionLocation section);

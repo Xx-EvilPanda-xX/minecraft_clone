@@ -21,7 +21,10 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Gen\OakTree.cpp" />
+    <ClCompile Include="src\Gen\PalmTree.cpp" />
     <ClCompile Include="src\Gen\TerrainGenerator.cpp" />
+    <ClCompile Include="src\Gen\Tree.cpp" />
     <ClCompile Include="src\Input\EventHandler.cpp" />
     <ClCompile Include="src\Input\Keyboard.cpp" />
     <ClCompile Include="src\Input\Mouse.cpp" />
@@ -47,7 +50,10 @@
     <ClInclude Include="noise.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Constants.h" />
+    <ClInclude Include="src\Gen\OakTree.h" />
+    <ClInclude Include="src\Gen\PalmTree.h" />
     <ClInclude Include="src\Gen\TerrainGenerator.h" />
+    <ClInclude Include="src\Gen\Tree.h" />
     <ClInclude Include="src\Input\EventHandler.h" />
     <ClInclude Include="src\Input\Keyboard.h" />
     <ClInclude Include="src\Input\Mouse.h" />

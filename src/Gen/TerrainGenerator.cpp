@@ -3,16 +3,19 @@
 #include "../World/ChunkSection.h"
 #include "../World/Block.h"
 #include "../Constants.h"
+#include "Tree.h"
+#include "PalmTree.h"
+#include "OakTree.h"
 
 TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	: m_Manager{ manager }
 {
 	m_Rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
-	m_Die = std::uniform_int_distribution<>{ 0, 32 };
+	m_Die = std::uniform_int_distribution<>{ 0, 64 };
 
 	std::mt19937 tempRand{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
-	int seed{ tempDie(tempRand) };
+	int seed{ -1852409154 };
 
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
@@ -22,10 +25,6 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 
 	std::cout << "Seed: " << seed << "\n";
 }
-
-Vector3i TerrainGenerator::treeLeaves[13]{ Vector3i{ 1, 3, 0 }, Vector3i{ 0, 3, 1 }, Vector3i{ -1, 3, 0 }, Vector3i{ 0, 3, -1 }, Vector3i{ 1, 2, 0 }, 
-										   Vector3i{ 0, 2, 1 }, Vector3i{ -1, 2, 0 }, Vector3i{ 0, 2, -1 }, Vector3i{ 1, 2, 1 }, Vector3i{ -1, 2, 1 }, 
-										   Vector3i{ 1, 2, -1 }, Vector3i{ -1, 2, -1 }, Vector3i{ 0, 4, 0} };
 
 ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation section)
 {
@@ -46,41 +45,43 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 				{
 					if (wY < currentHeight - 6)
 						chunkSection->setBlock(pos, BlockType::Stone, false);
+
 					else if (wY < currentHeight - 1 && wY >= currentHeight - 6)
 						chunkSection->setBlock(pos, BlockType::Dirt, false);
+
 					else if (wY < constants::waterLevel + 1 && wY <= currentHeight)
 					{
 						chunkSection->setBlock(pos, BlockType::Sand, false);
-						if (m_Die(m_Rand) < 32 && wY < constants::waterLevel - 10)
+						if (m_Die(m_Rand) < m_Die.max() / 2 && wY < constants::waterLevel - 10)
 							chunkSection->setBlock(pos, BlockType::Gravel, false);
 					}
+
 					else if (wY < currentHeight && wY >= currentHeight - 1)
 						chunkSection->setBlock(pos, BlockType::Grass, false);
+
 					else if (wY < constants::waterLevel)
 					{
 						chunkSection->setBlock(pos, BlockType::Water, false);
 						if (wY == constants::waterLevel - 1)
 							chunkSection->setBlock(pos, BlockType::Water, true);
 					}
+
 					else
 						chunkSection->setBlock(pos, BlockType::Air, false);
 
 				}
 
-				if (wY == currentHeight && wY > constants::waterLevel)
+				if (wY == currentHeight && wY >= constants::waterLevel && m_Die(m_Rand) == 0 && trees <= m_MaxTreesPerChunk)
 				{
-					if (m_Die(m_Rand) == 0)
-					{
-						//if (y + 4 > 15 || x >= 14 || x <= 1 || z >= 14 || z <= 1 )
-							//invalid tree position
-							//continue;
+					Tree* tree{};
+					if (wY < 50)
+						tree = new PalmTree{};
+					else
+						tree = new OakTree{};
 
-						if (trees <= m_MaxTreesPerChunk)
-						{
-							genTree(chunkSection, pos, section);
-							++trees;
-						}
-					}
+					genTree(tree, chunkSection, pos, section);
+					++trees;
+					delete tree;
 				}
 			}
 		}
@@ -90,20 +91,33 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 	return chunkSection;
 }
 
-void TerrainGenerator::genTree(ChunkSection* section, Vector3i pos, const SectionLocation& treeSection)
+void TerrainGenerator::genTree(Tree* tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection)
 {
-	for (int i{}; i < 4; ++i)
+	//check if tree collides with another anything (not perfect because its not possible to use getWorldBlock())
+	for (int i{}; i < tree->getNumLeaves(); ++i)
+	{
+		const Vector3i* leaves{ tree->getLeaves() };
+		Vector3i placePos{ pos.x + leaves[i].x, pos.y + leaves[i].y, pos.z + leaves[i].z };
+
+		if (section->getBlock(placePos).getType() != BlockType::Air)
+		{
+			return;
+		}
+	}
+
+	for (int i{}; i < tree->getTrunkHeight(); ++i)
 	{
 		Vector3i placePos{ pos.x, pos.y + i, pos.z };
-		Block block{ BlockType::Wood, false };
+		Block block{ tree->getTrunkType(), false};
 		if (!structureShouldBeInQueue(placePos, treeSection, block))
 			section->setBlock(placePos, block.getType(), false);
 	}
 
-	for (int i{}; i < 13; ++i)
+	for (int i{}; i < tree->getNumLeaves(); ++i)
 	{
-		Vector3i placePos{ pos.x + treeLeaves[i].x, pos.y + treeLeaves[i].y, pos.z + treeLeaves[i].z };
-		Block block{ BlockType::Leaves, false };
+		const Vector3i* leaves{ tree->getLeaves() };
+		Vector3i placePos{ pos.x + leaves[i].x, pos.y + leaves[i].y, pos.z + leaves[i].z };
+		Block block{ tree->getLeavesType(), false};
 		if (!structureShouldBeInQueue(placePos, treeSection, block))
 			section->setBlock(placePos, block.getType(), false);
 	}
