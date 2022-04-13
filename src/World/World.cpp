@@ -8,7 +8,7 @@
 #include "ChunkManager.h"
 #include "../Constants.h"
 
-#define DEBUG
+//#define DEBUG
 constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
 
 World::World(Shader shader, Player player, ChunkManager& manager)
@@ -17,6 +17,7 @@ World::World(Shader shader, Player player, ChunkManager& manager)
 	m_Player{ player },
 	m_WorldGen{ manager }
 {
+	m_LastBlockQueueSize = 0;
 }
 
 void World::worldUpdate(const Camera& camera, bool deletePass)
@@ -38,16 +39,21 @@ void World::worldUpdate(const Camera& camera, bool deletePass)
 		destroyPass(Vector2i{ playerPos.x, playerPos.z });
 
 	std::vector<QueueBlock>& blockQueue{ m_WorldGen.getBlockQueue() };
-	for (int i{}; i < blockQueue.size(); ++i)
+	if (m_LastBlockQueueSize != blockQueue.size())
 	{
-		QueueBlock queueBlock{ blockQueue.at(i) };
-		if (m_Manager.chunkExsists(queueBlock.loc.worldPos))
+		for (int i{}; i < blockQueue.size(); ++i)
 		{
-			m_Manager.getChunk(queueBlock.loc.worldPos)->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
-			blockQueue.erase(blockQueue.begin() + i);
-			--i;
+			QueueBlock queueBlock{ blockQueue.at(i) };
+			if (m_Manager.chunkExsists(queueBlock.loc.worldPos))
+			{
+				m_Manager.getChunk(queueBlock.loc.worldPos)->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
+				blockQueue.erase(blockQueue.begin() + i);
+				--i;
+			}
 		}
 	}
+
+	m_LastBlockQueueSize = blockQueue.size();
 }
 
 void World::worldRender(const Camera& camera, const Window& window)

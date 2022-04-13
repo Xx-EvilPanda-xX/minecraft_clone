@@ -166,7 +166,7 @@ void Player::collsionDetection()
 				}
 			}
 
-			const double targetDistance{ 0.5 + constants::playerSize + 0.0000001 };
+			constexpr double targetDistance{ 0.5 + constants::playerSize + 0.0000001 };
 
 			if (collideX)
 				m_Camera.setX(blockCenter.x < lastValidLoc.x ? (blockCenter.x + targetDistance) : (blockCenter.x - targetDistance));

@@ -12,18 +12,6 @@
 
 constexpr int genInterval{ 0 };
 
-namespace std
-{
-	template<>
-	struct hash<Vector2i>
-	{
-		size_t operator()(const Vector2i& key) const
-		{
-			return hash<int>{}(key.x) ^ hash<int>{}(key.y);
-		}
-	};
-}
-
 class World
 {
 private:
@@ -32,6 +20,8 @@ private:
 	Shader m_Shader;
 	ChunkManager& m_Manager;
 	Player m_Player;
+
+	int m_LastBlockQueueSize;
 
 	Vector3i getPlayerBlockPos(const Camera& camera);
 

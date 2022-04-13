@@ -13,9 +13,8 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	m_Rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	m_Die = std::uniform_int_distribution<>{ 0, 64 };
 
-	std::mt19937 tempRand{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
-	int seed{ -1852409154 };
+	int seed{ tempDie(m_Rand) };
 
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
@@ -30,6 +29,7 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 {
 	ChunkSection* chunkSection{ new ChunkSection{} };
 	int trees{};
+	m_Rand.seed(std::hash<int>{}(section.worldPos.x) ^ std::hash<int>{}(section.worldPos.y));
 
 	for (int x{}; x < 16; ++x)
 	{
@@ -71,14 +71,14 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 
 				}
 
-				if (wY == currentHeight && wY >= constants::waterLevel && m_Die(m_Rand) == 0 && trees <= m_MaxTreesPerChunk)
+				if (!constants::flatWorld && wY == currentHeight && wY >= constants::waterLevel && m_Die(m_Rand) == 0 && trees <= m_MaxTreesPerChunk)
 				{
 					const Tree& oakTree{ OakTree{} };
 					const Tree& palmTree{ PalmTree{} };
 					if (wY < 50)
-						genTree(palmTree, chunkSection, pos, section);
+						genTree(palmTree, chunkSection, pos, section, heightMap);
 					else
-						genTree(oakTree, chunkSection, pos, section);
+						genTree(oakTree, chunkSection, pos, section, heightMap);
 
 					++trees;
 				}
@@ -90,15 +90,25 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 	return chunkSection;
 }
 
-void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection)
+void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, int** heightMap)
 {
-	//check if tree collides with another anything (not perfect because its not possible to use getWorldBlock())
+	//check if tree collides with world or another tree (not perfect because its not possible to use getWorldBlock())
 	for (int i{}; i < tree.getNumLeaves(); ++i)
 	{
 		const Vector3i* leaves{ tree.getLeaves() };
 		Vector3i placePos{ pos.x + leaves[i].x, pos.y + leaves[i].y, pos.z + leaves[i].z };
+		int wY{ placePos.y + (sectionLocation.sectionIndex * 16) };
 
+		//tree
 		if (section->getBlock(placePos).getType() != BlockType::Air)
+		{
+			return;
+		}
+
+		//world
+		if (placePos.x <= 15 && placePos.y <= 15 && placePos.z <= 15 &&
+			placePos.x >= 0 && placePos.y >= 0 && placePos.z >= 0 &&
+			wY < heightMap[placePos.x][placePos.z])
 		{
 			return;
 		}
@@ -108,7 +118,7 @@ void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i
 	{
 		Vector3i placePos{ pos.x, pos.y + i, pos.z };
 		Block block{ tree.getTrunkType(), false};
-		if (!structureShouldBeInQueue(placePos, treeSection, block))
+		if (!structureShouldBeInQueue(placePos, sectionLocation, block))
 			section->setBlock(placePos, block.getType(), false);
 	}
 
@@ -117,7 +127,7 @@ void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i
 		const Vector3i* leaves{ tree.getLeaves() };
 		Vector3i placePos{ pos.x + leaves[i].x, pos.y + leaves[i].y, pos.z + leaves[i].z };
 		Block block{ tree.getLeavesType(), false};
-		if (!structureShouldBeInQueue(placePos, treeSection, block))
+		if (!structureShouldBeInQueue(placePos, sectionLocation, block))
 			section->setBlock(placePos, block.getType(), false);
 	}
 }
@@ -180,8 +190,6 @@ bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocat
 
 int** TerrainGenerator::getHeightMap(Chunk* chunk)
 {
-	m_Rand.seed(static_cast<unsigned int>(std::pow(chunk->getLocation().x, chunk->getLocation().y)));
-
 	int** heightMap = new int*[16];
 
 	for (int i{}; i < 16; ++i)
