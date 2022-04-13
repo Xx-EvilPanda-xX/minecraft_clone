@@ -7,6 +7,22 @@ Vector3i::Vector3i(int x, int y, int z)
 {
 }
 
+Vector3i::Vector3i(const glm::dvec3& vec)
+{
+	x = static_cast<int>(vec.x); 
+	y = static_cast<int>(vec.y);
+	z = static_cast<int>(vec.z);
+
+	if (vec.x < 0.0)
+		x -= 1;
+
+	if (vec.y < 0.0)
+		y -= 1;
+
+	if (vec.z < 0.0)
+		z -= 1;
+}
+
 Vector3i::Vector3i()
 {
 	x = 0;

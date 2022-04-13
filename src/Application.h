@@ -20,7 +20,6 @@ class Application
 private:
 	Window m_Window;
 	World m_World;
-	Camera m_Camera;
 
 	RenderData m_CrossHair;
 	Shader m_GuiShader;
@@ -60,8 +59,6 @@ public:
 	void updateGui();
 
 	Window& getWindow();
-
-	Camera& getCamera();
 
 	World& getWorld();
 

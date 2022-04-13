@@ -13,7 +13,7 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
 class Window
 {
 private:
-	GLFWwindow* m_Window;
+	GLFWwindow* m_GlfwWindow;
 	int m_Width;
 	int m_Height;
 	const char* m_Title;
@@ -27,7 +27,7 @@ public:
 
 	Window();
 
-	GLFWwindow* getWindow() const;
+	GLFWwindow* getGlfwWindow() const;
 
 	int getWidth() const;
 

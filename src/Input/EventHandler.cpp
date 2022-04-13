@@ -9,12 +9,15 @@ EventHandler::EventHandler()
 {
 }
 
-void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app, Player& player)
+void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 {
 	static double flyToggleCooldown{};
+	Player& player{ app.getWorld().getPlayer() };
+	Camera& cam{ player.getCamera() };
+	
 
 	if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
-		glfwSetWindowShouldClose(app.getWindow().getWindow(), true);
+		glfwSetWindowShouldClose(app.getWindow().getGlfwWindow(), true);
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL))
 		player.setSprinting(true);
@@ -87,17 +90,17 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app, Player& 
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_O))
-		app.getWorld().reloadChunks(app.getCamera());
+		app.getWorld().reloadChunks(cam);
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_ALT))
 	{
-		app.getCamera().setFov(20.0);
-		app.getCamera().setMouseSens(constants::mouse_sensitivity / 5.0);
+		cam.setFov(20.0);
+		cam.setMouseSens(constants::mouse_sensitivity / 5.0);
 	}
 	else
 	{
-		app.getCamera().setFov(90.0);
-		app.getCamera().setMouseSens(constants::mouse_sensitivity);
+		cam.setFov(90.0);
+		cam.setMouseSens(constants::mouse_sensitivity);
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_GRAVE_ACCENT))

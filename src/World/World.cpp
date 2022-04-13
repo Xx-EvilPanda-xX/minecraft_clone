@@ -50,7 +50,7 @@ void World::worldUpdate(const Camera& camera, bool deletePass)
 	}
 }
 
-void World::worldRender(const Camera& camera)
+void World::worldRender(const Camera& camera, const Window& window)
 {
 	Vector3i playerPos{ getPlayerBlockPos(camera) };
 	m_Shader.bind();
@@ -60,7 +60,7 @@ void World::worldRender(const Camera& camera)
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
 		if (m_Chunks[i]->isBuilt())
-			Renderer::drawMesh(camera, m_Chunks[i]->getMesh());
+			Renderer::drawMesh(camera, m_Chunks[i]->getMesh(), window);
 	}
 }
 
@@ -191,7 +191,7 @@ int World::getChunkIndex(Vector2i chunkPos) const
 
 Vector3i World::getPlayerBlockPos(const Camera& camera)
 {
-	Vector3i playerPos{ static_cast<int>(camera.getLocation().x), static_cast<int>(camera.getLocation().y), static_cast<int>(camera.getLocation().z) };
+	Vector3i playerPos{ camera.getLocation() };
 
 	if (camera.getLocation().x < 0.0)
 		--playerPos.x;

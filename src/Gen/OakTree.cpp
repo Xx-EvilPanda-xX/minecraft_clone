@@ -13,27 +13,27 @@ OakTree::OakTree()
 
 OakTree::~OakTree() = default;
 
-const Vector3i* OakTree::getLeaves()
+const Vector3i* OakTree::getLeaves() const
 {
 	return m_Leaves;
 }
 
-int OakTree::getTrunkHeight()
+int OakTree::getTrunkHeight() const
 {
 	return m_TrunkHeight;
 }
 
-int OakTree::getNumLeaves()
+int OakTree::getNumLeaves() const
 {
 	return m_NumLeaves;
 }
 
-BlockType OakTree::getLeavesType()
+BlockType OakTree::getLeavesType() const
 {
 	return m_LeavesType;
 }
 
-BlockType OakTree::getTrunkType()
+BlockType OakTree::getTrunkType() const
 {
 	return m_TrunkType;
 }

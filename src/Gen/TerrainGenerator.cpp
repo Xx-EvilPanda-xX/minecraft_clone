@@ -73,15 +73,14 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 
 				if (wY == currentHeight && wY >= constants::waterLevel && m_Die(m_Rand) == 0 && trees <= m_MaxTreesPerChunk)
 				{
-					Tree* tree{};
+					const Tree& oakTree{ OakTree{} };
+					const Tree& palmTree{ PalmTree{} };
 					if (wY < 50)
-						tree = new PalmTree{};
+						genTree(palmTree, chunkSection, pos, section);
 					else
-						tree = new OakTree{};
+						genTree(oakTree, chunkSection, pos, section);
 
-					genTree(tree, chunkSection, pos, section);
 					++trees;
-					delete tree;
 				}
 			}
 		}
@@ -91,12 +90,12 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 	return chunkSection;
 }
 
-void TerrainGenerator::genTree(Tree* tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection)
+void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection)
 {
 	//check if tree collides with another anything (not perfect because its not possible to use getWorldBlock())
-	for (int i{}; i < tree->getNumLeaves(); ++i)
+	for (int i{}; i < tree.getNumLeaves(); ++i)
 	{
-		const Vector3i* leaves{ tree->getLeaves() };
+		const Vector3i* leaves{ tree.getLeaves() };
 		Vector3i placePos{ pos.x + leaves[i].x, pos.y + leaves[i].y, pos.z + leaves[i].z };
 
 		if (section->getBlock(placePos).getType() != BlockType::Air)
@@ -105,19 +104,19 @@ void TerrainGenerator::genTree(Tree* tree, ChunkSection* section, Vector3i pos, 
 		}
 	}
 
-	for (int i{}; i < tree->getTrunkHeight(); ++i)
+	for (int i{}; i < tree.getTrunkHeight(); ++i)
 	{
 		Vector3i placePos{ pos.x, pos.y + i, pos.z };
-		Block block{ tree->getTrunkType(), false};
+		Block block{ tree.getTrunkType(), false};
 		if (!structureShouldBeInQueue(placePos, treeSection, block))
 			section->setBlock(placePos, block.getType(), false);
 	}
 
-	for (int i{}; i < tree->getNumLeaves(); ++i)
+	for (int i{}; i < tree.getNumLeaves(); ++i)
 	{
-		const Vector3i* leaves{ tree->getLeaves() };
+		const Vector3i* leaves{ tree.getLeaves() };
 		Vector3i placePos{ pos.x + leaves[i].x, pos.y + leaves[i].y, pos.z + leaves[i].z };
-		Block block{ tree->getLeavesType(), false};
+		Block block{ tree.getLeavesType(), false};
 		if (!structureShouldBeInQueue(placePos, treeSection, block))
 			section->setBlock(placePos, block.getType(), false);
 	}

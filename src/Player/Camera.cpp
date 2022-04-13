@@ -2,24 +2,21 @@
 #include "Camera.h"
 #include "../Constants.h"
 
-Camera::Camera(glm::dvec3 location, double yaw, double pitch, double fov, double sens, GLFWwindow* win)
+Camera::Camera(glm::dvec3 location, double yaw, double pitch, double fov, double sens)
 	: m_Location{ location },
 	m_Yaw{ yaw },
 	m_Pitch{ pitch },
 	m_Fov{ fov },
-	m_MouseSens{ sens },
-	m_Win{ win }
+	m_MouseSens{ sens }
 {
 	calculateVecs();
 }
 
 Camera::Camera() = default;
 
-glm::dmat4 Camera::getProjectionMat() const
+glm::dmat4 Camera::getProjectionMat(int windowWidth, int windowHeight) const
 {
-	int width, height;
-	glfwGetWindowSize(m_Win, &width, &height);
-	return glm::perspective(glm::radians(m_Fov), static_cast<double>(width) / static_cast<double>(height), 0.1, 1000.0);
+	return glm::perspective(glm::radians(m_Fov), static_cast<double>(windowWidth) / static_cast<double>(windowHeight), 0.1, 1000.0);
 }
 
 glm::dmat4 Camera::getViewMat() const

@@ -5,8 +5,8 @@
 #include "../Constants.h"
 #include <cmath>
 
-Player::Player(Camera & cam, ChunkManager & manager, Keyboard& keyboard, double reach)
-	: m_Cam{ cam },
+Player::Player(ChunkManager & manager, Keyboard& keyboard, double reach)
+	: m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, constants::mouse_sensitivity },
 	m_Manager{ manager },
 	m_Keyboard{ keyboard },
 	m_Reach{ reach }
@@ -33,24 +33,24 @@ void Player::move()
 	if (!m_Flying && !m_Grounded)
 		m_Velocity.y -= Application::s_Dt * constants::gravity;
 	
-	m_Cam.handleMove(m_Velocity, Application::s_Dt);
-	m_Aabb = createPlayerAABB(m_Cam.getLocation());
+	m_Camera.handleMove(m_Velocity, Application::s_Dt);
+	m_Aabb = createPlayerAABB(m_Camera.getLocation());
 	
 	collsionDetection();
 
 	m_JumpCoolDown -= Application::s_Dt;
 
-	m_LastMovedX = m_LastValidLoc.x != m_Cam.getLocation().x;
-	m_LastMovedY = m_LastValidLoc.y != m_Cam.getLocation().y;
-	m_LastMovedZ = m_LastValidLoc.z != m_Cam.getLocation().z;
+	m_LastMovedX = m_LastValidLoc.x != m_Camera.getLocation().x;
+	m_LastMovedY = m_LastValidLoc.y != m_Camera.getLocation().y;
+	m_LastMovedZ = m_LastValidLoc.z != m_Camera.getLocation().z;
 
-	m_LastValidLoc = m_Cam.getLocation();
+	m_LastValidLoc = m_Camera.getLocation();
 	m_LastValidAABB = m_Aabb;
 	m_CtrlLastDown = m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 
-	if (m_Cam.getLocation().y <= worldBottom)
+	if (m_Camera.getLocation().y <= worldBottom)
 	{
-		m_Cam.setY(worldBottom);
+		m_Camera.setY(worldBottom);
 		m_Velocity.y = 0.0;
 		m_Grounded = true;
 	}
@@ -58,8 +58,8 @@ void Player::move()
 
 void Player::collsionDetection()
 {
-	glm::dvec3 lowerPlayerHalf{ m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
-	glm::dvec3 upperPlayerHalf{ m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
+	glm::dvec3 lowerPlayerHalf{ m_Camera.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Camera.getLocation().z };
+	glm::dvec3 upperPlayerHalf{ m_Camera.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Camera.getLocation().z };
 
 	bool onGround{ false };
 	CollsionType collisionType{};
@@ -85,13 +85,11 @@ void Player::collsionDetection()
 
 			glm::dvec3 direction{ glm::normalize(lastValidLoc - blockCenter) * vecPrecision };
 			glm::dvec3 testLoc{ blockCenter };
-			Vector3i block{ static_cast<int>(std::floor(testLoc.x)), static_cast<int>(std::floor(testLoc.y)), static_cast<int>(std::floor(testLoc.z)) };
+			Vector3i block{ testLoc };
 			while (block == collsionPos)
 			{
 				testLoc += direction;
-				block.x = static_cast<int>(std::floor(testLoc.x));
-				block.y = static_cast<int>(std::floor(testLoc.y));
-				block.z = static_cast<int>(std::floor(testLoc.z));
+				block = Vector3i{ testLoc };
 			}
 
 			bool collideX{ block.x != collsionPos.x };
@@ -171,11 +169,11 @@ void Player::collsionDetection()
 			const double targetDistance{ 0.5 + constants::playerSize + 0.0000001 };
 
 			if (collideX)
-				m_Cam.setX(blockCenter.x < lastValidLoc.x ? (blockCenter.x + targetDistance) : (blockCenter.x - targetDistance));
+				m_Camera.setX(blockCenter.x < lastValidLoc.x ? (blockCenter.x + targetDistance) : (blockCenter.x - targetDistance));
 
 			if (collideY)
 			{
-				m_Cam.setY(blockCenter.y < lastValidLoc.y ? (blockCenter.y + targetDistance) + (constants::playerSize * 2.0) + cameraHeightDiff : (blockCenter.y - targetDistance) + cameraHeightDiff);
+				m_Camera.setY(blockCenter.y < lastValidLoc.y ? (blockCenter.y + targetDistance) + (constants::playerSize * 2.0) + cameraHeightDiff : (blockCenter.y - targetDistance) + cameraHeightDiff);
 				m_Velocity.y = 0.0;
 
 				if (collisionType == CollsionType::PlayerLowerHalf && m_JumpCoolDown <= 0.0)
@@ -187,12 +185,12 @@ void Player::collsionDetection()
 			}
 
 			if (collideZ)
-				m_Cam.setZ(blockCenter.z < lastValidLoc.z ? (blockCenter.z + targetDistance) : (blockCenter.z - targetDistance));
+				m_Camera.setZ(blockCenter.z < lastValidLoc.z ? (blockCenter.z + targetDistance) : (blockCenter.z - targetDistance));
 
-			m_Aabb = createPlayerAABB(m_Cam.getLocation());
+			m_Aabb = createPlayerAABB(m_Camera.getLocation());
 
-			lowerPlayerHalf = { m_Cam.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Cam.getLocation().z };
-			upperPlayerHalf = { m_Cam.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Cam.getLocation().z };
+			lowerPlayerHalf = { m_Camera.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Camera.getLocation().z };
+			upperPlayerHalf = { m_Camera.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Camera.getLocation().z };
 		}
 	}
 
@@ -240,7 +238,7 @@ bool Player::collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, con
 
 Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_ClosestCollision)
 {
-	Vector3i playerBlockPos{ static_cast<int>(playerPos.x), static_cast<int>(playerPos.y), static_cast<int>(playerPos.z) };
+	Vector3i playerBlockPos{ playerPos };
 
 	if (playerPos.x < 0.0)
 		--playerBlockPos.x;
@@ -350,7 +348,7 @@ void Player::calculateVelocity()
 
 void Player::breakBlock()
 {
-	Vector3i* breakPos{ breakIntersect() };
+	Vector3i* breakPos{ intersect<Vector3i>() };
 
 	if (breakPos != nullptr)
 	{
@@ -369,20 +367,18 @@ void Player::breakBlock()
 
 void Player::placeBlock(BlockType type)
 {
-	glm::dvec3 camFront{ m_Cam.getFront() * vecPrecision };
-	glm::dvec3* intersect{ placeIntersect() };
+	glm::dvec3 camFront{ m_Camera.getFront() * vecPrecision };
+	glm::dvec3* inter{ intersect<glm::dvec3>() };
 
-	if (intersect != nullptr)
+	if (inter != nullptr)
 	{
-		glm::dvec3 pos{ *intersect };
-		Vector3i blockPos{ static_cast<int>(intersect->x < 0.0 ? intersect->x - 1.0 : intersect->x), static_cast<int>(intersect->y < 0.0 ? intersect->y - 1.0 : intersect->y), static_cast<int>(intersect->z < 0.0 ? intersect->z - 1.0 : intersect->z) };
-		Vector3i placePos{ static_cast<int>(intersect->x < 0.0 ? pos.x - 1.0 : pos.x), static_cast<int>(intersect->y < 0.0 ? pos.y - 1.0 : pos.y), static_cast<int>(intersect->z < 0.0 ? pos.z - 1.0 : pos.z) };
+		glm::dvec3 pos{ *inter };
+		Vector3i blockPos{ *inter };
+		Vector3i placePos{ pos };
 		while (placePos == blockPos)
 		{
 			pos -= camFront;
-			placePos.x = static_cast<int>(pos.x < 0.0 ? pos.x - 1.0 : pos.x);
-			placePos.y = static_cast<int>(pos.y < 0.0 ? pos.y - 1.0 : pos.y);
-			placePos.z = static_cast<int>(pos.z < 0.0 ? pos.z - 1.0 : pos.z);
+			placePos = Vector3i{ pos };
 		}
 
 		if (pos.y < 0.0)
@@ -399,8 +395,30 @@ void Player::placeBlock(BlockType type)
 
 		updateMeshes(placePos);
 
-		delete intersect;
+		delete inter;
 	}
+}
+
+template <typename T>
+T* Player::intersect()
+{
+	glm::dvec3 camFront{ m_Camera.getFront() * vecPrecision };
+	glm::dvec3 currentPos{ m_Camera.getLocation() };
+	T* intersectPos{ nullptr };
+
+	while (glm::length((m_Camera.getLocation() - currentPos)) < m_Reach)
+	{
+		Vector3i blockPos{ currentPos };
+		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
+		{
+			intersectPos = new T{ currentPos };
+			break;
+		}
+
+		currentPos += camFront;
+	}
+
+	return intersectPos;
 }
 
 void Player::updateMeshes(Vector3i editPos)
@@ -466,66 +484,6 @@ void Player::updateMeshes(Vector3i editPos)
 	}
 }
 
-Vector3i* Player::breakIntersect()
-{
-	glm::dvec3 camFront{ m_Cam.getFront() * vecPrecision };
-	glm::dvec3 currentPos{ m_Cam.getLocation() };
-	Vector3i* breakPos{ nullptr };
-
-	while (glm::length((m_Cam.getLocation() - currentPos)) < m_Reach)
-	{
-		Vector3i blockPos{ static_cast<int>(currentPos.x), static_cast<int>(currentPos.y), static_cast<int>(currentPos.z) };
-		if (currentPos.x < 0.0)
-			blockPos.x -= 1;
-
-		if (currentPos.y < 0.0)
-			blockPos.y -= 1;
-
-		if (currentPos.z < 0.0)
-			blockPos.z -= 1;
-
-		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
-		{
-			breakPos = new Vector3i{ blockPos };
-			break;
-		}
-
-		currentPos += camFront;
-	}
-
-	return breakPos;
-}
-
-glm::dvec3* Player::placeIntersect()
-{
-	glm::dvec3 camFront{ m_Cam.getFront() * vecPrecision };
-	glm::dvec3 currentPos{ m_Cam.getLocation() };
-	glm::dvec3* placePos{ nullptr };
-
-	while (glm::length((m_Cam.getLocation() - currentPos)) < m_Reach)
-	{
-		Vector3i blockPos{ static_cast<int>(currentPos.x), static_cast<int>(currentPos.y), static_cast<int>(currentPos.z) };
-		if (currentPos.x < 0.0)
-			blockPos.x -= 1;
-
-		if (currentPos.y < 0.0)
-			blockPos.y -= 1;
-
-		if (currentPos.z < 0.0)
-			blockPos.z -= 1;
-
-		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
-		{
-			placePos = new glm::dvec3{ currentPos };
-			break;
-		}
-
-		currentPos += camFront;
-	}
-
-	return placePos;
-}
-
 double Player::getReach() const
 {
 	return m_Reach;
@@ -534,6 +492,11 @@ double Player::getReach() const
 void Player::setReach(double reach)
 {
 	m_Reach = reach;
+}
+
+Camera& Player::getCamera()
+{
+	return m_Camera;
 }
 
 glm::dvec3& Player::getVelocity()

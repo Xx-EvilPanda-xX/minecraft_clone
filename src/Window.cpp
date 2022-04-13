@@ -14,8 +14,8 @@ Window::Window(int width, int height, const char* title)
 	createWindow();
 	loadGL();
 
-	g_Keyboard = Keyboard{ m_Window };
-	g_Mouse = Mouse{ m_Window };
+	g_Keyboard = Keyboard{ m_GlfwWindow };
+	g_Mouse = Mouse{ m_GlfwWindow };
 }
 
 Window::Window() = default;
@@ -39,28 +39,28 @@ void Window::createWindow()
 {
 	if (constants::fullscreen)
 	{
-		m_Window = glfwCreateWindow(constants::fullscreenWidth, constants::fullscreenHeight, m_Title, glfwGetPrimaryMonitor(), NULL);
+		m_GlfwWindow = glfwCreateWindow(constants::fullscreenWidth, constants::fullscreenHeight, m_Title, glfwGetPrimaryMonitor(), NULL);
 	}
 	else
 	{
-		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
+		m_GlfwWindow = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
 	}
 	
-	if (m_Window == NULL)
+	if (m_GlfwWindow == NULL)
 	{
 		std::cout << "Failed to create GLFW window! Program will exit.\n";
 		glfwTerminate();
 		std::exit(-1);
 	}
-	glfwMakeContextCurrent(m_Window);
+	glfwMakeContextCurrent(m_GlfwWindow);
 
-	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(m_Window, mouse_move_callback);
+	glfwSetFramebufferSizeCallback(m_GlfwWindow, framebuffer_size_callback);
+	glfwSetCursorPosCallback(m_GlfwWindow, mouse_move_callback);
 
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(m_GlfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (glfwRawMouseMotionSupported())
-		glfwSetInputMode(m_Window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+		glfwSetInputMode(m_GlfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 }
 
 void Window::loadGL()
@@ -72,9 +72,9 @@ void Window::loadGL()
 	}
 }
 
-GLFWwindow* Window::getWindow() const
+GLFWwindow* Window::getGlfwWindow() const
 {
-	return m_Window;
+	return m_GlfwWindow;
 }
 
 int Window::getWidth() const
@@ -105,7 +105,7 @@ Mouse& Window::getMouse()
 void Window::setTitle(const char* title)
 {
 	m_Title = title;
-	glfwSetWindowTitle(m_Window, m_Title);
+	glfwSetWindowTitle(m_GlfwWindow, m_Title);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

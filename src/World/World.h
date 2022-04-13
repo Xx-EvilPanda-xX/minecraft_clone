@@ -38,7 +38,7 @@ private:
 public:
 	World(Shader shader, Player player, ChunkManager& manager);
 
-	void worldRender(const Camera& camera);
+	void worldRender(const Camera& camera, const Window& window);
 	
 	void worldUpdate(const Camera& camera, bool deletePass);
 

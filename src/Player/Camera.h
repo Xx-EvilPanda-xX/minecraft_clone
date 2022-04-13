@@ -5,7 +5,6 @@
 #include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <GLFW/glfw3.h>
 
 class Camera
 {
@@ -22,14 +21,12 @@ private:
 	glm::dvec3 m_Front;
 	glm::dvec3 m_Right;
 
-	GLFWwindow* m_Win;
-
 public:
-	Camera(glm::dvec3 location, double yaw, double pitch, double fov, double sens, GLFWwindow* win);
+	Camera(glm::dvec3 location, double yaw, double pitch, double fov, double sens);
 
 	Camera();
 
-	glm::dmat4 getProjectionMat() const;
+	glm::dmat4 getProjectionMat(int windowWidth, int windowHeight) const;
 
 	glm::dmat4 getViewMat() const;
 

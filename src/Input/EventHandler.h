@@ -22,7 +22,7 @@ public:
 
 	EventHandler();
 
-	void handleKeyboard(Keyboard& keyboard, Application& app, Player& player);
+	void handleKeyboard(Keyboard& keyboard, Application& app);
 
 	void handleMouse(Mouse& mouse, Player& player);
 

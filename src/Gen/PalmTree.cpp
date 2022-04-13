@@ -14,27 +14,27 @@ PalmTree::PalmTree()
 
 PalmTree::~PalmTree() = default;
 
-const Vector3i* PalmTree::getLeaves()
+const Vector3i* PalmTree::getLeaves() const
 {
 	return m_Leaves;
 }
 
-int PalmTree::getTrunkHeight()
+int PalmTree::getTrunkHeight() const
 {
 	return m_TrunkHeight;
 }
 
-int PalmTree::getNumLeaves()
+int PalmTree::getNumLeaves() const
 {
 	return m_NumLeaves;
 }
 
-BlockType PalmTree::getLeavesType()
+BlockType PalmTree::getLeavesType() const
 {
 	return m_LeavesType;
 }
 
-BlockType PalmTree::getTrunkType()
+BlockType PalmTree::getTrunkType() const
 {
 	return m_TrunkType;
 }

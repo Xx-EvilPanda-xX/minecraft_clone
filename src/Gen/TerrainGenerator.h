@@ -33,7 +33,7 @@ private:
 
 	const int m_MaxTreesPerChunk{ 16 };
 
-	void genTree(Tree* tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection);
+	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection);
 
 	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& section, Block block);
 

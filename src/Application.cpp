@@ -10,9 +10,8 @@
 #include "Constants.h"
 
 Application::Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager)
-	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ m_Camera, chunkManager, m_Window.getKeyboard(), constants::playerReach }, chunkManager },
+	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ chunkManager, m_Window.getKeyboard(), constants::playerReach }, chunkManager },
 	m_Window{ windowWidth, windowHeight, title },
-	m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, constants::mouse_sensitivity, m_Window.getWindow() },
 	m_Handler{}
 {
 	chunkManager.setWorld(&m_World);
@@ -46,9 +45,9 @@ void Application::init()
 
 void Application::run()
 {
-	while (!glfwWindowShouldClose(m_Window.getWindow()))
+	while (!glfwWindowShouldClose(m_Window.getGlfwWindow()))
 	{
-		glfwSetCursorPos(m_Window.getWindow(), 0.0, 0.0);
+		glfwSetCursorPos(m_Window.getGlfwWindow(), 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		updateFPS();
@@ -61,12 +60,12 @@ void Application::run()
 			deletePass = true;
 		}
 
-		m_World.worldUpdate(m_Camera, deletePass);
-		m_World.worldRender(m_Camera);
+		m_World.worldUpdate(m_World.getPlayer().getCamera(), deletePass);
+		m_World.worldRender(m_World.getPlayer().getCamera(), m_Window);
 		updateGui();
 		renderGui();
 
-		glfwSwapBuffers(m_Window.getWindow());
+		glfwSwapBuffers(m_Window.getGlfwWindow());
 		glfwPollEvents();
 	}
 }
@@ -84,14 +83,12 @@ void Application::updateGui()
 {
 	if (guiUpdateCooldown <= 0.0)
 	{
+		glm::dvec3 camLoc{ m_World.getPlayer().getCamera().getLocation() };
+		Vector2i chunkPos{ static_cast<int>(camLoc.x) / 16, static_cast<int>(camLoc.z) / 16 };
+
 		m_TextComponents[0].update(std::string{ "FPS: " } + std::to_string(currentFps), -1.0, 1.0, 0.1, 0.15);
-
-		glm::dvec3 pos{ m_Camera.getLocation() };
-		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", " + std::to_string(pos.z), -1.0, 0.975, 0.1, 0.15);
-
-		Vector2i chunkPos{ static_cast<int>(m_Camera.getLocation().x) / 16, static_cast<int>(m_Camera.getLocation().z) / 16 };
+		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(camLoc.x) + ", " + std::to_string(camLoc.y) + ", " + std::to_string(camLoc.z), -1.0, 0.975, 0.1, 0.15);
 		m_TextComponents[2].update(std::string{ "Chunk index: " } + std::to_string(m_World.getChunkIndex(chunkPos)), -1.0, 0.95, 0.1, 0.15);
-
 		m_TextComponents[3].update(std::string{ "Selected block: " } + m_Handler.getSelectedBlock().getName(), -1.0, 0.75, 0.1, 0.15);
 
 		guiUpdateCooldown = 0.05;
@@ -168,10 +165,10 @@ void Application::handleInput()
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };
 
-	m_Handler.handleKeyboard(keyboard, *this, m_World.getPlayer());
+	m_Handler.handleKeyboard(keyboard, *this);
 	m_Handler.handleMouse(mouse, m_World.getPlayer());
 
-	m_Camera.handleLook(glm::dvec2{ mouse.getXOffset(), mouse.getYOffset() });
+	m_World.getPlayer().getCamera().handleLook(glm::dvec2{mouse.getXOffset(), mouse.getYOffset()});
 }
 
 void Application::renderCrosshair()
@@ -183,7 +180,7 @@ void Application::renderCrosshair()
 	m_GuiShader.bind();
 
 	int width, height;
-	glfwGetWindowSize(m_Window.getWindow(), &width, &height);
+	glfwGetWindowSize(m_Window.getGlfwWindow(), &width, &height);
 	double aspect{ static_cast<double>(width) / static_cast<double>(height) };
 	glm::dmat4 proj{ glm::ortho(-aspect, aspect, 1.0, -1.0, -1.0, 1.0) };
 
@@ -215,11 +212,6 @@ void Application::renderCrosshair()
 Window& Application::getWindow()
 {
 	return m_Window;
-}
-
-Camera& Application::getCamera()
-{
-	return m_Camera;
 }
 
 World& Application::getWorld()

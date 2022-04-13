@@ -17,7 +17,7 @@ enum class CollsionType
 class Player
 {
 private:
-	Camera& m_Cam;
+	Camera m_Camera;
 	ChunkManager& m_Manager;
 	glm::dvec3 m_Velocity;
 	AABB m_Aabb;
@@ -45,9 +45,8 @@ private:
 	const int collsionSearchRadiusZ{ 2 };
 	const double worldBottom{ -40.0 };
 
-	Vector3i* breakIntersect();
-
-	glm::dvec3* placeIntersect();
+	template <typename T>
+	T* intersect();
 
 	void updateMeshes(Vector3i editPos);
 
@@ -62,7 +61,7 @@ private:
 	AABB createPlayerAABB(glm::dvec3 playerPos);
 
 public:
-	Player(Camera& cam, ChunkManager& manager, Keyboard& keyboard, double reach);
+	Player(ChunkManager& manager, Keyboard& keyboard, double reach);
 
 	void move();
 
@@ -70,9 +69,11 @@ public:
 
 	void placeBlock(BlockType block);
 
-	double getReach() const;
+	Camera& getCamera();
 
 	glm::dvec3& getVelocity();
+
+	double getReach() const;
 
 	bool isSprinting() const;
 

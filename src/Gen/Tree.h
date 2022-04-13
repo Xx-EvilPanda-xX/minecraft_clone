@@ -7,11 +7,11 @@
 class Tree
 {
 public:
-	virtual const Vector3i* getLeaves() = 0;
-	virtual int getTrunkHeight() = 0;
-	virtual int getNumLeaves() = 0;
-	virtual BlockType getLeavesType() = 0;
-	virtual BlockType getTrunkType() = 0;
+	virtual const Vector3i* getLeaves() const = 0;
+	virtual int getTrunkHeight() const = 0;
+	virtual int getNumLeaves() const = 0;
+	virtual BlockType getLeavesType() const = 0;
+	virtual BlockType getTrunkType() const = 0;
 	virtual ~Tree();
 
 protected:

@@ -63,7 +63,7 @@ void TextRenderer::prepare(int itr, Window& window)
 	model = glm::scale(model, glm::dvec3{ m_FontSize, m_FontSize, m_FontSize });
 
 	int width, height;
-	glfwGetWindowSize(window.getWindow(), &width, &height);
+	glfwGetWindowSize(window.getGlfwWindow(), &width, &height);
 	double aspect{ static_cast<double>(width) / static_cast<double>(height) };
 	//this line took a while phew
 	glm::dmat4 proj{ glm::ortho(-1.0, 1.0, 1.0 - (1.0 / (aspect / 2.0)), 1.0, -1.0, 1.0)};

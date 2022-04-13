@@ -6,11 +6,11 @@
 class OakTree : public Tree
 {
 public:
-	const Vector3i* getLeaves() override;
-	int getTrunkHeight() override;
-	int getNumLeaves() override;
-	BlockType getLeavesType() override;
-	BlockType getTrunkType() override;
+	const Vector3i* getLeaves() const override;
+	int getTrunkHeight() const override;
+	int getNumLeaves() const override;
+	BlockType getLeavesType() const override;
+	BlockType getTrunkType() const override;
 
 	OakTree();
 	~OakTree();
