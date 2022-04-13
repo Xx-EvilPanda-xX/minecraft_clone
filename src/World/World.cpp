@@ -8,7 +8,7 @@
 #include "ChunkManager.h"
 #include "../Constants.h"
 
-//#define DEBUG
+#define DEBUG
 constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
 
 World::World(Shader shader, Player player, ChunkManager& manager)

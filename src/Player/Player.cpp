@@ -239,14 +239,6 @@ bool Player::collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, con
 Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_ClosestCollision)
 {
 	Vector3i playerBlockPos{ playerPos };
-
-	if (playerPos.x < 0.0)
-		--playerBlockPos.x;
-	if (playerPos.y < 0.0)
-		--playerBlockPos.y;
-	if (playerPos.z < 0.0)
-		--playerBlockPos.z;
-
 	bool collision{ false };
 	double closestCollision{ -1.0 };
 	Vector3i* collisionPos{ nullptr };
