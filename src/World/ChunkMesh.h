@@ -54,19 +54,19 @@ private:
 
 	ChunkMesh& pushIndex(int i);
 
-	void pushUp(int size, glm::vec3& floats, float height);
+	void pushUp(glm::vec3& floats, float height);
 
-	void pushDown(int size, glm::vec3& floats);
+	void pushDown(glm::vec3& floats);
 
-	void pushNorth(int size, glm::vec3& floats, float height);
+	void pushNorth(glm::vec3& floats, float height);
 
-	void pushSouth(int size, glm::vec3& floats, float height);
+	void pushSouth(glm::vec3& floats, float height);
 
-	void pushEast(int size, glm::vec3& floats, float height);
+	void pushEast(glm::vec3& floats, float height);
 
-	void pushWest(int size, glm::vec3& floats, float height);
+	void pushWest(glm::vec3& floats, float height);
 
-	void pushNewIndices(int size);
+	void pushNewIndices();
 
 	float* calcTexCoords(BlockType block, Face face);
 

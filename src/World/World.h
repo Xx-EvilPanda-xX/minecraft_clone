@@ -23,8 +23,6 @@ private:
 
 	int m_LastBlockQueueSize;
 
-	Vector3i getPlayerBlockPos(const Camera& camera);
-
 public:
 	World(Shader shader, Player player, ChunkManager& manager);
 

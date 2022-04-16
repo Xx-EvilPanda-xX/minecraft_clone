@@ -11,7 +11,7 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	: m_Manager{ manager }
 {
 	m_Rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
-	m_Die = std::uniform_int_distribution<>{ 0, 64 };
+	m_Die = std::uniform_int_distribution<>{ 0, 256 };
 
 	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
 	int seed{ tempDie(m_Rand) };
@@ -25,11 +25,11 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	std::cout << "Seed: " << seed << "\n";
 }
 
-ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation section)
+ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sectionLocation)
 {
 	ChunkSection* chunkSection{ new ChunkSection{} };
 	int trees{};
-	m_Rand.seed(std::hash<int>{}(section.worldPos.x) ^ std::hash<int>{}(section.worldPos.y));
+	m_Rand.seed(std::hash<int>{}(sectionLocation.worldPos.x) ^ std::hash<int>{}(sectionLocation.worldPos.y));
 
 	for (int x{}; x < 16; ++x)
 	{
@@ -37,50 +37,63 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 		{
 			for (int z{}; z < 16; ++z)
 			{
-				int wY = (section.sectionIndex * 16) + y;
+				int wY = (sectionLocation.sectionIndex * 16) + y;
 				int currentHeight{ heightMap[x][z] };
 				Vector3i pos{ x, y, z };
 
+				//terrain
 				if (chunkSection->getBlock(pos).getType() == BlockType::Air)
 				{
 					if (wY < currentHeight - 6)
 						chunkSection->setBlock(pos, BlockType::Stone, false);
 
-					else if (wY < currentHeight - 1 && wY >= currentHeight - 6)
-						chunkSection->setBlock(pos, BlockType::Dirt, false);
-
-					else if (wY < constants::waterLevel + 1 && wY <= currentHeight)
+					if (wY < currentHeight && wY >= currentHeight - 6)
 					{
-						chunkSection->setBlock(pos, BlockType::Sand, false);
-						if (m_Die(m_Rand) < m_Die.max() / 2 && wY < constants::waterLevel - 10)
-							chunkSection->setBlock(pos, BlockType::Gravel, false);
+						if (wY < constants::waterLevel + 1)
+						{
+							if (m_Die(m_Rand) < m_Die.max() / 2 && wY < constants::waterLevel - 10)
+								chunkSection->setBlock(pos, BlockType::Gravel, false);
+							else
+								chunkSection->setBlock(pos, BlockType::Sand, false);
+						}
+						else
+						{
+							if (wY < currentHeight - 1)
+								chunkSection->setBlock(pos, BlockType::Dirt, false);
+							else
+								chunkSection->setBlock(pos, BlockType::Grass, false);
+						}
 					}
 
-					else if (wY < currentHeight && wY >= currentHeight - 1)
-						chunkSection->setBlock(pos, BlockType::Grass, false);
-
-					else if (wY < constants::waterLevel)
+					if (wY < constants::waterLevel && wY >= currentHeight)
 					{
 						chunkSection->setBlock(pos, BlockType::Water, false);
 						if (wY == constants::waterLevel - 1)
 							chunkSection->setBlock(pos, BlockType::Water, true);
 					}
-
-					else
-						chunkSection->setBlock(pos, BlockType::Air, false);
-
 				}
 
-				if (!constants::flatWorld && wY == currentHeight && wY >= constants::waterLevel && m_Die(m_Rand) == 0 && trees <= m_MaxTreesPerChunk)
+				//trees
+				if (!constants::flatWorld && wY == currentHeight && wY >= constants::waterLevel && trees <= m_MaxTreesPerChunk)
 				{
 					const Tree& oakTree{ OakTree{} };
 					const Tree& palmTree{ PalmTree{} };
 					if (wY < 50)
-						genTree(palmTree, chunkSection, pos, section, heightMap);
+					{ 
+						if (m_Die(m_Rand) == 0)
+						{
+							genTree(palmTree, chunkSection, pos, sectionLocation, heightMap);
+							++trees;
+						}
+					}
 					else
-						genTree(oakTree, chunkSection, pos, section, heightMap);
-
-					++trees;
+					{
+						if (m_Die(m_Rand) < 4)
+						{
+							genTree(oakTree, chunkSection, pos, sectionLocation, heightMap);
+							++trees;
+						}
+					}
 				}
 			}
 		}
@@ -211,6 +224,14 @@ int** TerrainGenerator::getHeightMap(Chunk* chunk)
 			else
 			{
 				double height{ (static_cast<double>(m_Noise.GetNoise(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0 };
+				
+				if (height < constants::waterLevel + 1)
+				{
+					height += 3;
+					if (height > constants::waterLevel + 1)
+						height = constants::waterLevel + 1;
+				}
+
 				heightMap[i][j] = static_cast<int>(height);
 			}
 		}

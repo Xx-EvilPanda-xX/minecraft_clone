@@ -22,7 +22,7 @@ World::World(Shader shader, Player player, ChunkManager& manager)
 
 void World::worldUpdate(const Camera& camera, bool deletePass)
 {
-	Vector3i playerPos{ getPlayerBlockPos(camera) };
+	Vector3i playerPos{ camera.getLocation() };
 
 	if (m_Manager.chunkExsists(playerPos))
 		m_Player.move();
@@ -58,7 +58,7 @@ void World::worldUpdate(const Camera& camera, bool deletePass)
 
 void World::worldRender(const Camera& camera, const Window& window)
 {
-	Vector3i playerPos{ getPlayerBlockPos(camera) };
+	Vector3i playerPos{ camera.getLocation() };
 	m_Shader.bind();
 	m_Shader.setBool("playerUnderWater", m_Manager.getWorldBlock(playerPos).getType() == BlockType::Water);
 	m_Shader.unbind();
@@ -193,20 +193,6 @@ int World::getChunkIndex(Vector2i chunkPos) const
 	}
 
 	return -1;
-}
-
-Vector3i World::getPlayerBlockPos(const Camera& camera)
-{
-	Vector3i playerPos{ camera.getLocation() };
-
-	if (camera.getLocation().x < 0.0)
-		--playerPos.x;
-	if (camera.getLocation().y < 0.0)
-		--playerPos.y;
-	if (camera.getLocation().z < 0.0)
-		--playerPos.z;
-
-	return playerPos;
 }
 
 std::vector<Chunk*>& World::getChunks()

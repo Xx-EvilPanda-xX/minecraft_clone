@@ -24,34 +24,33 @@ void ChunkMesh::createTextureAtlas(const char* path)
 
 void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 {
-	int size{ static_cast<int>(m_Vertices.size()) / 3 };
 	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
 	float height{ block.isSurface() ? 0.9f : 1.0f };
 
 	switch (face)
 	{
 	case Face::Up:
-		pushUp(size, floats, height);
+		pushUp(floats, height);
 		break;
 
 	case Face::Down:
-		pushDown(size, floats);
+		pushDown(floats);
 		break;
 
 	case Face::North:
-		pushNorth(size, floats, height);
+		pushNorth(floats, height);
 		break;
 
 	case Face::South:
-		pushSouth(size, floats, height);
+		pushSouth(floats, height);
 		break;
 
 	case Face::East:
-		pushEast(size, floats, height);
+		pushEast(floats, height);
 		break;
 
 	case Face::West:
-		pushWest(size, floats, height);
+		pushWest(floats, height);
 		break;
 	}
 
@@ -145,8 +144,10 @@ float* ChunkMesh::getTexCoordsFromStartPos(glm::vec2 startPos)
 	return coords;
 }
 
-void ChunkMesh::pushUp(int size, glm::vec3& floats, float height)
+void ChunkMesh::pushUp(glm::vec3& floats, float height)
 {
+	pushNewIndices();
+
 	float add{ 1.0f };
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //2
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
@@ -157,12 +158,12 @@ void ChunkMesh::pushUp(int size, glm::vec3& floats, float height)
 	{
 		pushLighting(upAmbient);
 	}
-
-	pushNewIndices(size);
 }
 
-void ChunkMesh::pushDown(int size, glm::vec3& floats)
+void ChunkMesh::pushDown(glm::vec3& floats)
 {
+	pushNewIndices();
+
 	float add{ 1.0f };
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
@@ -173,12 +174,12 @@ void ChunkMesh::pushDown(int size, glm::vec3& floats)
 	{
 		pushLighting(downAmbient);
 	}
-
-	pushNewIndices(size);
 }
 
-void ChunkMesh::pushNorth(int size, glm::vec3& floats, float height)
+void ChunkMesh::pushNorth(glm::vec3& floats, float height)
 {
+	pushNewIndices();
+
 	float add{ 1.0f };
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
@@ -189,12 +190,12 @@ void ChunkMesh::pushNorth(int size, glm::vec3& floats, float height)
 	{
 		pushLighting(northAmbient);
 	}
-
-	pushNewIndices(size);
 }
 
-void ChunkMesh::pushSouth(int size, glm::vec3& floats, float height)
+void ChunkMesh::pushSouth(glm::vec3& floats, float height)
 {
+	pushNewIndices();
+
 	float add{ 1.0f };
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
@@ -205,12 +206,12 @@ void ChunkMesh::pushSouth(int size, glm::vec3& floats, float height)
 	{
 		pushLighting(southAmbient);
 	}
-
-	pushNewIndices(size);
 }
 
-void ChunkMesh::pushEast(int size, glm::vec3& floats, float height)
+void ChunkMesh::pushEast(glm::vec3& floats, float height)
 {
+	pushNewIndices();
+
 	float add{ 1.0f };
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
@@ -221,12 +222,12 @@ void ChunkMesh::pushEast(int size, glm::vec3& floats, float height)
 	{
 		pushLighting(eastAmbient);
 	}
-
-	pushNewIndices(size);
 }
 
-void ChunkMesh::pushWest(int size, glm::vec3& floats, float height)
+void ChunkMesh::pushWest(glm::vec3& floats, float height)
 {
+	pushNewIndices();
+
 	float add{ 1.0f };
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
@@ -237,12 +238,11 @@ void ChunkMesh::pushWest(int size, glm::vec3& floats, float height)
 	{
 		pushLighting(westAmbient);
 	}
-	
-	pushNewIndices(size);
 }
 
-void ChunkMesh::pushNewIndices(int size)
+void ChunkMesh::pushNewIndices()
 {
+	int size{ static_cast<int>(m_Vertices.size() / 3) };
 	int s0{ size + 0 };
 	int s1{ size + 1 };
 	int s2{ size + 2 };
