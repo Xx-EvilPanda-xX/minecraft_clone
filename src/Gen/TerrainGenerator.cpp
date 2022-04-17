@@ -99,7 +99,6 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 		}
 	}
 
-
 	return chunkSection;
 }
 

@@ -14,7 +14,10 @@ Block::Block(BlockType type, bool surface)
 	case Water:
 		m_Transparent = true;
 		break;
-	case Leaves:
+	case PalmLeaves:
+		m_Transparent = true;
+		break;
+	case OakLeaves:
 		m_Transparent = true;
 		break;
 	case Glass:
@@ -66,8 +69,10 @@ std::string Block::getName()
 		return "CobbleStone";
 	case Wood:
 		return "Wood";
-	case Leaves:
-		return "Leaves";
+	case PalmLeaves:
+		return "PalmLeaves";
+	case OakLeaves:
+		return "OakLeaves";
 	case Glass:
 		return "Glass";
 	case CraftingTable:

@@ -13,9 +13,10 @@ ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader)
 
 Texture ChunkMesh::s_TexAltas{ Texture{} };
 BlockType ChunkMesh::s_AtlasIndices[]{ BlockType::Grass, BlockType::Stone, BlockType::Dirt,
-									BlockType::CobbleStone, BlockType::Wood, BlockType::Leaves,
+									BlockType::CobbleStone, BlockType::Wood, BlockType::PalmLeaves,
 									BlockType::Glass, BlockType::CraftingTable, BlockType::Planks,
-									BlockType::DiamondBlock, BlockType::Water, BlockType::Sand, BlockType::Gravel };
+									BlockType::DiamondBlock, BlockType::Water, BlockType::Sand,
+									BlockType::Gravel, BlockType::OakLeaves };
 
 void ChunkMesh::createTextureAtlas(const char* path)
 {
@@ -148,11 +149,11 @@ void ChunkMesh::pushUp(glm::vec3& floats, float height)
 {
 	pushNewIndices();
 
-	float add{ 1.0f };
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //2
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //6
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //7
+	constexpr float add{ 1.0f };
+	vertex(floats.x, floats.y + height, floats.z); //2
+	vertex(floats.x + add, floats.y + height, floats.z); //5
+	vertex(floats.x, floats.y + height, floats.z + add); //6
+	vertex(floats.x + add, floats.y + height, floats.z + add); //7
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -164,7 +165,7 @@ void ChunkMesh::pushDown(glm::vec3& floats)
 {
 	pushNewIndices();
 
-	float add{ 1.0f };
+	constexpr float add{ 1.0f };
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
@@ -180,7 +181,7 @@ void ChunkMesh::pushNorth(glm::vec3& floats, float height)
 {
 	pushNewIndices();
 
-	float add{ 1.0f };
+	constexpr float add{ 1.0f };
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
@@ -196,7 +197,7 @@ void ChunkMesh::pushSouth(glm::vec3& floats, float height)
 {
 	pushNewIndices();
 
-	float add{ 1.0f };
+	constexpr float add{ 1.0f };
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //6
@@ -212,7 +213,7 @@ void ChunkMesh::pushEast(glm::vec3& floats, float height)
 {
 	pushNewIndices();
 
-	float add{ 1.0f };
+	constexpr float add{ 1.0f };
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //7
@@ -228,7 +229,7 @@ void ChunkMesh::pushWest(glm::vec3& floats, float height)
 {
 	pushNewIndices();
 
-	float add{ 1.0f };
+	constexpr float add{ 1.0f };
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
 	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
 	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //2
@@ -273,6 +274,13 @@ ChunkMesh& ChunkMesh::pushIndex(int i)
 {
 	m_Indices.push_back(i);
 	return *this;
+}
+
+void ChunkMesh::vertex(float f1, float f2, float f3)
+{
+	pushVertexFloat(f1);
+	pushVertexFloat(f2);
+	pushVertexFloat(f3);
 }
 
 void ChunkMesh::clear()

@@ -6,7 +6,7 @@ OakTree::OakTree()
 							  { 1, 2, -1 }, { -1, 2, -1 }, { 0, 4, 0} },
 							  4,
 							  13,
-							  BlockType::Leaves,
+							  BlockType::OakLeaves,
 							  BlockType::Wood }
 {
 }

@@ -7,7 +7,7 @@ PalmTree::PalmTree()
 							  { 0, 4, -4 }, { 0, 6, 0 } },
 							  6,
 							  17,
-							  BlockType::Leaves,
+							  BlockType::PalmLeaves,
 							  BlockType::Wood }
 {
 }

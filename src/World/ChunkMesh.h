@@ -46,6 +46,8 @@ private:
 
 	void storeIndices(std::vector<int>& data);
 
+	void vertex(float f1, float f2, float f3);
+
 	ChunkMesh& pushVertexFloat(float f);
 
 	ChunkMesh& pushTexFloat(float f);

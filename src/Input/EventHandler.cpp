@@ -116,19 +116,19 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 	if (keyboard.isKeyDown(GLFW_KEY_5))
 		m_SelectedBlock = Block{ BlockType::Wood, false };
 	if (keyboard.isKeyDown(GLFW_KEY_6))
-		m_SelectedBlock = Block{ BlockType::Leaves, false };
+		m_SelectedBlock = Block{ BlockType::PalmLeaves, false };
 	if (keyboard.isKeyDown(GLFW_KEY_7))
-		m_SelectedBlock = Block{ BlockType::Glass, false };
+		m_SelectedBlock = Block{ BlockType::OakLeaves, false };
 	if (keyboard.isKeyDown(GLFW_KEY_8))
-		m_SelectedBlock = Block{ BlockType::Sand, false };
+		m_SelectedBlock = Block{ BlockType::Glass, false };
 	if (keyboard.isKeyDown(GLFW_KEY_9))
-		m_SelectedBlock = Block{ BlockType::Planks, false };
+		m_SelectedBlock = Block{ BlockType::Sand, false };
 	if (keyboard.isKeyDown(GLFW_KEY_0))
-		m_SelectedBlock = Block{ BlockType::DiamondBlock, false };
+		m_SelectedBlock = Block{ BlockType::Planks, false };
 	if (keyboard.isKeyDown(GLFW_KEY_MINUS))
-		m_SelectedBlock = Block{ BlockType::Water, false };
+		m_SelectedBlock = Block{ BlockType::DiamondBlock, false };
 	if (keyboard.isKeyDown(GLFW_KEY_EQUAL))
-		m_SelectedBlock = Block{ BlockType::CraftingTable, false };
+		m_SelectedBlock = Block{ BlockType::Water, false };
 
 	flyToggleCooldown -= Application::s_Dt;
 }
