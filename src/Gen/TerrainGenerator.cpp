@@ -8,6 +8,12 @@
 #include "OakTree.h"
 #include "OakForestBiome.h"
 
+struct TreeLoc
+{
+	Vector3i loc;
+	const Tree& tree;
+};
+
 TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	: m_Manager{ manager }
 {
@@ -15,7 +21,7 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	m_Die = std::uniform_int_distribution<>{ 0, 256 };
 
 	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
-	int seed{ tempDie(m_Rand) };
+	int seed{ -326684672 };
 
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction::CellularDistanceFunction_Hybrid);
@@ -35,6 +41,7 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 	const Biome& biome{ OakForestBiome{} };
 	const Tree& oakTree{ OakTree{} };
 	const Tree& palmTree{ PalmTree{} };
+	std::vector<TreeLoc> treeLocs{};
 
 	m_Rand.seed(std::hash<int>{}(sectionLocation.worldPos.x) ^ std::hash<int>{}(sectionLocation.worldPos.y));
 
@@ -44,8 +51,9 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 		{
 			int currentHeight{ heightMap[x][z] };
 			const std::vector<Layer>& layers{ biome.getLayers() };
+			int sectionY{ sectionLocation.sectionIndex * 16 };
 
-			if (sectionLocation.sectionIndex * 16 > (layers[layers.size() - 1].getTop() + currentHeight))
+			if (sectionY > (layers[layers.size() - 1].getTop() + currentHeight))
 				continue;
 
 			int y{};
@@ -67,10 +75,31 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 				}
 
 				Vector3i pos{ x, y, z };
-				if (!reachedTop)
+				if (!reachedTop && chunkSection->getBlock(pos).getType() == BlockType::Air)
 					chunkSection->setBlock(pos, layers[layerIndex].getType(), false);
 
 				++y;
+			}
+
+			
+			if (!constants::flatWorld && currentHeight > sectionY && currentHeight < sectionY + 16 /*&& currentHeight >= constants::waterLevel*/ && trees <= m_MaxTreesPerChunk)
+			{
+				if (currentHeight < 50)
+				{
+					if (m_Die(m_Rand) == 0)
+					{
+						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16), z }, palmTree });
+						++trees;
+					}
+				}
+				else
+				{
+					if (m_Die(m_Rand) < 4)
+					{
+						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16), z }, oakTree });
+						++trees;
+					}
+				}
 			}
 
 			//for (int y{}; y < 16; ++y)
@@ -112,38 +141,12 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 				//	}
 				//}
 			//}
-
-			
 		}
 	}
 
-	//tree loop
-	for (int x{}; x < 16; ++x)
+	for (const TreeLoc& pos : treeLocs)
 	{
-		for (int z{}; z < 16; ++z)
-		{
-			int currentHeight{ heightMap[x][z] };
-			if (!constants::flatWorld && currentHeight >= constants::waterLevel && trees <= m_MaxTreesPerChunk)
-			{
-				Vector3i pos{ x, currentHeight - (sectionLocation.sectionIndex * 16), z };
-				if (currentHeight < 50)
-				{
-					if (m_Die(m_Rand) == 0)
-					{
-						genTree(palmTree, chunkSection, pos, sectionLocation, heightMap);
-						++trees;
-					}
-				}
-				else
-				{
-					if (m_Die(m_Rand) < 4)
-					{
-						genTree(oakTree, chunkSection, pos, sectionLocation, heightMap);
-						++trees;
-					}
-				}
-			}
-		}
+		genTree(pos.tree, chunkSection, pos.loc, sectionLocation, heightMap);
 	}
 
 	return chunkSection;
