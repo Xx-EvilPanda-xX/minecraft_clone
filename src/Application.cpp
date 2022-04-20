@@ -16,10 +16,13 @@ Application::Application(int windowWidth, int windowHeight, const char* title, C
 {
 	chunkManager.setWorld(&m_World);
 
-	frames = 0;
-	time = 0;
+	m_CrossHair = { 0, 0, 0, 0, 0, 0, nullptr, 0 };
+	m_Frames = 0;
+	m_Time = 0;
 	m_LastFrame = 0.0;
-	guiUpdateCooldown = 0.0;
+	m_GuiUpdateCooldown = 0.0;
+	m_CurrentFps = 0;
+	m_DoDeletePass = false;
 }
 
 double Application::s_Dt{};
@@ -54,9 +57,9 @@ void Application::run()
 		handleInput();
 
 		bool deletePass{ false };
-		if (getCurrentTimeMillis() > (doDeletePass + 500))
+		if (getCurrentTimeMillis() > (m_DoDeletePass + 500))
 		{
-			doDeletePass = getCurrentTimeMillis();
+			m_DoDeletePass = getCurrentTimeMillis();
 			deletePass = true;
 		}
 
@@ -81,20 +84,20 @@ void Application::renderGui()
 
 void Application::updateGui()
 {
-	if (guiUpdateCooldown <= 0.0)
+	if (m_GuiUpdateCooldown <= 0.0)
 	{
 		glm::dvec3 camLoc{ m_World.getPlayer().getCamera().getLocation() };
 		Vector2i chunkPos{ static_cast<int>(camLoc.x) / 16, static_cast<int>(camLoc.z) / 16 };
 
-		m_TextComponents[0].update(std::string{ "FPS: " } + std::to_string(currentFps), -1.0, 1.0, 0.1, 0.15);
+		m_TextComponents[0].update(std::string{ "FPS: " } + std::to_string(m_CurrentFps), -1.0, 1.0, 0.1, 0.15);
 		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(camLoc.x) + ", " + std::to_string(camLoc.y) + ", " + std::to_string(camLoc.z), -1.0, 0.975, 0.1, 0.15);
 		m_TextComponents[2].update(std::string{ "Chunk index: " } + std::to_string(m_World.getChunkIndex(chunkPos)), -1.0, 0.95, 0.1, 0.15);
 		m_TextComponents[3].update(std::string{ "Selected block: " } + m_Handler.getSelectedBlock().getName(), -1.0, 0.75, 0.1, 0.15);
 
-		guiUpdateCooldown = 0.05;
+		m_GuiUpdateCooldown = 0.05;
 	}
 
-	guiUpdateCooldown -= s_Dt;
+	m_GuiUpdateCooldown -= s_Dt;
 }
 
 void Application::createCrosshair()
@@ -139,12 +142,12 @@ void Application::createCrosshair()
 
 void Application::updateFPS()
 {
-	++frames;
-	if (getCurrentTimeMillis() > (time + 1000))
+	++m_Frames;
+	if (getCurrentTimeMillis() > (m_Time + 1000))
 	{
-		currentFps = frames;
-		time = getCurrentTimeMillis();
-		frames = 0;
+		m_CurrentFps = m_Frames;
+		m_Time = getCurrentTimeMillis();
+		m_Frames = 0;
 	}
 }
 

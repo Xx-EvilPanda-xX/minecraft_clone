@@ -8,6 +8,8 @@
 #include "../noise.h"
 #include <unordered_map>
 #include "Tree.h"
+#include "../World/Block.h"
+#include "Biome.h"
 
 struct SectionLocation
 {

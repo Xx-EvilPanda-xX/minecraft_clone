@@ -32,6 +32,7 @@ Block::Block()
 {
 	m_Type = BlockType::Air;
 	m_Transparent = true;
+	m_Surface = false;
 }
 
 BlockType Block::getType() const

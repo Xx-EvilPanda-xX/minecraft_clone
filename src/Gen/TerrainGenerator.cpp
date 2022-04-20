@@ -6,6 +6,7 @@
 #include "Tree.h"
 #include "PalmTree.h"
 #include "OakTree.h"
+#include "OakForestBiome.h"
 
 TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	: m_Manager{ manager }
@@ -17,6 +18,8 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	int seed{ tempDie(m_Rand) };
 
 	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
+	m_Noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction::CellularDistanceFunction_Hybrid);
+	m_Noise.SetCellularReturnType(FastNoiseLite::CellularReturnType::CellularReturnType_Distance2);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
 	m_Noise.SetFractalOctaves(5);
 	m_Noise.SetFrequency(0.0075f);
@@ -29,70 +32,114 @@ ChunkSection* TerrainGenerator::genSection(int** heightMap, SectionLocation sect
 {
 	ChunkSection* chunkSection{ new ChunkSection{} };
 	int trees{};
+	const Biome& biome{ OakForestBiome{} };
+	const Tree& oakTree{ OakTree{} };
+	const Tree& palmTree{ PalmTree{} };
+
 	m_Rand.seed(std::hash<int>{}(sectionLocation.worldPos.x) ^ std::hash<int>{}(sectionLocation.worldPos.y));
 
 	for (int x{}; x < 16; ++x)
 	{
-		for (int y{}; y < 16; ++y)
+		for (int z{}; z < 16; ++z)
 		{
-			for (int z{}; z < 16; ++z)
+			int currentHeight{ heightMap[x][z] };
+			const std::vector<Layer>& layers{ biome.getLayers() };
+
+			if (sectionLocation.sectionIndex * 16 > (layers[layers.size() - 1].getTop() + currentHeight))
+				continue;
+
+			int y{};
+			int layerIndex{};
+			bool reachedTop{};
+			while (y < 16)
 			{
-				int wY = (sectionLocation.sectionIndex * 16) + y;
-				int currentHeight{ heightMap[x][z] };
-				Vector3i pos{ x, y, z };
-
-				//terrain
-				if (chunkSection->getBlock(pos).getType() == BlockType::Air)
+				if (!reachedTop)
 				{
-					if (wY < currentHeight - 6)
-						chunkSection->setBlock(pos, BlockType::Stone, false);
-
-					if (wY < currentHeight && wY >= currentHeight - 6)
+					if ((sectionLocation.sectionIndex * 16) + y > (layers[layerIndex].getTop() + currentHeight))
 					{
-						if (wY < constants::waterLevel + 1)
-						{
-							if (m_Die(m_Rand) < m_Die.max() / 2 && wY < constants::waterLevel - 10)
-								chunkSection->setBlock(pos, BlockType::Gravel, false);
-							else
-								chunkSection->setBlock(pos, BlockType::Sand, false);
-						}
-						else
-						{
-							if (wY < currentHeight - 1)
-								chunkSection->setBlock(pos, BlockType::Dirt, false);
-							else
-								chunkSection->setBlock(pos, BlockType::Grass, false);
-						}
-					}
+						++layerIndex;
 
-					if (wY < constants::waterLevel && wY >= currentHeight)
-					{
-						chunkSection->setBlock(pos, BlockType::Water, false);
-						if (wY == constants::waterLevel - 1)
-							chunkSection->setBlock(pos, BlockType::Water, true);
+						if (layerIndex >= layers.size())
+							reachedTop = true;
+
+						continue;
 					}
 				}
 
-				//trees
-				if (!constants::flatWorld && wY == currentHeight && wY >= constants::waterLevel && trees <= m_MaxTreesPerChunk)
+				Vector3i pos{ x, y, z };
+				if (!reachedTop)
+					chunkSection->setBlock(pos, layers[layerIndex].getType(), false);
+
+				++y;
+			}
+
+			//for (int y{}; y < 16; ++y)
+			//{//
+				//int wY = (sectionLocation.sectionIndex * 16) + y;
+				
+				//BlockType block{ getBlockFromLayer(biome, wY, currentHeight) };
+				
+
+				////terrain
+				//if (chunkSection->getBlock(pos).getType() == BlockType::Air)
+				//{
+				//	if (wY < currentHeight - 6)
+				//		chunkSection->setBlock(pos, BlockType::Stone, false);
+
+				//	if (wY < currentHeight && wY >= currentHeight - 6)
+				//	{
+				//		if (wY < constants::waterLevel + 1)
+				//		{
+				//			if (m_Die(m_Rand) < m_Die.max() / 2 && wY < constants::waterLevel - 10)
+				//				chunkSection->setBlock(pos, BlockType::Gravel, false);
+				//			else
+				//				chunkSection->setBlock(pos, BlockType::Sand, false);
+				//		}
+				//		else
+				//		{
+				//			if (wY < currentHeight - 1)
+				//				chunkSection->setBlock(pos, BlockType::Dirt, false);
+				//			else
+				//				chunkSection->setBlock(pos, BlockType::Grass, false);
+				//		}
+				//	}
+
+				//	if (wY < constants::waterLevel && wY >= currentHeight)
+				//	{
+				//		chunkSection->setBlock(pos, BlockType::Water, false);
+				//		if (wY == constants::waterLevel - 1)
+				//			chunkSection->setBlock(pos, BlockType::Water, true);
+				//	}
+				//}
+			//}
+
+			
+		}
+	}
+
+	//tree loop
+	for (int x{}; x < 16; ++x)
+	{
+		for (int z{}; z < 16; ++z)
+		{
+			int currentHeight{ heightMap[x][z] };
+			if (!constants::flatWorld && currentHeight >= constants::waterLevel && trees <= m_MaxTreesPerChunk)
+			{
+				Vector3i pos{ x, currentHeight - (sectionLocation.sectionIndex * 16), z };
+				if (currentHeight < 50)
 				{
-					const Tree& oakTree{ OakTree{} };
-					const Tree& palmTree{ PalmTree{} };
-					if (wY < 50)
-					{ 
-						if (m_Die(m_Rand) == 0)
-						{
-							genTree(palmTree, chunkSection, pos, sectionLocation, heightMap);
-							++trees;
-						}
-					}
-					else
+					if (m_Die(m_Rand) == 0)
 					{
-						if (m_Die(m_Rand) < 4)
-						{
-							genTree(oakTree, chunkSection, pos, sectionLocation, heightMap);
-							++trees;
-						}
+						genTree(palmTree, chunkSection, pos, sectionLocation, heightMap);
+						++trees;
+					}
+				}
+				else
+				{
+					if (m_Die(m_Rand) < 4)
+					{
+						genTree(oakTree, chunkSection, pos, sectionLocation, heightMap);
+						++trees;
 					}
 				}
 			}
@@ -109,7 +156,7 @@ void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i
 	{
 		const Vector3i* leaves{ tree.getLeaves() };
 		Vector3i placePos{ pos.x + leaves[i].x, pos.y + leaves[i].y, pos.z + leaves[i].z };
-		int wY{ placePos.y + (sectionLocation.sectionIndex * 16) };
+		int wY{ (sectionLocation.sectionIndex * 16) + placePos.y };
 
 		//tree
 		if (section->getBlock(placePos).getType() != BlockType::Air)

@@ -29,13 +29,13 @@ private:
 	TextRenderer m_TextComponents[numTextComponents];
 
 	double m_LastFrame;
-	double guiUpdateCooldown;
+	double m_GuiUpdateCooldown;
 
-	long frames;
-	long time;
-	int currentFps;
+	long m_Frames;
+	long m_Time;
+	int m_CurrentFps;
 
-	long doDeletePass;
+	long m_DoDeletePass;
 
 	void handleInput();
 
