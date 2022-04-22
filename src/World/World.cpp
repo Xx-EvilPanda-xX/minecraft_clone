@@ -83,23 +83,12 @@ void World::genPass()
 #endif // DEBUG
 
 
-		Chunk* chunk{ new Chunk(chunkPos, m_Shader) };
+		
+		
 
-		int** heightMap{ m_WorldGen.getHeightMap(chunk) };
-		for (int i{}; i < g_ChunkCap; ++i)
-		{
-			SectionLocation section{ i, chunkPos };
-			chunk->addSection(m_WorldGen.genSection(heightMap, section));
-		}
+		
 
-		for (int i{}; i < 16; ++i)
-		{
-			delete[] heightMap[i];
-		}
-
-		delete[] heightMap;
-
-		m_Chunks.push_back(chunk);
+		m_Chunks.push_back(m_WorldGen.generateChunk(chunkPos, m_Shader));
 	}
 }
 

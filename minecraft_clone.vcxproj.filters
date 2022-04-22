@@ -197,6 +197,9 @@
     <ClInclude Include="src\Gen\OakForestBiome.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Gen\SectionLocation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\frag.glsl">
