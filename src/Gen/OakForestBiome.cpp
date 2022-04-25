@@ -42,12 +42,12 @@ const int** OakForestBiome::getHeightMap(SectionLocation location)
 			{
 				double height{ (static_cast<double>(m_Noise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0 };
 
-				if (height < constants::waterLevel + 1)
+				/*if (height < constants::waterLevel + 1)
 				{
 					height += 3;
 					if (height > constants::waterLevel + 1)
 						height = constants::waterLevel + 1;
-				}
+				}*/
 
 				heightMap[i][j] = static_cast<int>(height);
 			}
@@ -59,11 +59,11 @@ const int** OakForestBiome::getHeightMap(SectionLocation location)
 
 void OakForestBiome::setNoiseParams()
 {
-	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_ValueCubic);
+	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_Noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction::CellularDistanceFunction_Hybrid);
 	m_Noise.SetCellularReturnType(FastNoiseLite::CellularReturnType::CellularReturnType_Distance2);
 	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
-	m_Noise.SetFractalOctaves(5);
-	m_Noise.SetFrequency(0.0115f);
+	m_Noise.SetFractalOctaves(7);
+	m_Noise.SetFrequency(0.00255f);
 	m_Noise.SetSeed(1377);
 }

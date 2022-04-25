@@ -23,14 +23,6 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
 	int seed{ tempDie(m_Rand) };
 
-	/*m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_ValueCubic);
-	m_Noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction::CellularDistanceFunction_Hybrid);
-	m_Noise.SetCellularReturnType(FastNoiseLite::CellularReturnType::CellularReturnType_Distance2);
-	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
-	m_Noise.SetFractalOctaves(5);
-	m_Noise.SetFrequency(0.0115f);
-	m_Noise.SetSeed(seed);*/
-
 	std::cout << "Seed: " << seed << "\n";
 }
 
@@ -106,11 +98,11 @@ ChunkSection* TerrainGenerator::genSection(const std::vector<Layer>& biomeLayers
 			
 			if (!constants::flatWorld && currentHeight > sectionY && currentHeight < sectionY + 16 /*&& currentHeight >= constants::waterLevel*/ && trees <= m_MaxTreesPerChunk)
 			{
-				if (currentHeight < 50)
+				if (currentHeight < 50 && currentHeight > 46)
 				{
 					if (m_Die(m_Rand) == 0)
 					{
-						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16), z }, palmTree });
+						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, z }, palmTree });
 						++trees;
 					}
 				}
@@ -118,7 +110,7 @@ ChunkSection* TerrainGenerator::genSection(const std::vector<Layer>& biomeLayers
 				{
 					if (m_Die(m_Rand) < 4)
 					{
-						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16), z }, oakTree });
+						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, z }, oakTree });
 						++trees;
 					}
 				}

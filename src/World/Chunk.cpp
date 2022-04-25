@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Chunk.h"
 #include "ChunkManager.h"
+#include "Block.h"
 
 Chunk::Chunk(Vector2i loc, Shader& shader) 
 	: m_Location{ loc },
@@ -16,10 +17,7 @@ Chunk::Chunk(Vector2i loc, Shader& shader)
 	m_IsBuilt = false;
 	m_Building = false;
 
-	for (int i{}; i < g_ChunkCap; ++i)
-	{
-		m_RemainingSections.push_back(i);
-	}
+	resetRemaining();
 }
 
 Chunk::~Chunk()
@@ -216,6 +214,8 @@ void Chunk::clearMesh()
 {
 	m_Mesh.clear();
 	m_IsBuilt = false;
+	m_Building = false;
+	resetRemaining();
 }
 
 void Chunk::resetRemaining()

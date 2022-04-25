@@ -44,7 +44,14 @@ void World::worldUpdate(const Camera& camera, bool deletePass)
 		for (int i{}; i < blockQueue.size(); ++i)
 		{
 			QueueBlock queueBlock{ blockQueue.at(i) };
-			if (m_Manager.chunkExsists(queueBlock.loc.worldPos))
+			Chunk* chunk{ m_Manager.getChunk(queueBlock.loc.worldPos) };
+
+			if (!chunk)
+				continue;
+
+			if (chunk->isBuilt())
+				chunk->clearMesh();
+			else
 			{
 				m_Manager.getChunk(queueBlock.loc.worldPos)->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
 				blockQueue.erase(blockQueue.begin() + i);
@@ -81,12 +88,6 @@ void World::genPass()
 		if (chunkPos.x > 4 || chunkPos.x < -4 || chunkPos.y > 4 || chunkPos.y < -4)
 			return;
 #endif // DEBUG
-
-
-		
-		
-
-		
 
 		m_Chunks.push_back(m_WorldGen.generateChunk(chunkPos, m_Shader));
 	}
