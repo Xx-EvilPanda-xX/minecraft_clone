@@ -14,12 +14,11 @@ protected:
 
 	Biome();
 
-	virtual void setNoiseParams() = 0;
-
 public:
 	virtual ~Biome();
 	virtual const std::vector<Layer>& getLayers() const = 0;
 	virtual const int** getHeightMap(SectionLocation location) = 0;
+	void setNoiseParams(int octaves, float freq);
 };
 
 #endif

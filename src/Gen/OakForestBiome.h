@@ -13,8 +13,6 @@ public:
 	const std::vector<Layer>& getLayers() const override;
 
 	const int** getHeightMap(SectionLocation location) override;
-
-	void setNoiseParams() override;
 };
 
 #endif

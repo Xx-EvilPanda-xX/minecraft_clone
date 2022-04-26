@@ -5,7 +5,7 @@
 #include "../Constants.h"
 #include <cmath>
 
-Player::Player(ChunkManager & manager, Keyboard& keyboard, double reach)
+Player::Player(ChunkManager& manager, Keyboard& keyboard, double reach)
 	: m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, constants::mouse_sensitivity },
 	m_Manager{ manager },
 	m_Keyboard{ keyboard },
@@ -180,7 +180,7 @@ void Player::collsionDetection()
 				{
 					onGround = true;
 					if (m_Keyboard.isKeyDown(GLFW_KEY_SPACE))
-						m_JumpCoolDown = 0.25;
+						m_JumpCoolDown = 0.15;
 				}
 			}
 

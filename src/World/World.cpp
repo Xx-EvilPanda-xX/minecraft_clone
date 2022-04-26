@@ -48,9 +48,6 @@ void World::worldUpdate(const Camera& camera, bool deletePass)
 
 			if (!chunk)
 				continue;
-
-			if (chunk->isBuilt())
-				chunk->clearMesh();
 			else
 			{
 				m_Manager.getChunk(queueBlock.loc.worldPos)->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());

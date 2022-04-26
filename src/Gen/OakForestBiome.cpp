@@ -4,11 +4,14 @@
 OakForestBiome::OakForestBiome()
 	: Biome()
 {
-	m_Layers.emplace_back(BlockType::Stone, -6);
+	m_Layers.emplace_back(BlockType::Stone, -40);
+	m_Layers.emplace_back(BlockType::DiamondBlock, -30);
+	m_Layers.emplace_back(BlockType::CraftingTable, -20);
+	m_Layers.emplace_back(BlockType::OakLeaves, -10);
 	m_Layers.emplace_back(BlockType::Dirt, -1);
 	m_Layers.emplace_back(BlockType::Grass, 0);
 
-	setNoiseParams();
+	setNoiseParams(7, 0.00355f);
 }
 
 OakForestBiome::~OakForestBiome() = default;
@@ -55,15 +58,4 @@ const int** OakForestBiome::getHeightMap(SectionLocation location)
 	}
 
 	return (const int**) heightMap;
-}
-
-void OakForestBiome::setNoiseParams()
-{
-	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
-	m_Noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction::CellularDistanceFunction_Hybrid);
-	m_Noise.SetCellularReturnType(FastNoiseLite::CellularReturnType::CellularReturnType_Distance2);
-	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
-	m_Noise.SetFractalOctaves(7);
-	m_Noise.SetFrequency(0.00255f);
-	m_Noise.SetSeed(1377);
 }

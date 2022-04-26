@@ -30,6 +30,7 @@ Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader)
 {
 	static Biome&& biome{ OakForestBiome{} };
 	Chunk* chunk{ new Chunk(loc, chunkShader) };
+
 	const int** heightMap{ biome.getHeightMap(SectionLocation{ 0, loc })};
 
 	for (int i{}; i < g_ChunkCap; ++i)
@@ -76,9 +77,15 @@ ChunkSection* TerrainGenerator::genSection(const std::vector<Layer>& biomeLayers
 			bool reachedTop{};
 			while (y < 16)
 			{
+				if (sectionY + y > 40)
+				{
+					++y;
+					continue;
+				}
+
 				if (!reachedTop)
 				{
-					if ((sectionLocation.sectionIndex * 16) + y > (biomeLayers[layerIndex].getTop() + currentHeight))
+					if (sectionY + y > (biomeLayers[layerIndex].getTop() + currentHeight))
 					{
 						++layerIndex;
 

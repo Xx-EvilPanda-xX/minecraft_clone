@@ -220,6 +220,7 @@ void Chunk::clearMesh()
 
 void Chunk::resetRemaining()
 {
+	m_RemainingSections.clear();
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
 		m_RemainingSections.push_back(i);
