@@ -21,6 +21,7 @@ enum BlockType
 	Planks,
 	DiamondBlock,
 	Water,
+	Cactus,
 
 	NUM_BLOCKS
 };

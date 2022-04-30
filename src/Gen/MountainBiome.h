@@ -1,15 +1,15 @@
-#ifndef PLAINS_BIOME_H
-#define PLAINS_BIOME_H
+#ifndef MOUNTAIN_BIOME_H
+#define MOUNTAIN_BIOME_H
 
 #include "Biome.h"
 #include "SectionLocation.h"
 #include "../Math/Vector2i.h"
 
-class PlainsBiome : public Biome
+class MountainBiome : public Biome
 {
 public:
-	PlainsBiome(int seed);
-	~PlainsBiome();
+	MountainBiome(int seed);
+	~MountainBiome();
 
 	const std::vector<Layer>& getLayers() const override;
 

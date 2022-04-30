@@ -2,7 +2,7 @@
 #include "../Constants.h"
 #include "Random.h"
 
-constexpr int ID{ 0 };
+constexpr int ID{ 2 };
 
 PlainsBiome::PlainsBiome(int seed)
 	: Biome(ID, seed)
@@ -54,6 +54,11 @@ const int** PlainsBiome::getHeightMap(Vector2i location)
 }
 
 bool PlainsBiome::hasTrees() const
+{
+	return false;
+}
+
+bool PlainsBiome::hasCactus() const
 {
 	return false;
 }

@@ -16,7 +16,7 @@ BlockType ChunkMesh::s_AtlasIndices[]{ BlockType::Grass, BlockType::Stone, Block
 									BlockType::CobbleStone, BlockType::Wood, BlockType::PalmLeaves,
 									BlockType::Glass, BlockType::CraftingTable, BlockType::Planks,
 									BlockType::DiamondBlock, BlockType::Water, BlockType::Sand,
-									BlockType::Gravel, BlockType::OakLeaves };
+									BlockType::Gravel, BlockType::OakLeaves, BlockType::Cactus };
 
 void ChunkMesh::createTextureAtlas(const char* path)
 {

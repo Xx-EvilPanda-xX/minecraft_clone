@@ -1,30 +1,28 @@
-#include "OakForestBiome.h"
+#include "MountainBiome.h"
 #include "../Constants.h"
 #include "Random.h"
 
-constexpr int ID{ 0 };
+constexpr int ID{ 3 };
 
-OakForestBiome::OakForestBiome(int seed)
+MountainBiome::MountainBiome(int seed)
 	: Biome(ID, seed)
 {
-	m_Layers.emplace_back(BlockType::Stone, -6, true);
-	m_Layers.emplace_back(BlockType::Dirt, -1, true);
-	m_Layers.emplace_back(BlockType::Grass, 0, true);
+	m_Layers.emplace_back(BlockType::Stone, 0, true);
 	m_Layers.emplace_back(BlockType::Water, constants::waterLevel, false);
-
-	setNoiseParams(7, 0.00255f);
+	
+	setNoiseParams(5, 0.00755f);
 }
 
-OakForestBiome::~OakForestBiome() = default;
+MountainBiome::~MountainBiome() = default;
 
-const std::vector<Layer>& OakForestBiome::getLayers() const
+const std::vector<Layer>& MountainBiome::getLayers() const
 {
 	return m_Layers;
 }
 
-const int** OakForestBiome::getHeightMap(Vector2i location)
+const int** MountainBiome::getHeightMap(Vector2i location)
 {
-	int** heightMap = new int*[16];
+	int** heightMap = new int* [16];
 
 	for (int i{}; i < 16; ++i)
 	{
@@ -45,20 +43,21 @@ const int** OakForestBiome::getHeightMap(Vector2i location)
 			else
 			{
 				double height{ (static_cast<double>(m_Noise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0 };
+				height += 30.0;
 				heightMap[i][j] = static_cast<int>(height);
 			}
 		}
 	}
 
-	return (const int**) heightMap;
+	return (const int**)heightMap;
 }
 
-bool OakForestBiome::hasTrees() const
+bool MountainBiome::hasTrees() const
 {
-	return true;
+	return false;
 }
 
-bool OakForestBiome::hasCactus() const
+bool MountainBiome::hasCactus() const
 {
 	return false;
 }

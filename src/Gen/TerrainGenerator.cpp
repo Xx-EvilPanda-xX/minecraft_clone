@@ -9,6 +9,7 @@
 #include "OakForestBiome.h"
 #include "DesertBiome.h"
 #include "PlainsBiome.h"
+#include "MountainBiome.h"
 
 struct TreeLoc
 {
@@ -177,6 +178,13 @@ ChunkSection* TerrainGenerator::genSection(const Biome* biomeMap[chunkSize][chun
 				}
 			}
 
+			if (biome->hasCactus() && currentHeight > sectionY && currentHeight < sectionY + 16 && currentHeight > constants::waterLevel)
+			{
+				if (m_Rand.get() < 8)
+					genCactus(chunkSection, Vector3i{ x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, z }, sectionLocation);
+			}
+
+
 			//for (int y{}; y < 16; ++y)
 			//{//
 				//int wY = (sectionLocation.sectionIndex * 16) + y;
@@ -280,6 +288,18 @@ void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i
 	}
 }
 
+void TerrainGenerator::genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& cactusLocation)
+{
+	int rand{ m_Rand.get() / 64 };
+	for (int i{}; i < rand; ++i)
+	{
+		Vector3i placePos{ pos.x, pos.y + i, pos.z };
+		Block block{ BlockType::Cactus, false };
+		if (!structureShouldBeInQueue(placePos, cactusLocation, block))
+			section->setBlock(placePos, block.getType(), false);
+	}
+}
+
 bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocation& section, Block block)
 {
 	SectionLocation sectionForQueue{ section };
@@ -360,6 +380,13 @@ const BiomeMixture** TerrainGenerator::getBiomeMap(Vector2i location)
 				mixture.addElement(new OakForestBiome{ m_Seed }, 1.0);
 			else if (height < 60 && height > 50)
 				mixture.addElement(new PlainsBiome{ m_Seed }, 1.0);
+			else if (height < 50 && height > 35)
+			{
+				mixture.addElement(new MountainBiome{ m_Seed }, 0.70);
+				mixture.addElement(new OakForestBiome{ m_Seed }, 0.10);
+				mixture.addElement(new PlainsBiome{ m_Seed }, 0.10);
+				mixture.addElement(new DesertBiome{ m_Seed }, 0.10);
+			}
 			else
 				mixture.addElement(new DesertBiome{ m_Seed }, 1.0);
 		}

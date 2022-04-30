@@ -36,6 +36,8 @@ private:
 
 	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection, const int** heightMap);
 
+	void genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& cactusLocation);
+
 	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& section, Block block);
 
 	ChunkSection* genSection(const Biome* biomeMap[chunkSize][chunkSize], const int** heightMap, SectionLocation section);

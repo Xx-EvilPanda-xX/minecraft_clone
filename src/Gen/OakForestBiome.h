@@ -16,6 +16,8 @@ public:
 	const int** getHeightMap(Vector2i location) override;
 
 	bool hasTrees() const override;
+
+	bool hasCactus() const override;
 };
 
 #endif

@@ -57,3 +57,8 @@ bool DesertBiome::hasTrees() const
 {
 	return false;
 }
+
+bool DesertBiome::hasCactus() const
+{
+	return true;
+}
