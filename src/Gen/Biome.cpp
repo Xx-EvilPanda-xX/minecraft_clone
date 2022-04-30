@@ -1,16 +1,22 @@
 #include "Biome.h"
 
-Biome::Biome() = default;
+Biome::Biome(int id, int seed)
+	: m_Id{ id }
+{
+	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
+	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
+	m_Noise.SetSeed(seed);
+}
 
 Biome::~Biome() = default;
 
 void Biome::setNoiseParams(int octaves, float freq)
 {
-	m_Noise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
-	m_Noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction::CellularDistanceFunction_Hybrid);
-	m_Noise.SetCellularReturnType(FastNoiseLite::CellularReturnType::CellularReturnType_Distance2);
-	m_Noise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
 	m_Noise.SetFractalOctaves(octaves);
 	m_Noise.SetFrequency(freq);
-	m_Noise.SetSeed(1377);
+}
+
+int Biome::getId()
+{
+	return m_Id;
 }

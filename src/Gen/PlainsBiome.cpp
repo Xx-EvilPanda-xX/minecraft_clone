@@ -1,10 +1,10 @@
-#include "OakForestBiome.h"
+#include "PlainsBiome.h"
 #include "../Constants.h"
 #include "Random.h"
 
 constexpr int ID{ 0 };
 
-OakForestBiome::OakForestBiome(int seed)
+PlainsBiome::PlainsBiome(int seed)
 	: Biome(ID, seed)
 {
 	m_Layers.emplace_back(BlockType::Stone, -6, true);
@@ -15,16 +15,16 @@ OakForestBiome::OakForestBiome(int seed)
 	setNoiseParams(7, 0.00255f);
 }
 
-OakForestBiome::~OakForestBiome() = default;
+PlainsBiome::~PlainsBiome() = default;
 
-const std::vector<Layer>& OakForestBiome::getLayers() const
+const std::vector<Layer>& PlainsBiome::getLayers() const
 {
 	return m_Layers;
 }
 
-const int** OakForestBiome::getHeightMap(Vector2i location)
+const int** PlainsBiome::getHeightMap(Vector2i location)
 {
-	int** heightMap = new int*[16];
+	int** heightMap = new int* [16];
 
 	for (int i{}; i < 16; ++i)
 	{
@@ -50,10 +50,10 @@ const int** OakForestBiome::getHeightMap(Vector2i location)
 		}
 	}
 
-	return (const int**) heightMap;
+	return (const int**)heightMap;
 }
 
-bool OakForestBiome::hasTrees() const
+bool PlainsBiome::hasTrees() const
 {
-	return true;
+	return false;
 }

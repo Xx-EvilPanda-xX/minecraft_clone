@@ -7,6 +7,8 @@
 #include "PalmTree.h"
 #include "OakTree.h"
 #include "OakForestBiome.h"
+#include "DesertBiome.h"
+#include "PlainsBiome.h"
 
 struct TreeLoc
 {
@@ -14,43 +16,100 @@ struct TreeLoc
 	const Tree& tree;
 };
 
-TerrainGenerator::TerrainGenerator(ChunkManager& manager)
-	: m_Manager{ manager }
+struct TerrainMap
 {
-	m_Rand = std::mt19937{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
-	m_Die = std::uniform_int_distribution<>{ 0, 256 };
+	const int** heightMap{};
+	Biome* biome;
+};
 
-	std::uniform_int_distribution<> tempDie{ -2147483648, 2147483647 };
-	int seed{ tempDie(m_Rand) };
+TerrainGenerator::TerrainGenerator(ChunkManager& manager)
+	: m_Manager{ manager },
+	m_Rand{ 0, 256 }
+{
+	Random seedRand{ -2147483648, 2147483647 };
+	int seed{ seedRand.get() };
+	m_Seed = seed;
+
+	m_BiomeNoise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
+	m_BiomeNoise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
+	m_BiomeNoise.SetSeed(seedRand.get());
+	m_BiomeNoise.SetFractalOctaves(2);
+	m_BiomeNoise.SetFrequency(0.0065f);
 
 	std::cout << "Seed: " << seed << "\n";
 }
 
 Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader)
 {
-	static Biome&& biome{ OakForestBiome{} };
+	const BiomeMixture** biomeMap{ getBiomeMap(loc) };
 	Chunk* chunk{ new Chunk(loc, chunkShader) };
+	int** heightMap{ allocHeightMap() };
+	const Biome* layerMap[chunkSize][chunkSize]{};
+	double bestPercentage{};
+	std::vector<TerrainMap> usedMaps{};
 
-	const int** heightMap{ biome.getHeightMap(SectionLocation{ 0, loc })};
+	for (int i{}; i < chunkSize; ++i)
+	{
+		for (int j{}; j < chunkSize; ++j)
+		{
+			Biome* biomeWithMostContribution{};
+
+			for (int k{}; k < biomeMap[i][j].getNumsElements(); ++k)
+			{
+				BiomeElement element{ biomeMap[i][j].getElement(k) };
+				Biome* biome{ element.biome };
+				const int** map{ nullptr };
+
+				for (int l{}; l < usedMaps.size(); ++l)
+				{
+					if (usedMaps.at(l).biome->getId() == biome->getId())
+						map = usedMaps.at(l).heightMap;
+				}
+
+				if (!map)
+				{
+					map = biome->getHeightMap(loc);
+					usedMaps.push_back(TerrainMap{ map, biome });
+				}
+
+				if (!biomeWithMostContribution || element.percentage > bestPercentage)
+				{
+					bestPercentage = element.percentage;
+					biomeWithMostContribution = biome;
+				}
+
+				heightMap[i][j] += static_cast<int>(static_cast<double>(map[i][j]) * element.percentage);
+			}
+
+			layerMap[i][j] = biomeWithMostContribution;
+		}
+	}
 
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
 		SectionLocation section{ i, loc };
-		chunk->addSection(genSection(biome.getLayers(), heightMap, section));
+		chunk->addSection(genSection(layerMap, (const int**)heightMap, section));
 	}
 
-	for (int i{}; i < 16; ++i)
+	deleteHeightMap((const int**)heightMap);
+
+	for (int i{}; i < chunkSize; ++i)
 	{
-		delete[] heightMap[i];
+		delete[] biomeMap[i];
 	}
 
-	delete[] heightMap;
+	delete[] biomeMap;
+
+	for (int i{}; i < usedMaps.size(); ++i)
+	{
+		deleteHeightMap(usedMaps.at(i).heightMap);
+	}
 
 	return chunk;
 }
 
 //TODO: add biome map
-ChunkSection* TerrainGenerator::genSection(const std::vector<Layer>& biomeLayers, const int** heightMap, SectionLocation sectionLocation)
+ChunkSection* TerrainGenerator::genSection(const Biome* biomeMap[chunkSize][chunkSize], const int** heightMap, SectionLocation sectionLocation)
 {
 	static const Tree& oakTree{ OakTree{} };
 	static const Tree& palmTree{ PalmTree{} };
@@ -60,32 +119,27 @@ ChunkSection* TerrainGenerator::genSection(const std::vector<Layer>& biomeLayers
 	int trees{};
 	std::vector<TreeLoc> treeLocs{};
 
-	m_Rand.seed(std::hash<int>{}(sectionLocation.worldPos.x) ^ std::hash<int>{}(sectionLocation.worldPos.y));
+	m_Rand.setSeed(std::hash<int>{}(sectionLocation.worldPos.x) ^ std::hash<int>{}(sectionLocation.worldPos.y));
 
-	for (int x{}; x < 16; ++x)
+	for (int x{}; x < chunkSize; ++x)
 	{
-		for (int z{}; z < 16; ++z)
+		for (int z{}; z < chunkSize; ++z)
 		{
 			int currentHeight{ heightMap[x][z] };
-			int sectionY{ sectionLocation.sectionIndex * 16 };
-
-			if (sectionY > (biomeLayers[biomeLayers.size() - 1].getTop() + currentHeight))
-				continue;
+			int sectionY{ sectionLocation.sectionIndex * chunkSize };
+			const Biome* biome{ biomeMap[x][z] };
+			const std::vector<Layer>& biomeLayers{ biome->getLayers() };
+			Layer topLayer{ biomeLayers[biomeLayers.size() - 1] };
 
 			int y{};
 			int layerIndex{};
 			bool reachedTop{};
-			while (y < 16)
+			while (y < chunkSize)
 			{
-				if (sectionY + y > 40)
-				{
-					++y;
-					continue;
-				}
-
 				if (!reachedTop)
 				{
-					if (sectionY + y > (biomeLayers[layerIndex].getTop() + currentHeight))
+					Layer currentLayer{ biomeLayers[layerIndex] };
+					if (sectionY + y > (currentLayer.getTop() + (currentLayer.isRelative() ? currentHeight : 0)))
 					{
 						++layerIndex;
 
@@ -103,11 +157,11 @@ ChunkSection* TerrainGenerator::genSection(const std::vector<Layer>& biomeLayers
 				++y;
 			}
 			
-			if (!constants::flatWorld && currentHeight > sectionY && currentHeight < sectionY + 16 /*&& currentHeight >= constants::waterLevel*/ && trees <= m_MaxTreesPerChunk)
+			if (!constants::flatWorld && biome->hasTrees() && currentHeight > sectionY && currentHeight < sectionY + 16 && currentHeight >= constants::waterLevel && trees <= m_MaxTreesPerChunk)
 			{
-				if (currentHeight < 50 && currentHeight > 46)
+				if (currentHeight < 52)
 				{
-					if (m_Die(m_Rand) == 0)
+					if (m_Rand.get() == 0)
 					{
 						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, z }, palmTree });
 						++trees;
@@ -115,7 +169,7 @@ ChunkSection* TerrainGenerator::genSection(const std::vector<Layer>& biomeLayers
 				}
 				else
 				{
-					if (m_Die(m_Rand) < 4)
+					if (m_Rand.get() < 4)
 					{
 						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, z }, oakTree });
 						++trees;
@@ -173,6 +227,17 @@ ChunkSection* TerrainGenerator::genSection(const std::vector<Layer>& biomeLayers
 	return chunkSection;
 }
 
+void TerrainGenerator::addHeightMaps(int** dest, const int** map1, const int** map2)
+{
+	for (int i{}; i < chunkSize; ++i)
+	{
+		for (int j{}; j < chunkSize; ++j)
+		{
+			dest[i][j] = map1[i][j] + map2[i][j];
+		}
+	}
+}
+
 void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, const int** heightMap)
 {
 	//check if tree collides with world or another tree (not perfect because its not possible to use getWorldBlock())
@@ -180,7 +245,7 @@ void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i
 	{
 		const Vector3i* leaves{ tree.getLeaves() };
 		Vector3i placePos{ pos.x + leaves[i].x, pos.y + leaves[i].y, pos.z + leaves[i].z };
-		int wY{ (sectionLocation.sectionIndex * 16) + placePos.y };
+		int wY{ (sectionLocation.sectionIndex * chunkSize) + placePos.y };
 
 		//tree
 		if (section->getBlock(placePos).getType() != BlockType::Air)
@@ -225,39 +290,39 @@ bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocat
 	if (pos.x > 15)
 	{
 		sectionForQueue.worldPos.x = section.worldPos.x + 1;
-		blockForQueuePos.x = pos.x - 16;
+		blockForQueuePos.x = pos.x - chunkSize;
 		isOutsideSection = true;
 	}
 	if (pos.x < 0)
 	{
 		sectionForQueue.worldPos.x = section.worldPos.x - 1;
-		blockForQueuePos.x = pos.x + 16;
+		blockForQueuePos.x = pos.x + chunkSize;
 		isOutsideSection = true;
 	}
 	if (pos.y > 15)
 	{
 		sectionForQueue.sectionIndex = section.sectionIndex + 1;
-		blockForQueuePos.y = pos.y - 16;
+		blockForQueuePos.y = pos.y - chunkSize;
 		isOutsideSection = true;
 		if (section.sectionIndex == 15) isOutsideWorld = true;
 	}
 	if (pos.y < 0)
 	{
 		sectionForQueue.sectionIndex = section.sectionIndex - 1;
-		blockForQueuePos.y = pos.y + 16;
+		blockForQueuePos.y = pos.y + chunkSize;
 		isOutsideSection = true;
 		if (section.sectionIndex == 0) isOutsideWorld = true;
 	}
 	if (pos.z > 15)
 	{
 		sectionForQueue.worldPos.y = section.worldPos.y + 1;
-		blockForQueuePos.z = pos.z - 16;
+		blockForQueuePos.z = pos.z - chunkSize;
 		isOutsideSection = true;
 	}
 	if (pos.z < 0)
 	{
 		sectionForQueue.worldPos.y = section.worldPos.y - 1;
-		blockForQueuePos.z = pos.z + 16;
+		blockForQueuePos.z = pos.z + chunkSize;
 		isOutsideSection = true;
 	}
 
@@ -269,6 +334,60 @@ bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocat
 	}
 
 	return isOutsideSection;
+}
+
+const BiomeMixture** TerrainGenerator::getBiomeMap(Vector2i location)
+{
+	BiomeMixture** map = new BiomeMixture*[chunkSize];
+
+	for (int i{}; i < chunkSize; ++i)
+	{
+		map[i] = new BiomeMixture[chunkSize];
+	}
+
+	int chunkX{ location.x * chunkSize };
+	int chunkY{ location.y * chunkSize };
+
+	for (int i{}; i < chunkSize; ++i)
+	{
+		for (int j{}; j < chunkSize; ++j)
+		{
+			double height{ (static_cast<double>(m_BiomeNoise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0 };
+			
+			BiomeMixture& mixture{ map[i][j] };
+			
+			if (height < 100 && height > 60)
+				mixture.addElement(new OakForestBiome{ m_Seed }, 1.0);
+			else if (height < 60 && height > 50)
+				mixture.addElement(new PlainsBiome{ m_Seed }, 1.0);
+			else
+				mixture.addElement(new DesertBiome{ m_Seed }, 1.0);
+		}
+	}
+
+	return (const BiomeMixture**) map;
+}
+
+int** TerrainGenerator::allocHeightMap()
+{
+	int** map = new int*[chunkSize];
+
+	for (int i{}; i < chunkSize; ++i)
+	{
+		map[i] = new int[chunkSize]{};
+	}
+
+	return map;
+}
+
+void TerrainGenerator::deleteHeightMap(const int** map)
+{
+	for (int i{}; i < chunkSize; ++i)
+	{
+		delete[] map[i];
+	}
+
+	delete[] map;
 }
 
 std::vector<QueueBlock>& TerrainGenerator::getBlockQueue()

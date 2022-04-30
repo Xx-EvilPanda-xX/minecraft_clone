@@ -1,15 +1,15 @@
-#ifndef OAK_FOREST_BIOME_H
-#define OAK_FOREST_BIOME_H
+#ifndef PLAINS_BIOME_H
+#define PLAINS_BIOME_H
 
 #include "Biome.h"
 #include "SectionLocation.h"
 #include "../Math/Vector2i.h"
 
-class OakForestBiome : public Biome
+class PlainsBiome : public Biome
 {
 public:
-	OakForestBiome(int seed);
-	~OakForestBiome();
+	PlainsBiome(int seed);
+	~PlainsBiome();
 
 	const std::vector<Layer>& getLayers() const override;
 

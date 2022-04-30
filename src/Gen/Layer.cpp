@@ -1,10 +1,10 @@
 #include "Layer.h"
 
-Layer::Layer(BlockType type, int top)
-	: m_Type{ BlockType::Air },
-	m_Top{}
+Layer::Layer(BlockType type, int top, bool relative)
+	: m_Type{ type },
+	m_Top{},
+	m_Relative{ relative }
 {
-	m_Type = type;
 	setTop(top);
 }
 
@@ -21,6 +21,11 @@ void Layer::setTop(int top)
 	m_Top = top;
 }
 
+void Layer::setRelative(bool relative)
+{
+	m_Relative = relative;
+}
+
 BlockType Layer::getType() const
 {
 	return m_Type;
@@ -29,4 +34,9 @@ BlockType Layer::getType() const
 int Layer::getTop() const
 {
 	return m_Top;
+}
+
+bool Layer::isRelative() const
+{
+	return m_Relative;
 }

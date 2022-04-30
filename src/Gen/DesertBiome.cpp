@@ -1,30 +1,30 @@
-#include "OakForestBiome.h"
+#include "DesertBiome.h"
 #include "../Constants.h"
 #include "Random.h"
 
-constexpr int ID{ 0 };
+constexpr int ID{ 1 };
 
-OakForestBiome::OakForestBiome(int seed)
+DesertBiome::DesertBiome(int seed)
 	: Biome(ID, seed)
 {
 	m_Layers.emplace_back(BlockType::Stone, -6, true);
 	m_Layers.emplace_back(BlockType::Dirt, -1, true);
-	m_Layers.emplace_back(BlockType::Grass, 0, true);
+	m_Layers.emplace_back(BlockType::Sand, 0, true);
 	m_Layers.emplace_back(BlockType::Water, constants::waterLevel, false);
 
-	setNoiseParams(7, 0.00255f);
+	setNoiseParams(7, 0.00355f);
 }
 
-OakForestBiome::~OakForestBiome() = default;
+DesertBiome::~DesertBiome() = default;
 
-const std::vector<Layer>& OakForestBiome::getLayers() const
+const std::vector<Layer>& DesertBiome::getLayers() const
 {
 	return m_Layers;
 }
 
-const int** OakForestBiome::getHeightMap(Vector2i location)
+const int** DesertBiome::getHeightMap(Vector2i location)
 {
-	int** heightMap = new int*[16];
+	int** heightMap = new int* [16];
 
 	for (int i{}; i < 16; ++i)
 	{
@@ -53,7 +53,7 @@ const int** OakForestBiome::getHeightMap(Vector2i location)
 	return (const int**) heightMap;
 }
 
-bool OakForestBiome::hasTrees() const
+bool DesertBiome::hasTrees() const
 {
-	return true;
+	return false;
 }

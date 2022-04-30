@@ -10,6 +10,11 @@
 #include "../World/Block.h"
 #include "Biome.h"
 #include "SectionLocation.h"	
+#include "BiomeMixture.h"
+#include "../noise.h"
+#include "Random.h"
+
+constexpr int chunkSize{ 16 };
 
 struct QueueBlock
 {
@@ -21,10 +26,11 @@ struct QueueBlock
 class TerrainGenerator
 {
 private:
-	std::mt19937 m_Rand;
-	std::uniform_int_distribution<> m_Die;
+	Random m_Rand;
+	int m_Seed;
 	std::vector<QueueBlock> m_BlockQueue;
 	ChunkManager& m_Manager;
+	FastNoiseLite m_BiomeNoise;
 
 	const int m_MaxTreesPerChunk{ 16 };
 
@@ -32,7 +38,15 @@ private:
 
 	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& section, Block block);
 
-	ChunkSection* genSection(const std::vector<Layer>& biomeLayers, const int** heightMap, SectionLocation section);
+	ChunkSection* genSection(const Biome* biomeMap[chunkSize][chunkSize], const int** heightMap, SectionLocation section);
+
+	const BiomeMixture** getBiomeMap(Vector2i location);
+
+	void addHeightMaps(int** dest, const int** map1, const int** map2);
+
+	int** allocHeightMap();
+
+	void deleteHeightMap(const int** map);
 
 public:
 	TerrainGenerator(ChunkManager& manager);
