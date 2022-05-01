@@ -8,3 +8,10 @@ XYZ: 169.273, 49.4501, 75.4422
 214380478
 
 XYZ: -148.048, 54.35, 9.24913
+
+
+New terrain gen with biomes:
+
+cool spot with all biomes
+1522019500
+XYZ: -317.375844, 91.650000, 263.650173

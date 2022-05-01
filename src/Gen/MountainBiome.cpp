@@ -7,9 +7,11 @@ constexpr int ID{ 3 };
 MountainBiome::MountainBiome(int seed)
 	: Biome(ID, seed)
 {
-	m_Layers.emplace_back(Block{ BlockType::Stone, false }, 0, true);
-	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, false);
-	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, false);
+	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, 0, true);
+	m_Layers.emplace_back(Block{ BlockType::Gravel, false }, 0, 90, true);
+	m_Layers.emplace_back(Block{ BlockType::Stone, false }, 0, 0, true);
+	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, 0, false);
+	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, 0, false);
 
 	m_Foliage.emplace_back(Foliage::FoliageType::CACTUS, 0.0075, constants::waterLevel, 255);
 	m_Foliage.emplace_back(Foliage::FoliageType::OAK_TREE, 0.0075, constants::waterLevel, 255);

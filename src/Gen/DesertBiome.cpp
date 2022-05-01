@@ -7,11 +7,10 @@ constexpr int ID{ 1 };
 DesertBiome::DesertBiome(int seed)
 	: Biome(ID, seed)
 {
-	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, true);
-	m_Layers.emplace_back(Block{ BlockType::Dirt, false }, -1, true);
-	m_Layers.emplace_back(Block{ BlockType::Sand, false }, 0, true);
-	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, false);
-	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, false);
+	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, 0, true);
+	m_Layers.emplace_back(Block{ BlockType::Sand, false }, 0, 0, true);
+	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, 0, false);
+	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, 0, false);
 
 	m_Foliage.emplace_back(Foliage::FoliageType::CACTUS, 0.01, constants::waterLevel, 255);
 

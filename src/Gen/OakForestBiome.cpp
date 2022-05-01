@@ -7,13 +7,14 @@ constexpr int ID{ 0 };
 OakForestBiome::OakForestBiome(int seed)
 	: Biome(ID, seed)
 {
-	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, true);
-	m_Layers.emplace_back(Block{ BlockType::Dirt, false }, -1, true);
-	m_Layers.emplace_back(Block{ BlockType::Grass, false }, 0, true);
-	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, false);
-	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, false);
+	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, 0, true);
+	m_Layers.emplace_back(Block{ BlockType::Dirt, false }, -1, constants::waterLevel + 2, true);
+	m_Layers.emplace_back(Block{ BlockType::Grass, false }, 0, constants::waterLevel + 2, true);
+	m_Layers.emplace_back(Block{ BlockType::Sand, false }, 0, 0, true);
+	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, 0, false);
+	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, 0, false);
 
-	m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.01, constants::waterLevel, constants::waterLevel + 3);
+	m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.01, constants::waterLevel, constants::waterLevel + 2);
 	m_Foliage.emplace_back(Foliage::FoliageType::OAK_TREE, 0.03, constants::waterLevel + 3, 255);
 
 	setNoiseParams(7, 0.00255f);

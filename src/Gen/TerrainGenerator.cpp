@@ -145,12 +145,17 @@ ChunkSection* TerrainGenerator::genSection(const Biome* biomeMap[chunkSize][chun
 
 						continue;
 					}
+
+					if (currentLayer.isRelative() && currentHeight < currentLayer.getVerticalLimit())
+					{
+						++layerIndex;
+						continue;
+					}
+
+					Vector3i pos{ x, y, z };
+					chunkSection->setBlock(pos, currentLayer.getBlock().getType(), currentLayer.getBlock().isSurface());
 				}
-
-				Vector3i pos{ x, y, z };
-				if (!reachedTop && chunkSection->getBlock(pos).getType() == BlockType::Air)
-					chunkSection->setBlock(pos, biomeLayers[layerIndex].getBlock().getType(), biomeLayers[layerIndex].getBlock().isSurface());
-
+					
 				++y;
 			}
 			
@@ -383,11 +388,11 @@ const BiomeMixture** TerrainGenerator::getBiomeMap(Vector2i location)
 			if (height < 100 && height > 65)
 				mixture.addElement(new MountainBiome{ m_Seed }, 1.0);
 			else if (height < 65 && height > 50)
-				mixture.addElement(new PlainsBiome{ m_Seed }, 1.0);
+				mixture.addElement(new OakForestBiome{ m_Seed }, 1.0);
 			else if (height < 50 && height > 35)
 			{
 				//mixture.addElement(new MountainBiome{ m_Seed }, 0.10);
-				mixture.addElement(new OakForestBiome{ m_Seed }, 1.0);
+				mixture.addElement(new PlainsBiome{ m_Seed }, 1.0);
 				//mixture.addElement(new PlainsBiome{ m_Seed }, 0.10);
 				//mixture.addElement(new DesertBiome{ m_Seed }, 0.10);
 			}
