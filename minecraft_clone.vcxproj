@@ -23,6 +23,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Gen\Biome.cpp" />
     <ClCompile Include="src\Gen\BiomeMixture.cpp" />
+    <ClCompile Include="src\Gen\Foliage.cpp" />
     <ClCompile Include="src\Gen\Layer.cpp" />
     <ClCompile Include="src\Gen\MountainBiome.cpp" />
     <ClCompile Include="src\Gen\OakTree.cpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\Gen\Biome.h" />
     <ClInclude Include="src\Gen\BiomeMixture.h" />
+    <ClInclude Include="src\Gen\Foliage.h" />
     <ClInclude Include="src\Gen\Layer.h" />
     <ClInclude Include="src\Gen\MountainBiome.h" />
     <ClInclude Include="src\Gen\OakTree.h" />

@@ -7,8 +7,13 @@ constexpr int ID{ 3 };
 MountainBiome::MountainBiome(int seed)
 	: Biome(ID, seed)
 {
-	m_Layers.emplace_back(BlockType::Stone, 0, true);
-	m_Layers.emplace_back(BlockType::Water, constants::waterLevel, false);
+	m_Layers.emplace_back(Block{ BlockType::Stone, false }, 0, true);
+	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, false);
+	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, false);
+
+	m_Foliage.emplace_back(Foliage::FoliageType::CACTUS, 0.0075, constants::waterLevel, 255);
+	m_Foliage.emplace_back(Foliage::FoliageType::OAK_TREE, 0.0075, constants::waterLevel, 255);
+	m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.0075, constants::waterLevel, 255);
 	
 	setNoiseParams(5, 0.00755f);
 }
@@ -36,28 +41,16 @@ const int** MountainBiome::getHeightMap(Vector2i location)
 	{
 		for (int j{}; j < 16; ++j)
 		{
-			if (constants::flatWorld)
-			{
-				heightMap[i][j] = constants::flatWorldHeight;
-			}
-			else
-			{
-				double height{ (static_cast<double>(m_Noise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0 };
-				height += 30.0;
-				heightMap[i][j] = static_cast<int>(height);
-			}
+			double height{ (static_cast<double>(m_Noise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0 };
+			height += 30.0;
+			heightMap[i][j] = static_cast<int>(height);
 		}
 	}
 
 	return (const int**)heightMap;
 }
 
-bool MountainBiome::hasTrees() const
+const std::vector<Foliage>& MountainBiome::getFoliage() const
 {
-	return false;
-}
-
-bool MountainBiome::hasCactus() const
-{
-	return false;
+	return m_Foliage;
 }

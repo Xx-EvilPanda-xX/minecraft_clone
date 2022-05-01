@@ -15,6 +15,8 @@ public:
 
 	void setSeed(int s);
 
+	void setRange(int bottomLimit, int topLimit);
+
 	int get();
 };
 

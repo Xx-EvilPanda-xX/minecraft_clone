@@ -34,6 +34,8 @@ private:
 
 	const int m_MaxTreesPerChunk{ 16 };
 
+	void genFoliage(const Biome* biome, Vector2i pos, int currentHeight, ChunkSection* section, const SectionLocation& sectionLocation, const int** heightMap);
+
 	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection, const int** heightMap);
 
 	void genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& cactusLocation);

@@ -7,10 +7,11 @@ constexpr int ID{ 2 };
 PlainsBiome::PlainsBiome(int seed)
 	: Biome(ID, seed)
 {
-	m_Layers.emplace_back(BlockType::Stone, -6, true);
-	m_Layers.emplace_back(BlockType::Dirt, -1, true);
-	m_Layers.emplace_back(BlockType::Grass, 0, true);
-	m_Layers.emplace_back(BlockType::Water, constants::waterLevel, false);
+	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, true);
+	m_Layers.emplace_back(Block{ BlockType::Dirt, false }, -1, true);
+	m_Layers.emplace_back(Block{ BlockType::Grass, false }, 0, true);
+	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, false);
+	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, false);
 
 	setNoiseParams(7, 0.00255f);
 }
@@ -53,12 +54,7 @@ const int** PlainsBiome::getHeightMap(Vector2i location)
 	return (const int**)heightMap;
 }
 
-bool PlainsBiome::hasTrees() const
+const std::vector<Foliage>& PlainsBiome::getFoliage() const
 {
-	return false;
-}
-
-bool PlainsBiome::hasCactus() const
-{
-	return false;
+	return m_Foliage;
 }

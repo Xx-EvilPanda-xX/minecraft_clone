@@ -109,12 +109,8 @@ Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader)
 	return chunk;
 }
 
-//TODO: add biome map
 ChunkSection* TerrainGenerator::genSection(const Biome* biomeMap[chunkSize][chunkSize], const int** heightMap, SectionLocation sectionLocation)
 {
-	static const Tree& oakTree{ OakTree{} };
-	static const Tree& palmTree{ PalmTree{} };
-	
 	ChunkSection* chunkSection{ new ChunkSection{} };
 	
 	int trees{};
@@ -153,37 +149,13 @@ ChunkSection* TerrainGenerator::genSection(const Biome* biomeMap[chunkSize][chun
 
 				Vector3i pos{ x, y, z };
 				if (!reachedTop && chunkSection->getBlock(pos).getType() == BlockType::Air)
-					chunkSection->setBlock(pos, biomeLayers[layerIndex].getType(), false);
+					chunkSection->setBlock(pos, biomeLayers[layerIndex].getBlock().getType(), biomeLayers[layerIndex].getBlock().isSurface());
 
 				++y;
 			}
 			
-			if (!constants::flatWorld && biome->hasTrees() && currentHeight > sectionY && currentHeight < sectionY + 16 && currentHeight >= constants::waterLevel && trees <= m_MaxTreesPerChunk)
-			{
-				if (currentHeight < 52)
-				{
-					if (m_Rand.get() == 0)
-					{
-						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, z }, palmTree });
-						++trees;
-					}
-				}
-				else
-				{
-					if (m_Rand.get() < 4)
-					{
-						treeLocs.push_back({ { x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, z }, oakTree });
-						++trees;
-					}
-				}
-			}
-
-			if (biome->hasCactus() && currentHeight > sectionY && currentHeight < sectionY + 16 && currentHeight > constants::waterLevel)
-			{
-				if (m_Rand.get() < 8)
-					genCactus(chunkSection, Vector3i{ x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, z }, sectionLocation);
-			}
-
+			if (!constants::flatWorld && currentHeight > sectionY && currentHeight < sectionY + 16)
+				genFoliage(biome, Vector2i{ x, z }, currentHeight, chunkSection, sectionLocation, heightMap);
 
 			//for (int y{}; y < 16; ++y)
 			//{//
@@ -246,6 +218,37 @@ void TerrainGenerator::addHeightMaps(int** dest, const int** map1, const int** m
 	}
 }
 
+void TerrainGenerator::genFoliage(const Biome* biome, Vector2i pos, int currentHeight, ChunkSection* section, const SectionLocation& sectionLocation, const int** heightMap)
+{
+	static const Tree& oakTree{ OakTree{} };
+	static const Tree& palmTree{ PalmTree{} };
+
+	for (int i{}; i < biome->getFoliage().size(); ++i)
+	{
+		Foliage foliage{ biome->getFoliage().at(i) };
+		m_Rand.setRange(0, static_cast<int>(std::pow(foliage.getSpawnRate(), -1.0)));
+		if (m_Rand.get() == 0 && currentHeight < foliage.getSpawnRangeTop() && currentHeight > foliage.getSpawnRangeBottom())
+		{
+			switch (foliage.getType())
+			{
+			case Foliage::FoliageType::OAK_TREE:
+				genTree(oakTree, section, Vector3i{ pos.x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, pos.y }, sectionLocation, heightMap);
+				break;
+			case Foliage::FoliageType::PALM_TREE:
+				genTree(palmTree, section, Vector3i{ pos.x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, pos.y }, sectionLocation, heightMap);
+				break;
+			case Foliage::FoliageType::CACTUS:
+				genCactus(section, Vector3i{ pos.x, currentHeight - (sectionLocation.sectionIndex * 16) + 1, pos.y }, sectionLocation);
+				break;
+			default:
+				std::cout << "Unknown foliage type.\n";
+				break;
+			}
+		}
+	}
+}
+
+
 void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, const int** heightMap)
 {
 	//check if tree collides with world or another tree (not perfect because its not possible to use getWorldBlock())
@@ -290,7 +293,8 @@ void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i
 
 void TerrainGenerator::genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& cactusLocation)
 {
-	int rand{ m_Rand.get() / 64 };
+	m_Rand.setRange(1, 4);
+	int rand{ m_Rand.get() };
 	for (int i{}; i < rand; ++i)
 	{
 		Vector3i placePos{ pos.x, pos.y + i, pos.z };
@@ -376,16 +380,16 @@ const BiomeMixture** TerrainGenerator::getBiomeMap(Vector2i location)
 			
 			BiomeMixture& mixture{ map[i][j] };
 			
-			if (height < 100 && height > 60)
-				mixture.addElement(new OakForestBiome{ m_Seed }, 1.0);
-			else if (height < 60 && height > 50)
+			if (height < 100 && height > 65)
+				mixture.addElement(new MountainBiome{ m_Seed }, 1.0);
+			else if (height < 65 && height > 50)
 				mixture.addElement(new PlainsBiome{ m_Seed }, 1.0);
 			else if (height < 50 && height > 35)
 			{
-				mixture.addElement(new MountainBiome{ m_Seed }, 0.70);
-				mixture.addElement(new OakForestBiome{ m_Seed }, 0.10);
-				mixture.addElement(new PlainsBiome{ m_Seed }, 0.10);
-				mixture.addElement(new DesertBiome{ m_Seed }, 0.10);
+				//mixture.addElement(new MountainBiome{ m_Seed }, 0.10);
+				mixture.addElement(new OakForestBiome{ m_Seed }, 1.0);
+				//mixture.addElement(new PlainsBiome{ m_Seed }, 0.10);
+				//mixture.addElement(new DesertBiome{ m_Seed }, 0.10);
 			}
 			else
 				mixture.addElement(new DesertBiome{ m_Seed }, 1.0);

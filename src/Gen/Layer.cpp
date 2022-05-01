@@ -1,7 +1,7 @@
 #include "Layer.h"
 
-Layer::Layer(BlockType type, int top, bool relative)
-	: m_Type{ type },
+Layer::Layer(Block block, int top, bool relative)
+	: m_Block{ block },
 	m_Top{},
 	m_Relative{ relative }
 {
@@ -10,9 +10,9 @@ Layer::Layer(BlockType type, int top, bool relative)
 
 Layer::~Layer() = default;
 
-void Layer::setType(BlockType type)
+void Layer::setBlock(Block block)
 {
-	m_Type = type;
+	m_Block = block;
 }
 
 void Layer::setTop(int top)
@@ -26,9 +26,9 @@ void Layer::setRelative(bool relative)
 	m_Relative = relative;
 }
 
-BlockType Layer::getType() const
+Block Layer::getBlock() const
 {
-	return m_Type;
+	return m_Block;
 }
 
 int Layer::getTop() const

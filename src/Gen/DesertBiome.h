@@ -12,11 +12,9 @@ public:
 
 	const std::vector<Layer>& getLayers() const override;
 
+	const std::vector<Foliage>& getFoliage() const override;
+
 	const int** getHeightMap(Vector2i location) override;
-
-	bool hasTrees() const override;
-
-	bool hasCactus() const override;
 };
 
 #endif
