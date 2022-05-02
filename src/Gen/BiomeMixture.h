@@ -24,7 +24,7 @@ public:
 
 	BiomeElement getElement(int element) const;
 
-	int getNumsElements() const;
+	int getNumElements() const;
 };
 
 #endif

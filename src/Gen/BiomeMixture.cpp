@@ -23,7 +23,7 @@ BiomeElement BiomeMixture::getElement(int element) const
 	return biomeElements.at(element);
 }
 
-int BiomeMixture::getNumsElements() const
+int BiomeMixture::getNumElements() const
 {
 	return biomeElements.size();
 }

@@ -22,6 +22,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Gen\Biome.cpp" />
+    <ClCompile Include="src\Gen\BiomeMap.cpp" />
     <ClCompile Include="src\Gen\BiomeMixture.cpp" />
     <ClCompile Include="src\Gen\Foliage.cpp" />
     <ClCompile Include="src\Gen\Layer.cpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\Gen\Biome.h" />
+    <ClInclude Include="src\Gen\BiomeMap.h" />
     <ClInclude Include="src\Gen\BiomeMixture.h" />
     <ClInclude Include="src\Gen\Foliage.h" />
     <ClInclude Include="src\Gen\Layer.h" />

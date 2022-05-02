@@ -22,6 +22,7 @@ enum BlockType
 	DiamondBlock,
 	Water,
 	Cactus,
+	Snow,
 
 	NUM_BLOCKS
 };

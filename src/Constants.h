@@ -23,6 +23,7 @@ namespace constants
 	constexpr double blockPlaceCooldown{ 0.15 };
 
 	constexpr int waterLevel{ 48 };
+	constexpr int beachSize{ 1 };
 
 	constexpr double walkSpeed{ 3.5 };
 	constexpr double sprintSpeed{ 15.0 };

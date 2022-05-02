@@ -86,6 +86,8 @@ std::string Block::getName()
 		return "Water";
 	case Cactus:
 		return "Cactus";
+	case Snow:
+		return "Snow";
 	default:
 		return "Unknown";
 	}

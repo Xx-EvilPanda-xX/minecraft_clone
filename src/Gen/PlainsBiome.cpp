@@ -27,13 +27,13 @@ const std::vector<Layer>& PlainsBiome::getLayers() const
 	return m_Layers;
 }
 
-const int** PlainsBiome::getHeightMap(Vector2i location)
+const double** PlainsBiome::getHeightMap(Vector2i location)
 {
-	int** heightMap = new int* [16];
+	double** heightMap = new double* [16];
 
 	for (int i{}; i < 16; ++i)
 	{
-		heightMap[i] = new int[16];
+		heightMap[i] = new double[16];
 	}
 
 	int chunkX{ location.x * 16 };
@@ -44,18 +44,20 @@ const int** PlainsBiome::getHeightMap(Vector2i location)
 		for (int j{}; j < 16; ++j)
 		{
 			if (constants::flatWorld)
-			{
 				heightMap[i][j] = constants::flatWorldHeight;
-			}
 			else
+				heightMap[i][j] = (static_cast<double>(m_Noise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0;
+
+			if (heightMap[i][j] < constants::waterLevel)
 			{
-				double height{ (static_cast<double>(m_Noise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0 };
-				heightMap[i][j] = static_cast<int>(height);
+				heightMap[i][j] += constants::beachSize;
+				if (heightMap[i][j] > constants::waterLevel)
+					heightMap[i][j] = constants::waterLevel;
 			}
 		}
 	}
 
-	return (const int**)heightMap;
+	return (const double**)heightMap;
 }
 
 const std::vector<Foliage>& PlainsBiome::getFoliage() const
