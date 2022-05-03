@@ -11,23 +11,23 @@
 //#define DEBUG
 constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
 
-World::World(Shader shader, Player player, ChunkManager& manager)
+World::World(Shader shader, Keyboard& keyboard)
 	: m_Shader{ shader },
-	m_Manager{ manager },
-	m_Player{ player },
-	m_WorldGen{ manager }
+	m_Manager{ this },
+	m_Player{ m_Manager, keyboard, constants::playerReach },
+	m_WorldGen{ m_Manager }
 {
 	m_LastBlockQueueSize = 0;
 }
 
-void World::worldUpdate(const Camera& camera, bool deletePass)
+void World::worldUpdate(bool deletePass)
 {
-	Vector3i playerPos{ camera.getLocation() };
+	Vector3i playerPos{ m_Player.getCamera().getLocation()};
 
 	if (m_Manager.chunkExsists(playerPos))
 		m_Player.move();
 
-	m_Manager.updateQueues(camera);
+	m_Manager.updateQueues(m_Player.getCamera());
 
 	for (int i{}; i < chunkBuildsPerFrame; ++i)
 	{
@@ -60,9 +60,9 @@ void World::worldUpdate(const Camera& camera, bool deletePass)
 	m_LastBlockQueueSize = blockQueue.size();
 }
 
-void World::worldRender(const Camera& camera, const Window& window)
+void World::worldRender(const Window& window)
 {
-	Vector3i playerPos{ camera.getLocation() };
+	Vector3i playerPos{ m_Player.getCamera().getLocation() };
 	m_Shader.bind();
 	m_Shader.setBool("playerUnderWater", m_Manager.getWorldBlock(playerPos).getType() == BlockType::Water);
 	m_Shader.unbind();
@@ -70,7 +70,7 @@ void World::worldRender(const Camera& camera, const Window& window)
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
 		if (m_Chunks[i]->isBuilt())
-			Renderer::drawMesh(camera, m_Chunks[i]->getMesh(), window);
+			Renderer::drawMesh(m_Player.getCamera(), m_Chunks[i]->getMesh(), window);
 	}
 }
 

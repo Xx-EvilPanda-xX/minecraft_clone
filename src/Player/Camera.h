@@ -10,6 +10,7 @@ class Camera
 {
 private:
 	glm::dvec3 m_Location;
+
 	double m_Yaw;
 	double m_Pitch;
 

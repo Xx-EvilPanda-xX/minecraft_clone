@@ -8,6 +8,7 @@ class Random
 private:
 	std::mt19937 m_Rand;
 	std::uniform_int_distribution<> m_Die;
+
 public:
 	Random(int bottomLimit, int topLimit);
 

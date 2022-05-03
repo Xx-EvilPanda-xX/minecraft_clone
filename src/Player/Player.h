@@ -18,9 +18,10 @@ class Player
 {
 private:
 	Camera m_Camera;
-	ChunkManager& m_Manager;
 	glm::dvec3 m_Velocity;
 	AABB m_Aabb;
+
+	ChunkManager& m_Manager;
 	Keyboard& m_Keyboard;
 
 	glm::dvec3 m_LastValidLoc;

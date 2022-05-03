@@ -9,13 +9,11 @@
 #include "Render/Texture.h"
 #include "Constants.h"
 
-Application::Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager)
-	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, Player{ chunkManager, m_Window.getKeyboard(), constants::playerReach }, chunkManager },
+Application::Application(int windowWidth, int windowHeight, const char* title)
+	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, m_Window.getKeyboard() },
 	m_Window{ windowWidth, windowHeight, title },
 	m_Handler{}
 {
-	chunkManager.setWorld(&m_World);
-
 	m_CrossHair = { 0, 0, 0, 0, 0, 0, nullptr, 0 };
 	m_Frames = 0;
 	m_Time = 0;
@@ -37,7 +35,6 @@ void Application::init()
 	m_TextComponents[1] = TextRenderer{ "XYZ: ", -1.0, 0.975, 0.1, 0.15, m_GuiShader };
 	m_TextComponents[2] = TextRenderer{ "Chunk adress: ", -1.0, 0.95, 0.1, 0.15, m_GuiShader };
 	m_TextComponents[3] = TextRenderer{ "Selected Block: ", -1.0, 0.75, 0.1, 0.15, m_GuiShader };
-	//m_TextComponents[4] = TextRenderer{ "[`]: Gravel, [1]: Grass, [2]: Stone, [3]: Dirt, [4]: CobbleStone, [5]: Wood, [6]: Leaves, [7]: Glass, [8]: Sand, [9]: Planks, [0]: DiamondBlock, [-]: Water, [=]: CraftingTable", -1.0, -0.075, 0.075, 0.15, m_GuiShader };
 
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -63,8 +60,8 @@ void Application::run()
 			deletePass = true;
 		}
 
-		m_World.worldUpdate(m_World.getPlayer().getCamera(), deletePass);
-		m_World.worldRender(m_World.getPlayer().getCamera(), m_Window);
+		m_World.worldUpdate(deletePass);
+		m_World.worldRender(m_Window);
 		updateGui();
 		renderGui();
 

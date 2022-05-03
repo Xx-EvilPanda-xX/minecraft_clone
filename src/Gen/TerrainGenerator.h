@@ -28,6 +28,7 @@ class TerrainGenerator
 private:
 	Random m_Rand;
 	int m_Seed;
+
 	std::vector<QueueBlock> m_BlockQueue;
 	ChunkManager& m_Manager;
 	FastNoiseLite m_BiomeNoise;

@@ -18,17 +18,17 @@ private:
 	std::vector<Chunk*> m_Chunks;
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
-	ChunkManager& m_Manager;
+	ChunkManager m_Manager;
 	Player m_Player;
 
 	int m_LastBlockQueueSize;
 
 public:
-	World(Shader shader, Player player, ChunkManager& manager);
+	World(Shader shader, Keyboard& keyboard);
 
-	void worldRender(const Camera& camera, const Window& window);
+	void worldRender(const Window& window);
 	
-	void worldUpdate(const Camera& camera, bool deletePass);
+	void worldUpdate(bool deletePass);
 
 	void genPass();
 

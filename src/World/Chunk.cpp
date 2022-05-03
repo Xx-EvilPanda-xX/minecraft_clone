@@ -51,7 +51,7 @@ void Chunk::addSection(ChunkSection* section)
 
 void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[4])
 {	
-	if (section < 0 || section > 16)
+	if (section < 0 || section > 15)
 	{
 		std::cout << "Invalid section index!\n";
 		return;

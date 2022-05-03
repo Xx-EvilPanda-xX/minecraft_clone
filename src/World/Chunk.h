@@ -14,11 +14,12 @@ class Chunk
 private:
 	ChunkSection* m_Sections[g_ChunkCap];
 	ChunkMesh m_Mesh;
+	Vector2i m_Location;
+
 	int m_CurrentSectionIndex;
 	bool m_Complete;
 	bool m_IsBuilt;
 	bool m_Building;
-	Vector2i m_Location;
 	std::vector<int> m_RemainingSections;
 
 	void resetRemaining();

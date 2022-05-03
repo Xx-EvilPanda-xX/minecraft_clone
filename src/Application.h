@@ -21,10 +21,10 @@ private:
 	Window m_Window;
 	World m_World;
 
+	EventHandler m_Handler;
 	RenderData m_CrossHair;
 	Shader m_GuiShader;
 	Shader m_TextShader;
-	EventHandler m_Handler;
 
 	TextRenderer m_TextComponents[numTextComponents];
 
@@ -48,7 +48,7 @@ private:
 public:
 	static double s_Dt;
 
-	Application(int windowWidth, int windowHeight, const char* title, ChunkManager& chunkManager);
+	Application(int windowWidth, int windowHeight, const char* title);
 
 	void init();
 

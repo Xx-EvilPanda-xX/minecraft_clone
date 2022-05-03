@@ -9,11 +9,11 @@ Player::Player(ChunkManager& manager, Keyboard& keyboard, double reach)
 	: m_Camera{ glm::dvec3{ 0.0, 96.0, 0.0 }, 0.0, 0.0, 90.0, constants::mouse_sensitivity },
 	m_Manager{ manager },
 	m_Keyboard{ keyboard },
-	m_Reach{ reach }
+	m_Reach{ reach },
+	m_Velocity{},
+	m_LastValidLoc{},
+	m_LastValidAABB{}
 {
-	m_Velocity = glm::dvec3{};
-	m_LastValidLoc = glm::dvec3{};
-
 	m_JumpCoolDown = 0.25;
 	m_Sprinting = false;
 	m_Grounded = false;

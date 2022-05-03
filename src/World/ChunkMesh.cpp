@@ -72,7 +72,7 @@ float* ChunkMesh::calcTexCoords(BlockType block, Face face)
 	{
 		if (s_AtlasIndices[i] == block)
 		{
-			index = i;
+			index = static_cast<float>(i);
 			break;
 		}
 	}
