@@ -27,6 +27,8 @@ private:
 
 	void finishBuilding();
 
+	void tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos);
+
 public:
 	Chunk(Vector2i loc, Shader& shader);
 

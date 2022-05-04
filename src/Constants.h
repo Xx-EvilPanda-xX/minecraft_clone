@@ -22,6 +22,7 @@ namespace constants
 	constexpr double blockBreakCooldown{ 0.15 };
 	constexpr double blockPlaceCooldown{ 0.15 };
 
+	constexpr bool useTranslucentWater{ true };
 	constexpr int waterLevel{ 48 };
 	constexpr int beachSize{ 1 };
 

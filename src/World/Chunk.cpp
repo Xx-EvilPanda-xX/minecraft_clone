@@ -2,6 +2,7 @@
 #include "Chunk.h"
 #include "ChunkManager.h"
 #include "Block.h"
+#include "../Constants.h"
 
 Chunk::Chunk(Vector2i loc, Shader& shader) 
 	: m_Location{ loc },
@@ -155,70 +156,30 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 					NegZ = chunkSection->getBlock(Vector3i{ x, y, z - 1 });
 				}
 
-				if (PosX.getType() == BlockType::Air ||
-					(!currentBlock.isTransparent() && PosX.isTransparent()) ||
-					(currentBlock.isTransparent() && PosX.isTransparent() && currentBlock.getType() != PosX.getType()))
-				{
-					if (PosX.getType() == BlockType::Water)
-						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
-					else
-						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
-				}
-
-				if (PosY.getType() == BlockType::Air ||
-					(!currentBlock.isTransparent() && PosY.isTransparent()) ||
-					(currentBlock.isTransparent() && PosY.isTransparent() && currentBlock.getType() != PosY.getType()))
-				{
-					if (PosY.getType() == BlockType::Water)
-						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
-					else
-						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
-				}
-
-				if (PosZ.getType() == BlockType::Air ||
-					(!currentBlock.isTransparent() && PosZ.isTransparent()) ||
-					(currentBlock.isTransparent() && PosZ.isTransparent() && currentBlock.getType() != PosZ.getType()))
-				{
-					if (PosZ.getType() == BlockType::Water)
-						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
-					else
-						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
-				}
-
-				if (NegX.getType() == BlockType::Air ||
-					(!currentBlock.isTransparent() && NegX.isTransparent()) ||
-					(currentBlock.isTransparent() && NegX.isTransparent() && currentBlock.getType() != NegX.getType()))
-				{
-					if (NegX.getType() == BlockType::Water)
-						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
-					else
-						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
-				}
-
-				if (NegY.getType() == BlockType::Air ||
-					(!currentBlock.isTransparent() && NegY.isTransparent()) ||
-					(currentBlock.isTransparent() && NegY.isTransparent() && currentBlock.getType() != NegY.getType()))
-				{
-					if (NegY.getType() == BlockType::Water)
-						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
-					else
-						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
-				}
-
-				if (NegZ.getType() == BlockType::Air ||
-					(!currentBlock.isTransparent() && NegZ.isTransparent()) ||
-					(currentBlock.isTransparent() && NegZ.isTransparent() && currentBlock.getType() != NegZ.getType()))
-				{
-					if (NegZ.getType() == BlockType::Water)
-						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
-					else
-						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
-				}
+				tryAddFace(PosX, currentBlock, Face::North, Vector3i{ x, wY, z });
+				tryAddFace(PosY, currentBlock, Face::Up, Vector3i{ x, wY, z });
+				tryAddFace(PosZ, currentBlock, Face::East, Vector3i{ x, wY, z });
+				tryAddFace(NegX, currentBlock, Face::South, Vector3i{ x, wY, z });
+				tryAddFace(NegY, currentBlock, Face::Down, Vector3i{ x, wY, z });
+				tryAddFace(NegZ, currentBlock, Face::West, Vector3i{ x, wY, z });
 			}
 		}
 	}
 	
 	finishBuilding();
+}
+
+void Chunk::tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos)
+{
+	if (testBlock.getType() == BlockType::Air ||
+		(!currentBlock.isTransparent() && testBlock.isTransparent()) ||
+		(currentBlock.isTransparent() && testBlock.isTransparent() && currentBlock.getType() != testBlock.getType()))
+	{
+		if (currentBlock.getType() == BlockType::Water && testBlock.getType() == BlockType::Air && constants::useTranslucentWater)
+			m_TranslucentMesh.addFace(pos, currentBlock, face);
+		else
+			m_SolidMesh.addFace(pos, currentBlock, face);
+	}
 }
 
 void Chunk::finishBuilding()
