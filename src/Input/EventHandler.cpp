@@ -90,7 +90,7 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_O))
-		app.getWorld().reloadChunks(cam);
+		app.getWorld().rebuildChunks(cam);
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_ALT))
 	{

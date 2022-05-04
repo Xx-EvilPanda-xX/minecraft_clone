@@ -132,6 +132,13 @@ void World::buildPass()
 	static int sectionPtr{};
 	static int shouldGen{};
 
+	if (m_ResetBuildVars)
+	{
+		sectionPtr = 0;
+		shouldGen = 0;
+		m_ResetBuildVars = false;
+	}
+
 	Chunk* currentChunk{ nullptr };
 
 	if (!m_Manager.getBuildQueue().empty())
@@ -158,17 +165,16 @@ void World::buildPass()
 	++shouldGen;
 }
 
-void World::reloadChunks(const Camera& camera)
+void World::rebuildChunks(const Camera& camera)
 {
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
-		delete m_Chunks[i];
-		m_Chunks[i] = nullptr;
+		m_Chunks[i]->clearMesh();
 	}
 
-	m_Chunks.clear();
-	m_Manager.clearQueues();
+	m_Manager.getBuildQueue().clear();
 	m_Manager.updateQueues(camera);
+	m_ResetBuildVars = true;
 }
 
 int World::getChunkIndex(Vector2i chunkPos) const

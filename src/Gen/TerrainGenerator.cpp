@@ -36,7 +36,7 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	m_BiomeNoise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
 	m_BiomeNoise.SetSeed(seedRand.get());
 	m_BiomeNoise.SetFractalOctaves(6);
-	m_BiomeNoise.SetFrequency(0.0065f);
+	m_BiomeNoise.SetFrequency(0.0055f);
 
 	std::cout << "Seed: " << seed << "\n";
 }

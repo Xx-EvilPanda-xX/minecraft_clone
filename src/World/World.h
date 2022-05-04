@@ -22,6 +22,7 @@ private:
 	Player m_Player;
 
 	int m_LastBlockQueueSize;
+	bool m_ResetBuildVars;
 
 public:
 	World(Shader shader, Keyboard& keyboard);
@@ -36,7 +37,7 @@ public:
 
 	void buildPass();
 
-	void reloadChunks(const Camera& camera);
+	void rebuildChunks(const Camera& camera);
 
 	int getChunkIndex(Vector2i chunkPos) const;
 
