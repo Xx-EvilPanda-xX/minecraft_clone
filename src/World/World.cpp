@@ -70,7 +70,13 @@ void World::worldRender(const Window& window)
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
 		if (m_Chunks[i]->isBuilt())
-			Renderer::drawMesh(m_Player.getCamera(), m_Chunks[i]->getMesh(), window);
+			Renderer::drawMesh(m_Player.getCamera(), m_Chunks[i]->getTranslucentMesh(), window);
+	}
+
+	for (int i{}; i < m_Chunks.size(); ++i)
+	{
+		if (m_Chunks[i]->isBuilt())
+			Renderer::drawMesh(m_Player.getCamera(), m_Chunks[i]->getSolidMesh(), window);
 	}
 }
 

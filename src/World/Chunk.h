@@ -13,7 +13,8 @@ class Chunk
 {
 private:
 	ChunkSection* m_Sections[g_ChunkCap];
-	ChunkMesh m_Mesh;
+	ChunkMesh m_SolidMesh;
+	ChunkMesh m_TranslucentMesh;
 	Vector2i m_Location;
 
 	int m_CurrentSectionIndex;
@@ -37,7 +38,9 @@ public:
 
 	int getCurrentSectionIndex() const;
 
-	const ChunkMesh& getMesh() const;
+	const ChunkMesh& getSolidMesh() const;
+
+	const ChunkMesh& getTranslucentMesh() const;
 
 	bool isComplete() const;
 

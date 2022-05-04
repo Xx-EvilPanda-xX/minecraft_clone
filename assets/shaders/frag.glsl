@@ -20,7 +20,7 @@ void main(){
 
     if (playerUnderWater)
     {
-        outColor *= vec4(0.0, 0.25, 0.75, 0.0);
-        outColor += vec4(0.0, 0.1, 0.45, 0.0);
+        outColor *= vec4(0.0, 0.25, 0.75, 1.0);
+        outColor += vec4(0.0, 0.1, 0.45, 1.0);
     }
 }

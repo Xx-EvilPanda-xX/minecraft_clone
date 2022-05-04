@@ -5,7 +5,8 @@
 
 Chunk::Chunk(Vector2i loc, Shader& shader) 
 	: m_Location{ loc },
-	m_Mesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader }
+	m_SolidMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader },
+	m_TranslucentMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader }
 {
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
@@ -29,7 +30,10 @@ Chunk::~Chunk()
 	}
 
 	if (m_IsBuilt)
-		m_Mesh.clear();
+	{
+		m_SolidMesh.clear();
+		m_TranslucentMesh.clear();
+	}
 }
 
 void Chunk::addSection(ChunkSection* section)
@@ -155,42 +159,60 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 					(!currentBlock.isTransparent() && PosX.isTransparent()) ||
 					(currentBlock.isTransparent() && PosX.isTransparent() && currentBlock.getType() != PosX.getType()))
 				{
-					m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
+					if (PosX.getType() == BlockType::Water)
+						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
+					else
+						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
 				}
 
 				if (PosY.getType() == BlockType::Air ||
 					(!currentBlock.isTransparent() && PosY.isTransparent()) ||
 					(currentBlock.isTransparent() && PosY.isTransparent() && currentBlock.getType() != PosY.getType()))
 				{
-					m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
+					if (PosY.getType() == BlockType::Water)
+						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
+					else
+						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Up);
 				}
 
 				if (PosZ.getType() == BlockType::Air ||
 					(!currentBlock.isTransparent() && PosZ.isTransparent()) ||
 					(currentBlock.isTransparent() && PosZ.isTransparent() && currentBlock.getType() != PosZ.getType()))
 				{
-					m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
+					if (PosZ.getType() == BlockType::Water)
+						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
+					else
+						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::East);
 				}
 
 				if (NegX.getType() == BlockType::Air ||
 					(!currentBlock.isTransparent() && NegX.isTransparent()) ||
 					(currentBlock.isTransparent() && NegX.isTransparent() && currentBlock.getType() != NegX.getType()))
 				{
-					m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
+					if (NegX.getType() == BlockType::Water)
+						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
+					else
+						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::South);
 				}
 
 				if (NegY.getType() == BlockType::Air ||
 					(!currentBlock.isTransparent() && NegY.isTransparent()) ||
 					(currentBlock.isTransparent() && NegY.isTransparent() && currentBlock.getType() != NegY.getType()))
 				{
-					m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
+					if (NegY.getType() == BlockType::Water)
+						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
+					else
+						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::Down);
 				}
 
 				if (NegZ.getType() == BlockType::Air ||
 					(!currentBlock.isTransparent() && NegZ.isTransparent()) ||
 					(currentBlock.isTransparent() && NegZ.isTransparent() && currentBlock.getType() != NegZ.getType()))
 				{
-					m_Mesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
+					if (NegZ.getType() == BlockType::Water)
+						m_TranslucentMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
+					else
+						m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::West);
 				}
 			}
 		}
@@ -203,7 +225,8 @@ void Chunk::finishBuilding()
 {
 	if (m_RemainingSections.size() == 0)
 	{
-		m_Mesh.toBuffers();
+		m_SolidMesh.toBuffers();
+		m_TranslucentMesh.toBuffers();
 		m_IsBuilt = true;
 		m_Building = false;
 		resetRemaining();
@@ -212,7 +235,8 @@ void Chunk::finishBuilding()
 
 void Chunk::clearMesh()
 {
-	m_Mesh.clear();
+	m_SolidMesh.clear();
+	m_TranslucentMesh.clear();
 	m_IsBuilt = false;
 	m_Building = false;
 	resetRemaining();
@@ -232,9 +256,14 @@ int Chunk::getCurrentSectionIndex() const
 	return m_CurrentSectionIndex;
 }
 
-const ChunkMesh& Chunk::getMesh() const
+const ChunkMesh& Chunk::getSolidMesh() const
 {
-	return m_Mesh;
+	return m_SolidMesh;
+}
+
+const ChunkMesh& Chunk::getTranslucentMesh() const
+{
+	return m_TranslucentMesh;
 }
 
 bool Chunk::isComplete() const
