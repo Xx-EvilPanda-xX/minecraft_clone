@@ -90,7 +90,14 @@ void Application::updateGui()
 	if (m_GuiUpdateCooldown <= 0.0)
 	{
 		glm::dvec3 camLoc{ m_World.getPlayer().getCamera().getLocation() };
+		Vector3i iVecCamLoc{ camLoc };
 		Vector2i chunkPos{ static_cast<int>(camLoc.x) / 16, static_cast<int>(camLoc.z) / 16 };
+
+		if (iVecCamLoc.x < 0 && iVecCamLoc.x % 16 != 0)
+			--chunkPos.x;
+
+		if (iVecCamLoc.z < 0 && iVecCamLoc.z % 16 != 0)
+			--chunkPos.y;
 
 		m_TextComponents[0].update(std::string{ "FPS: " } + std::to_string(m_CurrentFps), -1.0, 1.0, 0.1, 0.15);
 		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(camLoc.x) + ", " + std::to_string(camLoc.y) + ", " + std::to_string(camLoc.z), -1.0, 0.975, 0.1, 0.15);

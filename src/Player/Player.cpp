@@ -417,6 +417,13 @@ void Player::updateMeshes(Vector3i editPos)
 {
 	Chunk* chunk{ m_Manager.getChunk(editPos) };
 
+	if (!chunk->isBuilt())
+		return;
+
+	int chunkIndex;
+	if (m_Manager.isInBuildQueue(chunk, chunkIndex))
+		m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
+
 	chunk->clearMesh();
 	Chunk* adjacentChunks[4]{};
 	m_Manager.getAdjacentChunks(chunk->getLocation(), adjacentChunks);
@@ -431,6 +438,9 @@ void Player::updateMeshes(Vector3i editPos)
 	{
 		Chunk* chunkPosX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x + 1, chunk->getLocation().y }) };
 
+		if (m_Manager.isInBuildQueue(chunkPosX, chunkIndex))
+			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
+
 		chunkPosX->clearMesh();
 		m_Manager.getAdjacentChunks(chunkPosX->getLocation(), adjacentChunks);
 		for (int i{}; i < 16; ++i)
@@ -442,6 +452,9 @@ void Player::updateMeshes(Vector3i editPos)
 	if (local.x == 0)
 	{
 		Chunk* chunkNegX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x - 1, chunk->getLocation().y }) };
+
+		if (m_Manager.isInBuildQueue(chunkNegX, chunkIndex))
+			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
 
 		chunkNegX->clearMesh();
 		m_Manager.getAdjacentChunks(chunkNegX->getLocation(), adjacentChunks);
@@ -455,6 +468,9 @@ void Player::updateMeshes(Vector3i editPos)
 	{
 		Chunk* chunkPosY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y + 1 }) };
 
+		if (m_Manager.isInBuildQueue(chunkPosY, chunkIndex))
+			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
+
 		chunkPosY->clearMesh();
 		m_Manager.getAdjacentChunks(chunkPosY->getLocation(), adjacentChunks);
 		for (int i{}; i < 16; ++i)
@@ -466,6 +482,9 @@ void Player::updateMeshes(Vector3i editPos)
 	if (local.z == 0)
 	{
 		Chunk* chunkNegY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y - 1 }) };
+
+		if (m_Manager.isInBuildQueue(chunkNegY, chunkIndex))
+			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
 
 		chunkNegY->clearMesh();
 		m_Manager.getAdjacentChunks(chunkNegY->getLocation(), adjacentChunks);

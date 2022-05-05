@@ -55,7 +55,7 @@ void Chunk::addSection(ChunkSection* section)
 }
 
 void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[4])
-{	
+{
 	if (section < 0 || section > 15)
 	{
 		std::cout << "Invalid section index!\n";
@@ -175,7 +175,7 @@ void Chunk::tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i 
 		(!currentBlock.isTransparent() && testBlock.isTransparent()) ||
 		(currentBlock.isTransparent() && testBlock.isTransparent() && currentBlock.getType() != testBlock.getType()))
 	{
-		if (currentBlock.getType() == BlockType::Water && testBlock.getType() == BlockType::Air && constants::useTranslucentWater)
+		if (currentBlock.getType() == BlockType::Water && constants::useTranslucentWater)
 			m_TranslucentMesh.addFace(pos, currentBlock, face);
 		else
 			m_SolidMesh.addFace(pos, currentBlock, face);

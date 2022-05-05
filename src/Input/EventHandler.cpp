@@ -89,7 +89,7 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 		flyToggleCooldown = 0.15f;
 	}
 
-	if (keyboard.isKeyDown(GLFW_KEY_O))
+	if (keyboard.isKeyDown(GLFW_KEY_R))
 		app.getWorld().rebuildChunks(cam);
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_ALT))
