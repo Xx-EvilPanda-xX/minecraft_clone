@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include <glm/glm.hpp>
+
 namespace constants
 {
 	constexpr int windowWidth{ 1280 };
@@ -30,6 +32,8 @@ namespace constants
 	constexpr double sprintSpeed{ 15.0 };
 	constexpr double playerDrift{ 20.0 };
 	constexpr double playerSize{ 0.45 };
+	constexpr double cameraFov{ 90.0 };
+	constexpr glm::dvec3 playerSpawnPos{ 0.0, 96.0, 0.0 };
 
 	constexpr double gravity{ 53.0 };
 	constexpr double jumpHeight{ 1.4 };

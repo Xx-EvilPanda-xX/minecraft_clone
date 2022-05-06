@@ -24,6 +24,16 @@ void World::worldUpdate(bool deletePass)
 {
 	Vector3i playerPos{ m_Player.getCamera().getLocation()};
 
+	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
+	if (playerPos.y < -5.0)
+		glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
+	if (playerPos.y > 255.0)
+		glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
+	if (playerPos.y > 512.0)
+		glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
+	if (playerPos.y > 1024.0)
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 	if (m_Manager.chunkExsists(playerPos))
 		m_Player.move();
 
