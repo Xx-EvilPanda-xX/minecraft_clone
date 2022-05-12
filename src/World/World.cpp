@@ -83,7 +83,7 @@ void World::worldRender(const Window& window)
 			Renderer::drawMesh(m_Player.getCamera(), m_Chunks[i]->getSolidMesh(), window);
 	}
 
-	if (constants::useTranslucentWater)
+	if constexpr (constants::useTranslucentWater)
 	{
 		for (int i{}; i < m_Chunks.size(); ++i)
 		{

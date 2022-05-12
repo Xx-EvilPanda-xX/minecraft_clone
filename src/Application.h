@@ -37,6 +37,8 @@ private:
 
 	long m_DoDeletePass;
 
+	void startupHelp();
+
 	void handleInput();
 
 	void updateFPS();

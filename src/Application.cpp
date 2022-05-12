@@ -47,6 +47,8 @@ void Application::init()
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
+
+	startupHelp();
 }
 
 void Application::run()
@@ -164,6 +166,18 @@ void Application::updateFPS()
 long Application::getCurrentTimeMillis()
 {
 	return static_cast<long>(glfwGetTime() * 1000);
+}
+
+void Application::startupHelp()
+{
+	std::cout << "\n\nCONTROLS:\n\n";
+	std::cout << "Move forward: W\nMove backward: S\nMove right: D\nMove left: A\nMove up: space (fly only)\nMove down: right shift\nJump: space (gravity only)\n";
+	std::cout << "Sprint: left control\nToggle flying: F\nEnable wireframe: C\n";
+	std::cout << "Optifine zoom: left alt\nReload chunks: R\nEscape: quit";
+	std::cout << "\n\n===================================================\n\n";
+	std::cout << "BLOCKS:\n\n";
+	std::cout << "1: Grass\n2: Stone\n3: Dirt\n4: Cobble Stone\n5: Wood\n6: Palm Leaves\n7: Oak Leaves\n8: Glass\n9: Sand\n0: Planks\n";
+	std::cout << "Tab + 1: Cactus\nTab + 2: Gravel\nTab + 3: Diamond Block\nTab + 4: Snow\nTab + 5: Water\nTab + 6: Crafting Table\n\n";
 }
 
 void Application::handleInput()

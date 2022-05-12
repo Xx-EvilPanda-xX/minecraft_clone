@@ -103,32 +103,44 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 		cam.setMouseSens(constants::mouse_sensitivity);
 	}
 
-	if (keyboard.isKeyDown(GLFW_KEY_GRAVE_ACCENT))
-		m_SelectedBlock = Block{ BlockType::Gravel, false };
-	if (keyboard.isKeyDown(GLFW_KEY_1))
-		m_SelectedBlock = Block{ BlockType::Grass, false };
-	if (keyboard.isKeyDown(GLFW_KEY_2))
-		m_SelectedBlock = Block{ BlockType::Stone, false };
-	if (keyboard.isKeyDown(GLFW_KEY_3))
-		m_SelectedBlock = Block{ BlockType::Dirt, false };
-	if (keyboard.isKeyDown(GLFW_KEY_4))
-		m_SelectedBlock = Block{ BlockType::CobbleStone, false };
-	if (keyboard.isKeyDown(GLFW_KEY_5))
-		m_SelectedBlock = Block{ BlockType::Wood, false };
-	if (keyboard.isKeyDown(GLFW_KEY_6))
-		m_SelectedBlock = Block{ BlockType::PalmLeaves, false };
-	if (keyboard.isKeyDown(GLFW_KEY_7))
-		m_SelectedBlock = Block{ BlockType::OakLeaves, false };
-	if (keyboard.isKeyDown(GLFW_KEY_8))
-		m_SelectedBlock = Block{ BlockType::Glass, false };
-	if (keyboard.isKeyDown(GLFW_KEY_9))
-		m_SelectedBlock = Block{ BlockType::Sand, false };
-	if (keyboard.isKeyDown(GLFW_KEY_0))
-		m_SelectedBlock = Block{ BlockType::Planks, false };
-	if (keyboard.isKeyDown(GLFW_KEY_MINUS))
-		m_SelectedBlock = Block{ BlockType::DiamondBlock, false };
-	if (keyboard.isKeyDown(GLFW_KEY_EQUAL))
-		m_SelectedBlock = Block{ BlockType::Water, false };
+	if (!keyboard.isKeyDown(GLFW_KEY_TAB))
+	{
+		if (keyboard.isKeyDown(GLFW_KEY_1))
+			m_SelectedBlock = Block{ BlockType::Grass, false };
+		if (keyboard.isKeyDown(GLFW_KEY_2))
+			m_SelectedBlock = Block{ BlockType::Stone, false };
+		if (keyboard.isKeyDown(GLFW_KEY_3))
+			m_SelectedBlock = Block{ BlockType::Dirt, false };
+		if (keyboard.isKeyDown(GLFW_KEY_4))
+			m_SelectedBlock = Block{ BlockType::CobbleStone, false };
+		if (keyboard.isKeyDown(GLFW_KEY_5))
+			m_SelectedBlock = Block{ BlockType::Wood, false };
+		if (keyboard.isKeyDown(GLFW_KEY_6))
+			m_SelectedBlock = Block{ BlockType::PalmLeaves, false };
+		if (keyboard.isKeyDown(GLFW_KEY_7))
+			m_SelectedBlock = Block{ BlockType::OakLeaves, false };
+		if (keyboard.isKeyDown(GLFW_KEY_8))
+			m_SelectedBlock = Block{ BlockType::Glass, false };
+		if (keyboard.isKeyDown(GLFW_KEY_9))
+			m_SelectedBlock = Block{ BlockType::Sand, false };
+		if (keyboard.isKeyDown(GLFW_KEY_0))
+			m_SelectedBlock = Block{ BlockType::Planks, false };
+	}
+	else
+	{
+		if (keyboard.isKeyDown(GLFW_KEY_1))
+			m_SelectedBlock = Block{ BlockType::Cactus, false };
+		if (keyboard.isKeyDown(GLFW_KEY_2))
+			m_SelectedBlock = Block{ BlockType::Gravel, false };
+		if (keyboard.isKeyDown(GLFW_KEY_3))
+			m_SelectedBlock = Block{ BlockType::DiamondBlock, false };
+		if (keyboard.isKeyDown(GLFW_KEY_4))
+			m_SelectedBlock = Block{ BlockType::Snow, false };
+		if (keyboard.isKeyDown(GLFW_KEY_5))
+			m_SelectedBlock = Block{ BlockType::Water, false };
+		if (keyboard.isKeyDown(GLFW_KEY_6))
+			m_SelectedBlock = Block{ BlockType::CraftingTable, false };
+	}
 
 	flyToggleCooldown -= Application::s_Dt;
 }
