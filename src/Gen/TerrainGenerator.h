@@ -31,7 +31,8 @@ private:
 
 	std::vector<QueueBlock> m_BlockQueue;
 	ChunkManager& m_Manager;
-	FastNoiseLite m_BiomeNoise;
+	FastNoiseLite m_BiomeNoise1;
+	FastNoiseLite m_BiomeNoise2;
 
 	const int m_MaxTreesPerChunk{ 16 };
 
@@ -46,6 +47,8 @@ private:
 	ChunkSection* genSection(const Biome* biomeMap[chunkSize][chunkSize], const double** heightMap, SectionLocation section);
 
 	const BiomeMixture** getBiomeMap(Vector2i location);
+
+	int setBiomeNoiseParams();
 
 	template <typename T>
 	T** allocMap();

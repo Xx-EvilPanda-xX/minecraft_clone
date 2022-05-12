@@ -28,17 +28,29 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	: m_Manager{ manager },
 	m_Rand{ 0, 256 }
 {
+	
+	m_Seed = setBiomeNoiseParams();
+	std::cout << "Seed: " << m_Seed << "\n";
+}
+
+int TerrainGenerator::setBiomeNoiseParams()
+{
 	Random seedRand{ -2147483648, 2147483647 };
 	int seed{ seedRand.get() };
-	m_Seed = seed;
 
-	m_BiomeNoise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
-	m_BiomeNoise.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
-	m_BiomeNoise.SetSeed(seedRand.get());
-	m_BiomeNoise.SetFractalOctaves(6);
-	m_BiomeNoise.SetFrequency(0.0055f);
+	m_BiomeNoise1.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
+	m_BiomeNoise1.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
+	m_BiomeNoise1.SetSeed(seedRand.get());
+	m_BiomeNoise1.SetFractalOctaves(7);
+	m_BiomeNoise1.SetFrequency(0.009f);
 
-	std::cout << "Seed: " << seed << "\n";
+	m_BiomeNoise2.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
+	m_BiomeNoise2.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
+	m_BiomeNoise2.SetSeed(seedRand.get());
+	m_BiomeNoise2.SetFractalOctaves(1);
+	m_BiomeNoise2.SetFrequency(0.0015f);
+
+	return seed;
 }
 
 Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader)
@@ -312,8 +324,10 @@ const BiomeMixture** TerrainGenerator::getBiomeMap(Vector2i location)
 	{
 		for (int j{}; j < chunkSize; ++j)
 		{
-			double height{ (m_BiomeNoise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0 + 0.5) * 200.0 };
-			
+			double height1{ (m_BiomeNoise1.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0 + 0.5) * 200.0 };
+			double height2{ m_BiomeNoise2.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) * 90.0 };
+			double height = height1 + height2;
+
 			if (height > 255)
 				height = 255;
 			if (height < 0)

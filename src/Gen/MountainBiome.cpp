@@ -46,7 +46,7 @@ const double** MountainBiome::getHeightMap(Vector2i location)
 			else
 				heightMap[i][j] = (static_cast<double>(m_Noise.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j))) / 2.0 + 0.5) * 100.0;
 
-			heightMap[i][j] += 30.0;
+			heightMap[i][j] += 35.0;
 
 			if (heightMap[i][j] < constants::waterLevel)
 			{
