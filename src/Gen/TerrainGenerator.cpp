@@ -10,6 +10,7 @@
 #include "DesertBiome.h"
 #include "PlainsBiome.h"
 #include "MountainBiome.h"
+#include "GravelPlainsBiome.h"
 #include "BiomeMap.h"
 
 struct TreeLoc
@@ -93,7 +94,7 @@ Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader)
 					biomeWithMostContribution = biome;
 				}
 
-				heightMap[i][j] += static_cast<double>(map[i][j]) * element.percentage;
+				heightMap[i][j] += map[i][j] * element.percentage;
 			}
 
 			layerMap[i][j] = biomeWithMostContribution;
@@ -339,19 +340,31 @@ const BiomeMixture** TerrainGenerator::getBiomeMap(Vector2i location)
 			if (height <= Biomes::s_Mountains.top && height >= Biomes::s_Mountains.bottom)
 				mixture.addElement(new MountainBiome{ m_Seed }, 1.0);
 
-			//transition between mountains and oak forest
-			else if (height <= Biomes::s_Mountains.bottom && height >= Biomes::s_OakForest.top)
+			//transition between mountains and gravel plains
+			else if (height <= Biomes::s_Mountains.bottom && height >= Biomes::s_GravelPlains.top)
 			{
-				double div{ static_cast<double>(Biomes::s_Mountains.bottom - Biomes::s_OakForest.top) };
-				mixture.addElement(new OakForestBiome{ m_Seed }, std::abs(Biomes::s_Mountains.bottom - height) / div);
-				mixture.addElement(new MountainBiome{ m_Seed }, std::abs(Biomes::s_OakForest.top - height) / div);
+				double div{ static_cast<double>(Biomes::s_Mountains.bottom - Biomes::s_GravelPlains.top) };
+				mixture.addElement(new MountainBiome{ m_Seed }, std::abs(Biomes::s_GravelPlains.top - height) / div);
+				mixture.addElement(new GravelPlainsBiome{ m_Seed }, std::abs(Biomes::s_Mountains.bottom - height) / div);
 			}
 
-			//oak forest
+			//gravel plains
+			else if (height <= Biomes::s_GravelPlains.top && height >= Biomes::s_GravelPlains.bottom)
+				mixture.addElement(new GravelPlainsBiome{ m_Seed }, 1.0);
+
+			//oak forest (no transition since heightmaps are the same)
 			else if (height <= Biomes::s_OakForest.top && height >= Biomes::s_OakForest.bottom)
 				mixture.addElement(new OakForestBiome{ m_Seed }, 1.0);
 
-			//plains (no transition since heightmaps are the same)
+			//transition between oak forest and plains
+			else if (height <= Biomes::s_OakForest.bottom && height >= Biomes::s_Plains.top)
+			{
+				double div{ static_cast<double>(Biomes::s_OakForest.bottom - Biomes::s_Plains.top) };
+				mixture.addElement(new OakForestBiome{ m_Seed }, std::abs(Biomes::s_Plains.top - height) / div);
+				mixture.addElement(new PlainsBiome{ m_Seed }, std::abs(Biomes::s_OakForest.bottom - height) / div);
+			}
+
+			//plains
 			else if (height <= Biomes::s_Plains.top && height >= Biomes::s_Plains.bottom)
 				mixture.addElement(new PlainsBiome{ m_Seed }, 1.0);
 

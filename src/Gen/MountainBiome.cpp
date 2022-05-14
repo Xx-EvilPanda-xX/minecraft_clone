@@ -10,12 +10,11 @@ MountainBiome::MountainBiome(int seed)
 	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -3, 0, true);
 	m_Layers.emplace_back(Block{ BlockType::Snow, false }, 0, 85, true);
 	m_Layers.emplace_back(Block{ BlockType::Stone, false }, 0, 0, true);
-	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, 0, false);
-	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, 0, false);
+	addWaterLayer();
 
 	m_Foliage.emplace_back(Foliage::FoliageType::OAK_TREE, 0.0075, constants::waterLevel, 85);
 	
-	setNoiseParams(7, 0.00855f);
+	setNoiseParams(7, 0.008f);
 }
 
 MountainBiome::~MountainBiome() = default;

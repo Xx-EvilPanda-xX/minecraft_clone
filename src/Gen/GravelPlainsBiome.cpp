@@ -1,32 +1,27 @@
-#include "PlainsBiome.h"
+#include "GravelPlainsBiome.h"
 #include "../Constants.h"
 #include "Random.h"
 
-constexpr int ID{ 2 };
+constexpr int ID{ 4 };
 
-PlainsBiome::PlainsBiome(int seed)
+GravelPlainsBiome::GravelPlainsBiome(int seed)
 	: Biome(ID, seed)
 {
 	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, 0, true);
-	m_Layers.emplace_back(Block{ BlockType::Dirt, false }, -1, constants::waterLevel + 2, true);
-	m_Layers.emplace_back(Block{ BlockType::Grass, false }, 0, constants::waterLevel + 2, true);
-	m_Layers.emplace_back(Block{ BlockType::Sand, false }, 0, constants::waterLevel - 5, true);
 	m_Layers.emplace_back(Block{ BlockType::Gravel, false }, 0, 0, true);
 	addWaterLayer();
 
-	m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.01, constants::waterLevel, constants::waterLevel + 2);
-
-	setNoiseParams(7, 0.00255f);
+	setNoiseParams(7, 0.00355f);
 }
 
-PlainsBiome::~PlainsBiome() = default;
+GravelPlainsBiome::~GravelPlainsBiome() = default;
 
-const std::vector<Layer>& PlainsBiome::getLayers() const
+const std::vector<Layer>& GravelPlainsBiome::getLayers() const
 {
 	return m_Layers;
 }
 
-const double** PlainsBiome::getHeightMap(Vector2i location)
+const double** GravelPlainsBiome::getHeightMap(Vector2i location)
 {
 	double** heightMap = new double* [16];
 
@@ -59,7 +54,7 @@ const double** PlainsBiome::getHeightMap(Vector2i location)
 	return (const double**)heightMap;
 }
 
-const std::vector<Foliage>& PlainsBiome::getFoliage() const
+const std::vector<Foliage>& GravelPlainsBiome::getFoliage() const
 {
 	return m_Foliage;
 }

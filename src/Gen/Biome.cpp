@@ -20,3 +20,9 @@ int Biome::getId()
 {
 	return m_Id;
 }
+
+void Biome::addWaterLayer()
+{
+	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, 0, false);
+	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, 0, false);
+}

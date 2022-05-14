@@ -7,6 +7,7 @@
 #include "../noise.h"
 #include "SectionLocation.h"
 #include "Foliage.h"
+#include "../Constants.h"
 
 class Biome
 {
@@ -17,6 +18,8 @@ protected:
 	const int m_Id;
 
 	Biome(int id, int seed);
+
+	void addWaterLayer();
 
 public:
 	virtual ~Biome();

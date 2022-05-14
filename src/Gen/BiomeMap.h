@@ -17,6 +17,7 @@ private:
 
 public:
 	static const BiomeDefinition s_Mountains;
+	static const BiomeDefinition s_GravelPlains;
 	static const BiomeDefinition s_OakForest;
 	static const BiomeDefinition s_Plains;
 	static const BiomeDefinition s_Desert;

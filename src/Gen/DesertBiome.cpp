@@ -9,8 +9,7 @@ DesertBiome::DesertBiome(int seed)
 {
 	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, 0, true);
 	m_Layers.emplace_back(Block{ BlockType::Sand, false }, 0, 0, true);
-	m_Layers.emplace_back(Block{ BlockType::Water, false }, constants::waterLevel - 1, 0, false);
-	m_Layers.emplace_back(Block{ BlockType::Water, true }, constants::waterLevel, 0, false);
+	addWaterLayer();
 
 	m_Foliage.emplace_back(Foliage::FoliageType::CACTUS, 0.01, constants::waterLevel, 255);
 
