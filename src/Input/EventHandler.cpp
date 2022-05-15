@@ -29,25 +29,25 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 	if (keyboard.isKeyDown(GLFW_KEY_W))
 	{
 		if (player.getVelocity().z < velocityLimit)
-			player.getVelocity().z += (constants::playerDrift * 10.0) * Application::s_Dt;
+			player.getVelocity().z += constants::playerDrift * 0.1;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_A))
 	{
 		if (player.getVelocity().x > -velocityLimit)
-			player.getVelocity().x -= (constants::playerDrift * 10.0) * Application::s_Dt;
+			player.getVelocity().x -= constants::playerDrift * 0.1;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_S))
 	{
 		if (player.getVelocity().z > -velocityLimit)
-			player.getVelocity().z -= (constants::playerDrift * 10.0) * Application::s_Dt;
+			player.getVelocity().z -= constants::playerDrift * 0.1;
 	}
 		
 	if (keyboard.isKeyDown(GLFW_KEY_D))
 	{
 		if (player.getVelocity().x < velocityLimit)
-			player.getVelocity().x += (constants::playerDrift * 10.0) * Application::s_Dt;
+			player.getVelocity().x += constants::playerDrift * 0.1;
 	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_SPACE))
@@ -55,7 +55,7 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 		if (player.isFlying())
 		{
 			if (player.getVelocity().y < velocityLimit)
-				player.getVelocity().y += (constants::playerDrift * 10.0) * Application::s_Dt;
+				player.getVelocity().y += constants::playerDrift * 0.1;
 		}
 		else if (player.isGrounded())
 		{
@@ -68,7 +68,7 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 		if (player.isFlying())
 		{
 			if (player.getVelocity().y > -velocityLimit)
-				player.getVelocity().y -= (constants::playerDrift * 10.0) * Application::s_Dt;
+				player.getVelocity().y -= constants::playerDrift * 0.1;
 		}
 	}
 

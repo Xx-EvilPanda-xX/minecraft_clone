@@ -31,7 +31,7 @@ void Player::move()
 
 	//gravity
 	if (!m_Flying && !m_Grounded)
-		m_Velocity.y -= Application::s_Dt * constants::gravity;
+		m_Velocity.y -= constants::gravity * Application::s_Dt;
 	
 	m_Camera.handleMove(m_Velocity, Application::s_Dt);
 	m_Aabb = createPlayerAABB(m_Camera.getLocation());
@@ -278,51 +278,57 @@ void Player::calculateVelocity()
 	if (!m_DecreasingVel)
 		m_DecreasingVel = m_CtrlLastDown && !m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 
-	if ((!m_Keyboard.isKeyDown(GLFW_KEY_A) && !m_Keyboard.isKeyDown(GLFW_KEY_D)) || m_DecreasingVel)
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_A) || m_DecreasingVel)
 	{
 		if (m_Velocity.x < 0.0)
 		{
 			m_Velocity.x += constants::playerDrift * Application::s_Dt;
-			if (m_Velocity.x > 0.0)
-				m_Velocity.x = 0.0;
-		}
-		else
-		{
-			m_Velocity.x -= constants::playerDrift * Application::s_Dt;
-			if (m_Velocity.x < 0.0)
-				m_Velocity.x = 0.0;
+			if (m_Velocity.x > 0.0) m_Velocity.x = 0.0;
 		}
 	}
-	
-	if ((!m_Keyboard.isKeyDown(GLFW_KEY_SPACE) && !m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT)) || m_DecreasingVel)
+
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_D) || m_DecreasingVel)
+	{
+		if (m_Velocity.x > 0.0)
+		{
+			m_Velocity.x -= constants::playerDrift * Application::s_Dt;
+			if (m_Velocity.x < 0.0) m_Velocity.x = 0.0;
+		}
+	}
+
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT) || m_DecreasingVel)
 	{
 		if (m_Velocity.y < 0.0)
 		{
 			m_Velocity.y += constants::playerDrift * Application::s_Dt;
-			if (m_Velocity.y > 0.0)
-				m_Velocity.y = 0.0;
-		}
-		else
-		{
-			m_Velocity.y -= constants::playerDrift * Application::s_Dt;
-			if (m_Velocity.y < 0.0)
-				m_Velocity.y = 0.0;
+			if (m_Velocity.y > 0.0) m_Velocity.y = 0.0;
 		}
 	}
 
-	if ((!m_Keyboard.isKeyDown(GLFW_KEY_W) && !m_Keyboard.isKeyDown(GLFW_KEY_S)) || m_DecreasingVel)
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_SPACE) || m_DecreasingVel)
+	{
+		if (m_Velocity.y > 0.0)
+		{
+			m_Velocity.y -= constants::playerDrift * Application::s_Dt;
+			if (m_Velocity.y < 0.0) m_Velocity.y = 0.0;
+		}
+	}
+
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_S) || m_DecreasingVel)
 	{
 		if (m_Velocity.z < 0.0)
 		{
 			m_Velocity.z += constants::playerDrift * Application::s_Dt;
-			if (m_Velocity.z > 0.0)
-				m_Velocity.z = 0.0;
+			if (m_Velocity.z > 0.0) m_Velocity.z = 0.0;
 		}
-		else
+	}
+
+	if (!m_Keyboard.isKeyDown(GLFW_KEY_W) || m_DecreasingVel)
+	{
+		if (m_Velocity.z > 0.0)
 		{
 			m_Velocity.z -= constants::playerDrift * Application::s_Dt;
-			if (m_Velocity.z < 0.0)
-				m_Velocity.z = 0.0;
+			if (m_Velocity.z < 0.0) m_Velocity.z = 0.0;
 		}
 	}
 

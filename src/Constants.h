@@ -11,7 +11,7 @@ namespace constants
 	constexpr int fullscreenWidth{ 1920 };
 	constexpr int fullscreenHeight{ 1080 };
 
-	constexpr bool fullscreen{ true };
+	constexpr bool fullscreen{ false };
 
 	constexpr double mouse_sensitivity{ 0.025 };
 
@@ -35,7 +35,7 @@ namespace constants
 	constexpr double cameraFov{ 90.0 };
 	constexpr glm::dvec3 playerSpawnPos{ 0.0, 96.0, 0.0 };
 
-	constexpr double gravity{ 53.0 };
+	constexpr double gravity{ 60.0 };
 	constexpr double jumpHeight{ 1.4 };
 }
 
