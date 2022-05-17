@@ -48,26 +48,7 @@ void World::worldUpdate(bool deletePass)
 	if (deletePass)
 		destroyPass(Vector2i{ playerPos.x, playerPos.z });
 
-	std::vector<QueueBlock>& blockQueue{ m_WorldGen.getBlockQueue() };
-	if (m_LastBlockQueueSize != blockQueue.size())
-	{
-		for (int i{}; i < blockQueue.size(); ++i)
-		{
-			QueueBlock queueBlock{ blockQueue.at(i) };
-			Chunk* chunk{ m_Manager.getChunk(queueBlock.loc.worldPos) };
-
-			if (!chunk)
-				continue;
-			else
-			{
-				m_Manager.getChunk(queueBlock.loc.worldPos)->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
-				blockQueue.erase(blockQueue.begin() + i);
-				--i;
-			}
-		}
-	}
-
-	m_LastBlockQueueSize = blockQueue.size();
+	placeQueueBlocks();
 }
 
 void World::worldRender(const Window& window)
@@ -182,6 +163,30 @@ void World::buildPass()
 		shouldGen = 0;
 	}
 	++shouldGen;
+}
+
+void World::placeQueueBlocks()
+{
+	std::vector<QueueBlock>& blockQueue{ m_WorldGen.getBlockQueue() };
+	if (m_LastBlockQueueSize != blockQueue.size())
+	{
+		for (int i{}; i < blockQueue.size(); ++i)
+		{
+			QueueBlock queueBlock{ blockQueue.at(i) };
+			Chunk* chunk{ m_Manager.getChunk(queueBlock.loc.worldPos) };
+
+			if (!chunk)
+				continue;
+			else
+			{
+				m_Manager.getChunk(queueBlock.loc.worldPos)->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
+				blockQueue.erase(blockQueue.begin() + i);
+				--i;
+			}
+		}
+	}
+
+	m_LastBlockQueueSize = blockQueue.size();
 }
 
 void World::rebuildChunks(const Camera& camera)

@@ -103,8 +103,8 @@ Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader)
 
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
-		SectionLocation section{ i, loc };
-		chunk->addSection(genSection(layerMap, (const double**) heightMap, section));
+		SectionLocation sectionLocation{ i, loc };
+		chunk->addSection(genSection(layerMap, (const double**) heightMap, sectionLocation));
 	}
 
 	deleteMap<double>((const double**)heightMap);
@@ -245,7 +245,7 @@ void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i
 	}
 }
 
-void TerrainGenerator::genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& cactusLocation)
+void TerrainGenerator::genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation)
 {
 	m_Rand.setRange(1, 4);
 	int rand{ m_Rand.get() };
@@ -253,53 +253,53 @@ void TerrainGenerator::genCactus(ChunkSection* section, Vector3i pos, const Sect
 	{
 		Vector3i placePos{ pos.x, pos.y + i, pos.z };
 		Block block{ BlockType::Cactus, false };
-		if (!structureShouldBeInQueue(placePos, cactusLocation, block))
+		if (!structureShouldBeInQueue(placePos, sectionLocation, block))
 			section->setBlock(placePos, block.getType(), false);
 	}
 }
 
-bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocation& section, Block block)
+bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocation& sectionLocation, Block block)
 {
-	SectionLocation sectionForQueue{ section };
+	SectionLocation sectionForQueue{ sectionLocation };
 	Vector3i blockForQueuePos{ pos };
 	bool isOutsideSection{ false };
 	bool isOutsideWorld{ false };
 
 	if (pos.x > 15)
 	{
-		sectionForQueue.worldPos.x = section.worldPos.x + 1;
+		sectionForQueue.worldPos.x = sectionLocation.worldPos.x + 1;
 		blockForQueuePos.x = pos.x - chunkSize;
 		isOutsideSection = true;
 	}
 	if (pos.x < 0)
 	{
-		sectionForQueue.worldPos.x = section.worldPos.x - 1;
+		sectionForQueue.worldPos.x = sectionLocation.worldPos.x - 1;
 		blockForQueuePos.x = pos.x + chunkSize;
 		isOutsideSection = true;
 	}
 	if (pos.y > 15)
 	{
-		sectionForQueue.sectionIndex = section.sectionIndex + 1;
+		sectionForQueue.sectionIndex = sectionLocation.sectionIndex + 1;
 		blockForQueuePos.y = pos.y - chunkSize;
 		isOutsideSection = true;
-		if (section.sectionIndex == 15) isOutsideWorld = true;
+		if (sectionLocation.sectionIndex == 15) isOutsideWorld = true;
 	}
 	if (pos.y < 0)
 	{
-		sectionForQueue.sectionIndex = section.sectionIndex - 1;
+		sectionForQueue.sectionIndex = sectionLocation.sectionIndex - 1;
 		blockForQueuePos.y = pos.y + chunkSize;
 		isOutsideSection = true;
-		if (section.sectionIndex == 0) isOutsideWorld = true;
+		if (sectionLocation.sectionIndex == 0) isOutsideWorld = true;
 	}
 	if (pos.z > 15)
 	{
-		sectionForQueue.worldPos.y = section.worldPos.y + 1;
+		sectionForQueue.worldPos.y = sectionLocation.worldPos.y + 1;
 		blockForQueuePos.z = pos.z - chunkSize;
 		isOutsideSection = true;
 	}
 	if (pos.z < 0)
 	{
-		sectionForQueue.worldPos.y = section.worldPos.y - 1;
+		sectionForQueue.worldPos.y = sectionLocation.worldPos.y - 1;
 		blockForQueuePos.z = pos.z + chunkSize;
 		isOutsideSection = true;
 	}

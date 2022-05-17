@@ -12,7 +12,7 @@ private:
 	bool m_Relative;
 
 public:
-	//vertical limit mean it doesn't generate below that y value (ex. 0: always generates, 255: never generates)
+	//vertical limit means it doesn't generate below that y value (ex. 0: always generates, 255: never generates)
 	Layer(Block block, int top, int verticalLimit, bool relative);
 	~Layer();
 

@@ -24,6 +24,8 @@ private:
 	int m_LastBlockQueueSize;
 	bool m_ResetBuildVars;
 
+	void placeQueueBlocks();
+
 public:
 	World(Shader shader, Keyboard& keyboard);
 

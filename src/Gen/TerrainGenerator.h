@@ -38,13 +38,13 @@ private:
 
 	void genFoliage(const Biome* biome, Vector2i pos, double currentHeight, ChunkSection* section, const SectionLocation& sectionLocation, const double** heightMap);
 
-	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& treeSection, const double** heightMap);
+	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, const double** heightMap);
 
-	void genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& cactusLocation);
+	void genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation);
 
-	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& section, Block block);
+	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& sectionLocation, Block block);
 
-	ChunkSection* genSection(const Biome* biomeMap[chunkSize][chunkSize], const double** heightMap, SectionLocation section);
+	ChunkSection* genSection(const Biome* biomeMap[chunkSize][chunkSize], const double** heightMap, SectionLocation sectionLocation);
 
 	const BiomeMixture** getBiomeMap(Vector2i location);
 

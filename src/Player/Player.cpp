@@ -179,6 +179,7 @@ void Player::collsionDetection()
 				if (collisionType == CollsionType::PlayerLowerHalf && m_JumpCoolDown <= 0.0)
 				{
 					onGround = true;
+					m_JumpCoolDown = 0.0;
 					if (m_Keyboard.isKeyDown(GLFW_KEY_SPACE))
 						m_JumpCoolDown = 0.15;
 				}
