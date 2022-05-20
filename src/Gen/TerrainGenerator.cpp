@@ -6,6 +6,7 @@
 #include "Tree.h"
 #include "PalmTree.h"
 #include "OakTree.h"
+#include "BushTree.h"
 #include "OakForestBiome.h"
 #include "DesertBiome.h"
 #include "PlainsBiome.h"
@@ -176,6 +177,7 @@ void TerrainGenerator::genFoliage(const Biome* biome, Vector2i pos, double curre
 {
 	static const Tree& oakTree{ OakTree{} };
 	static const Tree& palmTree{ PalmTree{} };
+	static const Tree& bushTree{ BushTree{} };
 
 	for (int i{}; i < biome->getFoliage().size(); ++i)
 	{
@@ -183,19 +185,23 @@ void TerrainGenerator::genFoliage(const Biome* biome, Vector2i pos, double curre
 		m_Rand.setRange(0, static_cast<int>(std::pow(foliage.getSpawnRate(), -1.0)));
 		if (m_Rand.get() == 0 && currentHeight < foliage.getSpawnRangeTop() && currentHeight > foliage.getSpawnRangeBottom())
 		{
+			Vector3i placePos{ pos.x, static_cast<int>(currentHeight) - (sectionLocation.sectionIndex * 16) + 1, pos.y };
 			switch (foliage.getType())
 			{
 			case Foliage::FoliageType::OAK_TREE:
-				genTree(oakTree, section, Vector3i{ pos.x, static_cast<int>(currentHeight) - (sectionLocation.sectionIndex * 16) + 1, pos.y }, sectionLocation, heightMap);
+				genTree(oakTree, section, placePos, sectionLocation, heightMap);
 				break;
 			case Foliage::FoliageType::PALM_TREE:
-				genTree(palmTree, section, Vector3i{ pos.x, static_cast<int>(currentHeight) - (sectionLocation.sectionIndex * 16) + 1, pos.y }, sectionLocation, heightMap);
+				genTree(palmTree, section, placePos, sectionLocation, heightMap);
+				break;
+			case Foliage::FoliageType::BUSH:
+				genTree(bushTree, section, placePos, sectionLocation, heightMap);
 				break;
 			case Foliage::FoliageType::CACTUS:
-				genCactus(section, Vector3i{ pos.x, static_cast<int>(currentHeight) - (sectionLocation.sectionIndex * 16) + 1, pos.y }, sectionLocation);
+				genCactus(section, placePos, sectionLocation);
 				break;
 			default:
-				std::cout << "Unknown foliage type.\n";
+				std::cout << "Undefined foliage type.\n";
 				break;
 			}
 		}
@@ -325,14 +331,21 @@ const BiomeMixture** TerrainGenerator::getBiomeMap(Vector2i location)
 	{
 		for (int j{}; j < chunkSize; ++j)
 		{
-			double height1{ (m_BiomeNoise1.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0 + 0.5) * 200.0 };
+			double height1{ (m_BiomeNoise1.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) / 2.0 + 0.5) * 250.0 };
 			double height2{ m_BiomeNoise2.GetNoise<float>(static_cast<float>(chunkX + i), static_cast<float>(chunkY + j)) * 90.0 };
 			double height = height1 + height2;
 
 			if (height > 255)
+			{
 				height = 255;
+				//std::cout << "ERR: Height map returned a value greater than 255!\nClamping to 255!\n";
+			}
+				
 			if (height < 0)
+			{
 				height = 0;
+				//std::cout << "ERR: Height map returned a value less than 0!\nClamping to 0!\n";
+			}
 
 			BiomeMixture& mixture{ map[i][j] };
 			

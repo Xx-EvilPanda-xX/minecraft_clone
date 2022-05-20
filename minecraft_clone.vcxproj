@@ -24,6 +24,7 @@
     <ClCompile Include="src\Gen\Biome.cpp" />
     <ClCompile Include="src\Gen\BiomeMap.cpp" />
     <ClCompile Include="src\Gen\BiomeMixture.cpp" />
+    <ClCompile Include="src\Gen\BushTree.cpp" />
     <ClCompile Include="src\Gen\Foliage.cpp" />
     <ClCompile Include="src\Gen\GravelPlainsBiome.cpp" />
     <ClCompile Include="src\Gen\Layer.cpp" />
@@ -64,14 +65,15 @@
     <ClInclude Include="src\Gen\Biome.h" />
     <ClInclude Include="src\Gen\BiomeMap.h" />
     <ClInclude Include="src\Gen\BiomeMixture.h" />
+    <ClInclude Include="src\Gen\BushTree.h" />
     <ClInclude Include="src\Gen\Foliage.h" />
     <ClInclude Include="src\Gen\GravelPlainsBiome.h" />
     <ClInclude Include="src\Gen\Layer.h" />
     <ClInclude Include="src\Gen\MountainBiome.h" />
-    <ClInclude Include="src\Gen\OakTree.h" />
-    <ClInclude Include="src\Gen\PalmTree.h" />
     <ClInclude Include="src\Gen\OakForestBiome.h" />
     <ClInclude Include="src\Gen\DesertBiome.h" />
+    <ClInclude Include="src\Gen\OakTree.h" />
+    <ClInclude Include="src\Gen\PalmTree.h" />
     <ClInclude Include="src\Gen\PlainsBiome.h" />
     <ClInclude Include="src\Gen\Random.h" />
     <ClInclude Include="src\Gen\SectionLocation.h" />

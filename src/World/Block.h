@@ -16,6 +16,7 @@ enum BlockType
 	Wood,
 	PalmLeaves,
 	OakLeaves,
+	Flowers,
 	Glass,
 	CraftingTable,
 	Planks,

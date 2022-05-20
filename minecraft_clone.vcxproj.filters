@@ -126,6 +126,9 @@
     <ClCompile Include="src\Gen\GravelPlainsBiome.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Gen\BushTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
@@ -203,15 +206,6 @@
     <ClInclude Include="src\Render\TextRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Gen\Tree.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Gen\OakTree.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Gen\PalmTree.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Gen\Biome.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -246,6 +240,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Gen\GravelPlainsBiome.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gen\OakTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gen\PalmTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gen\Tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gen\BushTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

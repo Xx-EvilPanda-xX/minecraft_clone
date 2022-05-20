@@ -20,6 +20,9 @@ Block::Block(BlockType type, bool surface)
 	case OakLeaves:
 		m_Transparent = true;
 		break;
+	case Flowers:
+		m_Transparent = true;
+		break;
 	case Glass:
 		m_Transparent = true;
 		break;
@@ -74,6 +77,8 @@ std::string Block::getName()
 		return "PalmLeaves";
 	case OakLeaves:
 		return "OakLeaves";
+	case Flowers:
+		return "Flowers";
 	case Glass:
 		return "Glass";
 	case CraftingTable:

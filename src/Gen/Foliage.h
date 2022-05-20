@@ -8,6 +8,7 @@ public:
 	{
 		OAK_TREE,
 		PALM_TREE,
+		BUSH,
 		CACTUS,
 	};
 
