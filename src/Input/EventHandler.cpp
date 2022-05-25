@@ -140,6 +140,8 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 			m_SelectedBlock = Block{ BlockType::Water, false };
 		if (keyboard.isKeyDown(GLFW_KEY_6))
 			m_SelectedBlock = Block{ BlockType::CraftingTable, false };
+		if (keyboard.isKeyDown(GLFW_KEY_7))
+			m_SelectedBlock = Block{ BlockType::Flowers, false };
 	}
 
 	flyToggleCooldown -= Application::s_Dt;

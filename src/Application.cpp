@@ -177,7 +177,7 @@ void Application::startupHelp()
 	std::cout << "\n\n===================================================\n\n";
 	std::cout << "BLOCKS:\n\n";
 	std::cout << "1: Grass\n2: Stone\n3: Dirt\n4: Cobble Stone\n5: Wood\n6: Palm Leaves\n7: Oak Leaves\n8: Glass\n9: Sand\n0: Planks\n";
-	std::cout << "Tab + 1: Cactus\nTab + 2: Gravel\nTab + 3: Diamond Block\nTab + 4: Snow\nTab + 5: Water\nTab + 6: Crafting Table\n\n";
+	std::cout << "Tab + 1: Cactus\nTab + 2: Gravel\nTab + 3: Diamond Block\nTab + 4: Snow\nTab + 5: Water\nTab + 6: Crafting Table\nTab + 7: Flowers\n\n";
 }
 
 void Application::handleInput()

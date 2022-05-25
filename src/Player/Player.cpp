@@ -181,7 +181,10 @@ void Player::collsionDetection()
 					onGround = true;
 					m_JumpCoolDown = 0.0;
 					if (m_Keyboard.isKeyDown(GLFW_KEY_SPACE))
+					{
 						m_JumpCoolDown = 0.15;
+						//std::cout << "cooldown reset" << i << "\n";
+					}
 				}
 			}
 
@@ -306,7 +309,7 @@ void Player::calculateVelocity()
 		}
 	}
 
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_SPACE) || m_DecreasingVel)
+	if ((!m_Keyboard.isKeyDown(GLFW_KEY_SPACE) && m_Flying) || m_DecreasingVel)
 	{
 		if (m_Velocity.y > 0.0)
 		{
