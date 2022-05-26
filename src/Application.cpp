@@ -58,9 +58,6 @@ void Application::run()
 		glfwSetCursorPos(m_Window.getGlfwWindow(), 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		updateFPS();
-		handleInput();
-
 		bool deletePass{ false };
 		if (getCurrentTimeMillis() > (m_DoDeletePass + 500))
 		{
@@ -72,6 +69,9 @@ void Application::run()
 		m_World.worldRender(m_Window);
 		updateGui();
 		renderGui();
+
+		updateFPS();
+		handleInput();
 
 		glfwSwapBuffers(m_Window.getGlfwWindow());
 		glfwPollEvents();
@@ -163,9 +163,9 @@ void Application::updateFPS()
 	}
 }
 
-long Application::getCurrentTimeMillis()
+long long Application::getCurrentTimeMillis()
 {
-	return static_cast<long>(glfwGetTime() * 1000);
+	return static_cast<long long>(glfwGetTime() * 1000);
 }
 
 void Application::startupHelp()
@@ -186,8 +186,8 @@ void Application::handleInput()
 	s_Dt = frame - m_LastFrame;
 	m_LastFrame = frame;
 
-	if (s_Dt > 0.1)
-		s_Dt = 0.1;
+	if (s_Dt > 0.25)
+		s_Dt = 0.25;
 
 	Keyboard& keyboard{ m_Window.getKeyboard() };
 	Mouse& mouse{ m_Window.getMouse() };

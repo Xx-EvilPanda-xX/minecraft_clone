@@ -12,17 +12,14 @@ Player::Player(ChunkManager& manager, Keyboard& keyboard, double reach)
 	m_Reach{ reach },
 	m_Velocity{},
 	m_LastValidLoc{},
-	m_LastValidAABB{}
+	m_LastValidAABB{},
+	m_LastMoved{},
+	m_DecreasingVel{}
 {
 	m_JumpCoolDown = 0.25;
 	m_Sprinting = false;
 	m_Grounded = false;
 	m_Flying = false;
-	m_LastMovedX = false;
-	m_LastMovedY = false;
-	m_LastMovedZ = false;
-	m_CtrlLastDown = false;
-	m_DecreasingVel = false;
 }
 
 void Player::move()
@@ -40,13 +37,12 @@ void Player::move()
 
 	m_JumpCoolDown -= Application::s_Dt;
 
-	m_LastMovedX = m_LastValidLoc.x != m_Camera.getLocation().x;
-	m_LastMovedY = m_LastValidLoc.y != m_Camera.getLocation().y;
-	m_LastMovedZ = m_LastValidLoc.z != m_Camera.getLocation().z;
+	m_LastMoved.x = m_LastValidLoc.x != m_Camera.getLocation().x;
+	m_LastMoved.y = m_LastValidLoc.y != m_Camera.getLocation().y;
+	m_LastMoved.z = m_LastValidLoc.z != m_Camera.getLocation().z;
 
 	m_LastValidLoc = m_Camera.getLocation();
 	m_LastValidAABB = m_Aabb;
-	m_CtrlLastDown = m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 
 	if (m_Camera.getLocation().y <= worldBottom)
 	{
@@ -107,7 +103,7 @@ void Player::collsionDetection()
 				collideY = false;
 				collideZ = false;
 
-				if (!m_LastMovedX && m_LastMovedY && m_LastMovedZ)
+				if (!m_LastMoved.x && m_LastMoved.y && m_LastMoved.z)
 				{
 					if (blockCenter.y < m_Aabb.min().y || blockCenter.y > m_Aabb.max().y)
 						collideY = true;
@@ -116,7 +112,7 @@ void Player::collsionDetection()
 				}
 
 
-				if (m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
+				if (m_LastMoved.x && !m_LastMoved.y && m_LastMoved.z)
 				{
 					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
 						collideX = true;
@@ -124,7 +120,7 @@ void Player::collsionDetection()
 						collideY = true;
 				}
 
-				if (m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
+				if (m_LastMoved.x && m_LastMoved.y && !m_LastMoved.z)
 				{
 					if (blockCenter.y < m_Aabb.min().y || blockCenter.y > m_Aabb.max().y)
 						collideY = true;
@@ -132,7 +128,7 @@ void Player::collsionDetection()
 						collideZ = true;
 				}
 
-				if (!m_LastMovedX && !m_LastMovedY && m_LastMovedZ)
+				if (!m_LastMoved.x && !m_LastMoved.y && m_LastMoved.z)
 				{
 					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
 						collideX = true;
@@ -141,7 +137,7 @@ void Player::collsionDetection()
 				}
 
 
-				if (m_LastMovedX && !m_LastMovedY && !m_LastMovedZ)
+				if (m_LastMoved.x && !m_LastMoved.y && !m_LastMoved.z)
 				{
 					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
 						collideZ = true;
@@ -149,7 +145,7 @@ void Player::collsionDetection()
 						collideY = true;
 				}
 
-				if (!m_LastMovedX && m_LastMovedY && !m_LastMovedZ)
+				if (!m_LastMoved.x && m_LastMoved.y && !m_LastMoved.z)
 				{
 					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
 						collideX = true;
@@ -157,7 +153,7 @@ void Player::collsionDetection()
 						collideY = true;
 				}
 
-				if (m_LastMovedX && m_LastMovedY && m_LastMovedZ)
+				if (m_LastMoved.x && m_LastMoved.y && m_LastMoved.z)
 				{
 					if (blockCenter.y > m_Aabb.min().y && blockCenter.y < m_Aabb.max().y)
 						collideX = true;
@@ -179,12 +175,8 @@ void Player::collsionDetection()
 				if (collisionType == CollsionType::PlayerLowerHalf && m_JumpCoolDown <= 0.0)
 				{
 					onGround = true;
-					m_JumpCoolDown = 0.0;
 					if (m_Keyboard.isKeyDown(GLFW_KEY_SPACE))
-					{
-						m_JumpCoolDown = 0.15;
-						//std::cout << "cooldown reset" << i << "\n";
-					}
+						m_JumpCoolDown = 0.025;
 				}
 			}
 
@@ -279,10 +271,23 @@ Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_C
 
 void Player::calculateVelocity()
 {
-	if (!m_DecreasingVel)
-		m_DecreasingVel = m_CtrlLastDown && !m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL);
+	constexpr double speed{ constants::walkSpeed };
+	const bool crtl{ m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL) };
+	const bool a{ m_Keyboard.isKeyDown(GLFW_KEY_A) };
+	const bool s{ m_Keyboard.isKeyDown(GLFW_KEY_S) };
+	const bool w{ m_Keyboard.isKeyDown(GLFW_KEY_W) };
+	const bool d{ m_Keyboard.isKeyDown(GLFW_KEY_D) };
+	const bool shift{ m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT) };
+	const bool space{ m_Keyboard.isKeyDown(GLFW_KEY_SPACE) };
 
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_A) || m_DecreasingVel)
+	m_DecreasingVel.x = (m_Velocity.x > speed || m_Velocity.x < -speed) && (a || d) && !crtl;
+	m_DecreasingVel.y = (m_Velocity.y > speed || m_Velocity.y < -speed) && (shift || space) && !crtl;
+	m_DecreasingVel.z = (m_Velocity.z > speed || m_Velocity.z < -speed) && (w || s) && !crtl;
+
+	//std::cout << "DecreasingVel: " << m_DecreasingVel.x << ", " << m_DecreasingVel.y << ", " << m_DecreasingVel.z << "\t\t";
+	//std::cout << "Velocity: " << m_Velocity.x << ", " << m_Velocity.y << ", " << m_Velocity.z << "\n";
+
+	if (!a || m_DecreasingVel.x)
 	{
 		if (m_Velocity.x < 0.0)
 		{
@@ -291,7 +296,7 @@ void Player::calculateVelocity()
 		}
 	}
 
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_D) || m_DecreasingVel)
+	if (!d || m_DecreasingVel.x)
 	{
 		if (m_Velocity.x > 0.0)
 		{
@@ -300,7 +305,7 @@ void Player::calculateVelocity()
 		}
 	}
 
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT) || m_DecreasingVel)
+	if (!shift || m_DecreasingVel.y)
 	{
 		if (m_Velocity.y < 0.0)
 		{
@@ -309,7 +314,7 @@ void Player::calculateVelocity()
 		}
 	}
 
-	if ((!m_Keyboard.isKeyDown(GLFW_KEY_SPACE) && m_Flying) || m_DecreasingVel)
+	if ((!space && m_Flying) || m_DecreasingVel.y)
 	{
 		if (m_Velocity.y > 0.0)
 		{
@@ -318,7 +323,7 @@ void Player::calculateVelocity()
 		}
 	}
 
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_S) || m_DecreasingVel)
+	if (!s || m_DecreasingVel.z)
 	{
 		if (m_Velocity.z < 0.0)
 		{
@@ -327,7 +332,7 @@ void Player::calculateVelocity()
 		}
 	}
 
-	if (!m_Keyboard.isKeyDown(GLFW_KEY_W) || m_DecreasingVel)
+	if (!w || m_DecreasingVel.z)
 	{
 		if (m_Velocity.z > 0.0)
 		{
@@ -335,10 +340,6 @@ void Player::calculateVelocity()
 			if (m_Velocity.z < 0.0) m_Velocity.z = 0.0;
 		}
 	}
-
-	double speed{ constants::walkSpeed };
-	if ((m_Velocity.x <= speed && m_Velocity.y <= speed && m_Velocity.z <= speed) && (m_Velocity.x >= -speed && m_Velocity.y >= -speed && m_Velocity.z >= -speed))
-		m_DecreasingVel = false;
 
 	if ((m_Velocity.x < 0.01 && m_Velocity.x > 0.0) || (m_Velocity.x > -0.01 && m_Velocity.x < 0.0))
 		m_Velocity.x = 0.0;
@@ -510,10 +511,7 @@ double Player::getReach() const
 	return m_Reach;
 }
 
-void Player::setReach(double reach)
-{
-	m_Reach = reach;
-}
+
 
 Camera& Player::getCamera()
 {
@@ -538,6 +536,16 @@ bool Player::isGrounded() const
 bool Player::isFlying() const
 {
 	return m_Flying;
+}
+
+glm::bvec3& Player::getDecreasingVel()
+{
+	return m_DecreasingVel;
+}
+
+void Player::setReach(double reach)
+{
+	m_Reach = reach;
 }
 
 void Player::setFlying(bool flying)

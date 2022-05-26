@@ -167,10 +167,10 @@ void ChunkMesh::pushDown(glm::vec3& floats)
 	pushNewIndices();
 
 	constexpr float add{ 1.0f };
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
+	vertex(floats.x + add, floats.y, floats.z); //1
+	vertex(floats.x, floats.y, floats.z); //0
+	vertex(floats.x + add, floats.y, floats.z + add); //4
+	vertex(floats.x, floats.y, floats.z + add); //3
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -183,10 +183,10 @@ void ChunkMesh::pushNorth(glm::vec3& floats, float height)
 	pushNewIndices();
 
 	constexpr float add{ 1.0f };
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //7
+	vertex(floats.x + add, floats.y, floats.z); //1
+	vertex(floats.x + add, floats.y, floats.z + add); //4
+	vertex(floats.x + add, floats.y + height, floats.z); //5
+	vertex(floats.x + add, floats.y + height, floats.z + add); //7
 	
 	for (int i{}; i < 4; ++i)
 	{
@@ -199,10 +199,10 @@ void ChunkMesh::pushSouth(glm::vec3& floats, float height)
 	pushNewIndices();
 
 	constexpr float add{ 1.0f };
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //6
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //2
+	vertex(floats.x, floats.y, floats.z + add); //3
+	vertex(floats.x, floats.y, floats.z); //0
+	vertex(floats.x, floats.y + height, floats.z + add); //6
+	vertex(floats.x, floats.y + height, floats.z); //2
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -215,10 +215,10 @@ void ChunkMesh::pushEast(glm::vec3& floats, float height)
 	pushNewIndices();
 
 	constexpr float add{ 1.0f };
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //4
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z + add); //3
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //7
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z + add); //6
+	vertex(floats.x + add, floats.y, floats.z + add); //4
+	vertex(floats.x, floats.y, floats.z + add); //3
+	vertex(floats.x + add, floats.y + height, floats.z + add); //7
+	vertex(floats.x, floats.y + height, floats.z + add); //6
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -231,10 +231,10 @@ void ChunkMesh::pushWest(glm::vec3& floats, float height)
 	pushNewIndices();
 
 	constexpr float add{ 1.0f };
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //0
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y).pushVertexFloat(floats.z); //1
-	pushVertexFloat(floats.x).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //2
-	pushVertexFloat(floats.x + add).pushVertexFloat(floats.y + height).pushVertexFloat(floats.z); //5
+	vertex(floats.x, floats.y, floats.z); //0
+	vertex(floats.x + add, floats.y, floats.z); //1
+	vertex(floats.x, floats.y + height, floats.z); //2
+	vertex(floats.x + add, floats.y + height, floats.z); //5
 
 	for (int i{}; i < 4; ++i)
 	{

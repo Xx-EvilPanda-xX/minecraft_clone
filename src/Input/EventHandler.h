@@ -18,7 +18,7 @@ private:
 	Block m_SelectedBlock;
 
 public:
-	bool IsWireFrame;
+	bool m_IsWireFrame;
 
 	EventHandler();
 

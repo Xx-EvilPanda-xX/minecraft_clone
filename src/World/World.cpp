@@ -9,7 +9,7 @@
 #include "../Constants.h"
 
 //#define DEBUG
-constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
+constexpr int chunkBuildsPerFrame{ static_cast<int>(constants::renderDistance / 1.5) };
 
 World::World(Shader shader, Keyboard& keyboard)
 	: m_Shader{ shader },
@@ -18,6 +18,7 @@ World::World(Shader shader, Keyboard& keyboard)
 	m_WorldGen{ m_Manager }
 {
 	m_LastBlockQueueSize = 0;
+	m_MoveCountDown = 100;
 }
 
 void World::worldUpdate(bool deletePass)
@@ -34,7 +35,7 @@ void World::worldUpdate(bool deletePass)
 	if (playerPos.y > 1024.0)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	if (m_Manager.chunkExsists(playerPos))
+	if (m_Manager.chunkExsists(playerPos) && m_MoveCountDown <= 0)
 		m_Player.move();
 
 	m_Manager.updateQueues(m_Player.getCamera());
@@ -49,6 +50,7 @@ void World::worldUpdate(bool deletePass)
 		destroyPass(Vector2i{ playerPos.x, playerPos.z });
 
 	placeQueueBlocks();
+	--m_MoveCountDown;
 }
 
 void World::worldRender(const Window& window)

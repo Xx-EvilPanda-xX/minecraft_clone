@@ -31,9 +31,9 @@ private:
 	double m_LastFrame;
 	double m_GuiUpdateCooldown;
 
-	long m_Frames;
-	long m_Time;
-	int m_CurrentFps;
+	long long m_Frames;
+	long long m_Time;
+	long long m_CurrentFps;
 
 	long m_DoDeletePass;
 
@@ -43,7 +43,7 @@ private:
 
 	void updateFPS();
 
-	long getCurrentTimeMillis();
+	long long getCurrentTimeMillis();
 
 	void createCrosshair();
 

@@ -22,6 +22,7 @@ private:
 	Player m_Player;
 
 	int m_LastBlockQueueSize;
+	int m_MoveCountDown;
 	bool m_ResetBuildVars;
 
 	void placeQueueBlocks();

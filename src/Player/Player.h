@@ -26,16 +26,13 @@ private:
 
 	glm::dvec3 m_LastValidLoc;
 	AABB m_LastValidAABB;
-
-	bool m_LastMovedX;
-	bool m_LastMovedY;
-	bool m_LastMovedZ;
+	
+	glm::bvec3 m_LastMoved;
+	glm::bvec3 m_DecreasingVel;
 
 	bool m_Sprinting;
 	bool m_Grounded;
 	bool m_Flying;
-	bool m_CtrlLastDown;
-	bool m_DecreasingVel;
 	double m_Reach;
 	double m_JumpCoolDown;
 
@@ -81,6 +78,8 @@ public:
 	bool isGrounded() const;
 
 	bool isFlying() const;
+
+	glm::bvec3& getDecreasingVel();
 
 	void setReach(double reach);
 

@@ -18,7 +18,7 @@ namespace constants
 	constexpr bool flatWorld{ false };
 	constexpr int flatWorldHeight{ 64 };
 
-	constexpr int renderDistance{ 12 };
+	constexpr int renderDistance{ 11 };
 
 	constexpr double playerReach{ 8.0f };
 	constexpr double blockBreakCooldown{ 0.15 };
@@ -30,7 +30,7 @@ namespace constants
 
 	constexpr double walkSpeed{ 3.5 };
 	constexpr double sprintSpeed{ 15.0 };
-	constexpr double playerDrift{ 20.0 };
+	constexpr double playerDrift{ 15.0 };
 	constexpr double playerSize{ 0.45 };
 	constexpr double cameraFov{ 90.0 };
 	constexpr glm::dvec3 playerSpawnPos{ 0.0, 96.0, 0.0 };
