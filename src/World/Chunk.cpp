@@ -128,6 +128,12 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 				if (currentBlock.getType() == BlockType::Air)
 					continue;
 
+				if (currentBlock.isFoliageMesh())
+				{
+					m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
+					continue;
+				}
+
 				if (x == 15 || x == 0 || y == 15 || y == 0 || z == 15 || z == 0)
 				{
 					PosX = (x == 15 ? sectionPosX : chunkSection)->getBlock(Vector3i(x == 15 ? 0 : x + 1, y, z));

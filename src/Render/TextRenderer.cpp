@@ -77,7 +77,6 @@ void TextRenderer::render(EventHandler& handler, Window& window)
 {
 	if (!handler.m_IsWireFrame)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
 	for (int i{}; i < m_Text.length(); ++i)
@@ -104,7 +103,6 @@ void TextRenderer::render(EventHandler& handler, Window& window)
 
 	if (!handler.m_IsWireFrame)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 }
 

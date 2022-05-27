@@ -28,7 +28,7 @@ double Application::s_Dt{};
 void Application::init()
 {
 	m_GuiShader = Shader("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl");
-	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_26.png");
+	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_27.png");
 	TextRenderer::createChars();
 	createCrosshair();
 	m_TextComponents[0] = TextRenderer{ "FPS: ", -1.0, 1.0, 0.1, 0.15, m_GuiShader };
@@ -38,7 +38,6 @@ void Application::init()
 
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
@@ -173,11 +172,11 @@ void Application::startupHelp()
 	std::cout << "\n\nCONTROLS:\n\n";
 	std::cout << "Move forward: W\nMove backward: S\nMove right: D\nMove left: A\nMove up: space (fly only)\nMove down: right shift\nJump: space (gravity only)\n";
 	std::cout << "Sprint: left control\nToggle flying: F\nEnable wireframe: C\n";
-	std::cout << "Optifine zoom: left alt\nReload chunks: R\nEscape: quit";
+	std::cout << "Optifine zoom: left alt\nReload chunks: R\nQuit: ESC";
 	std::cout << "\n\n===================================================\n\n";
 	std::cout << "BLOCKS:\n\n";
 	std::cout << "1: Grass\n2: Stone\n3: Dirt\n4: Cobble Stone\n5: Wood\n6: Palm Leaves\n7: Oak Leaves\n8: Glass\n9: Sand\n0: Planks\n";
-	std::cout << "Tab + 1: Cactus\nTab + 2: Gravel\nTab + 3: Diamond Block\nTab + 4: Snow\nTab + 5: Water\nTab + 6: Crafting Table\nTab + 7: Flowers\n\n";
+	std::cout << "Tab + 1: Cactus\nTab + 2: Gravel\nTab + 3: Diamond Block\nTab + 4: Snow\nTab + 5: Water\nTab + 6: Crafting Table\nTab + 7: Flowers\nTab + 8: Tall Grass\nTab + 9: Shrub\n\n";
 }
 
 void Application::handleInput()
@@ -201,7 +200,6 @@ void Application::handleInput()
 void Application::renderCrosshair()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
 	m_GuiShader.bind();
@@ -233,7 +231,6 @@ void Application::renderCrosshair()
 	m_GuiShader.unbind();
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
 }
 
 Window& Application::getWindow()

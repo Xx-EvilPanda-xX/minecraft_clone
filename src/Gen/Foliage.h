@@ -10,6 +10,8 @@ public:
 		PALM_TREE,
 		BUSH,
 		CACTUS,
+		TALL_GRASS,
+		SHRUB
 	};
 
 private:

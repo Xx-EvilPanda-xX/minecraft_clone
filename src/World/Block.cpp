@@ -1,10 +1,11 @@
 #include "Block.h"
 
 Block::Block(BlockType type, bool surface) 
-	: m_Type{ type },
+	: m_Type{ static_cast<char>(type) },
 	m_Surface{ surface }
 {
 	m_Transparent = false;
+	m_FoliageMesh = false;
 
 	switch (type)
 	{
@@ -26,6 +27,14 @@ Block::Block(BlockType type, bool surface)
 	case Glass:
 		m_Transparent = true;
 		break;
+	case TallGrass:
+		m_Transparent = true;
+		m_FoliageMesh = true;
+		break;
+	case Shrub:
+		m_Transparent = true;
+		m_FoliageMesh = true;
+		break;
 	default:
 		break;
 	}
@@ -33,14 +42,14 @@ Block::Block(BlockType type, bool surface)
 
 Block::Block()
 {
-	m_Type = BlockType::Air;
+	m_Type = static_cast<char>(BlockType::Air);
 	m_Transparent = true;
 	m_Surface = false;
 }
 
 BlockType Block::getType() const
 {
-	return m_Type;
+	return static_cast<BlockType>(m_Type);
 }
 
 bool Block::isTransparent()
@@ -51,6 +60,11 @@ bool Block::isTransparent()
 bool Block::isSurface()
 {
 	return m_Surface;
+}
+
+bool Block::isFoliageMesh()
+{
+	return m_FoliageMesh;
 }
 
 std::string Block::getName()
@@ -93,6 +107,10 @@ std::string Block::getName()
 		return "Cactus";
 	case Snow:
 		return "Snow";
+	case TallGrass:
+		return "TallGrass";
+	case Shrub:
+		return "Shrub";
 	default:
 		return "Unknown";
 	}

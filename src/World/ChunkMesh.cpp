@@ -17,7 +17,8 @@ BlockType ChunkMesh::s_AtlasIndices[]{ BlockType::Grass, BlockType::Stone, Block
 									BlockType::Glass, BlockType::CraftingTable, BlockType::Planks,
 									BlockType::DiamondBlock, BlockType::Water, BlockType::Sand,
 									BlockType::Gravel, BlockType::OakLeaves, BlockType::Cactus,
-									BlockType::Snow, BlockType::Flowers };
+									BlockType::Snow, BlockType::Flowers, BlockType::TallGrass,
+									BlockType::Shrub };
 
 void ChunkMesh::createTextureAtlas(const char* path)
 {
@@ -29,40 +30,58 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
 	float height{ block.isSurface() ? 0.9f : 1.0f };
 
-	switch (face)
+	if (block.isFoliageMesh())
 	{
-	case Face::Up:
-		pushUp(floats, height);
-		break;
+		pushSmallFoliage(floats);
 
-	case Face::Down:
-		pushDown(floats);
-		break;
+		for (int i{}; i < 2; ++i)
+		{
+			float* tex{ calcTexCoords(block.getType(), static_cast<Face>(i)) };
+			for (int i{}; i < 8; ++i)
+			{
+				m_TexCoords.push_back(tex[i]);
+			}
 
-	case Face::North:
-		pushNorth(floats, height);
-		break;
-
-	case Face::South:
-		pushSouth(floats, height);
-		break;
-
-	case Face::East:
-		pushEast(floats, height);
-		break;
-
-	case Face::West:
-		pushWest(floats, height);
-		break;
+			delete[] tex;
+		}
 	}
-
-	float* tex{ calcTexCoords(block.getType(), face) };
-	for (int i{}; i < 8; ++i)
+	else
 	{
-		m_TexCoords.push_back(tex[i]);
-	}
+		switch (face)
+		{
+		case Face::Up:
+			pushUp(floats, height);
+			break;
 
-	delete[] tex;
+		case Face::Down:
+			pushDown(floats);
+			break;
+
+		case Face::North:
+			pushNorth(floats, height);
+			break;
+
+		case Face::South:
+			pushSouth(floats, height);
+			break;
+
+		case Face::East:
+			pushEast(floats, height);
+			break;
+
+		case Face::West:
+			pushWest(floats, height);
+			break;
+		}
+
+		float* tex{ calcTexCoords(block.getType(), face) };
+		for (int i{}; i < 8; ++i)
+		{
+			m_TexCoords.push_back(tex[i]);
+		}
+
+		delete[] tex;
+	}
 }
 
 float* ChunkMesh::calcTexCoords(BlockType block, Face face)
@@ -239,6 +258,35 @@ void ChunkMesh::pushWest(glm::vec3& floats, float height)
 	for (int i{}; i < 4; ++i)
 	{
 		pushLighting(westAmbient);
+	}
+}
+
+void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
+{
+	constexpr float sqrt2{ 1.41421356f };
+	constexpr float add{ (sqrt2 - 1.0f) / (2.0f * sqrt2) };
+
+	pushNewIndices();
+	vertex(floats.x + add, floats.y, floats.z + add);
+	vertex(floats.x + (1.0f - add), floats.y, floats.z + (1.0f - add));
+	vertex(floats.x + add, floats.y + 1.0f, floats.z + add);
+	vertex(floats.x + (1.0f - add), floats.y + 1.0f, floats.z + (1.0f - add));
+
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(northAmbient);
+	}
+
+	pushNewIndices();
+	vertex(floats.x + add, floats.y, floats.z + (1.0f - add));
+	vertex(floats.x + (1.0f - add), floats.y, floats.z + add);
+	vertex(floats.x + add, floats.y + 1.0f, floats.z + (1.0f - add));
+
+	vertex(floats.x + (1.0f - add), floats.y + 1.0f, floats.z + add);
+
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(southAmbient);
 	}
 }
 

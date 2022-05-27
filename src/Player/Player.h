@@ -33,6 +33,7 @@ private:
 	bool m_Sprinting;
 	bool m_Grounded;
 	bool m_Flying;
+	bool m_HasTouchedGround;
 	double m_Reach;
 	double m_JumpCoolDown;
 
@@ -79,6 +80,8 @@ public:
 
 	bool isFlying() const;
 
+	bool isHasTouchedGround() const;
+
 	glm::bvec3& getDecreasingVel();
 
 	void setReach(double reach);
@@ -86,6 +89,8 @@ public:
 	void setSprinting(bool sprinting);
 
 	void setFlying(bool flying);
+
+	void setHasTouchedGround(bool hasTouchedGround);
 };
 
 #endif

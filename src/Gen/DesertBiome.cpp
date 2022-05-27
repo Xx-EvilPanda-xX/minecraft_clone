@@ -12,6 +12,7 @@ DesertBiome::DesertBiome(int seed)
 	addWaterLayer();
 
 	m_Foliage.emplace_back(Foliage::FoliageType::CACTUS, 0.01, constants::waterLevel, 255);
+	m_Foliage.emplace_back(Foliage::FoliageType::SHRUB, 0.015, constants::waterLevel + 5, 255);
 
 	setNoiseParams(7, 0.00255f);
 }

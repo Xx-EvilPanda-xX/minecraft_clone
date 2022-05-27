@@ -21,11 +21,11 @@ constexpr float downAmbient{ 0.6f };
 enum class Face
 {
 	Up,
-	Down,
 	North,
 	South,
 	East,
-	West
+	West,
+	Down
 };
 
 class ChunkMesh
@@ -67,6 +67,8 @@ private:
 	void pushEast(glm::vec3& floats, float height);
 
 	void pushWest(glm::vec3& floats, float height);
+
+	void pushSmallFoliage(glm::vec3& floats);
 
 	void pushNewIndices();
 

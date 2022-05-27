@@ -29,7 +29,7 @@ namespace constants
 	constexpr int beachSize{ 1 };
 
 	constexpr double walkSpeed{ 3.5 };
-	constexpr double sprintSpeed{ 15.0 };
+	constexpr double sprintSpeed{ 9.0 };
 	constexpr double playerDrift{ 15.0 };
 	constexpr double playerSize{ 0.45 };
 	constexpr double cameraFov{ 90.0 };

@@ -20,6 +20,7 @@ Player::Player(ChunkManager& manager, Keyboard& keyboard, double reach)
 	m_Sprinting = false;
 	m_Grounded = false;
 	m_Flying = false;
+	m_HasTouchedGround = false;
 }
 
 void Player::move()
@@ -175,6 +176,7 @@ void Player::collsionDetection()
 				if (collisionType == CollsionType::PlayerLowerHalf && m_JumpCoolDown <= 0.0)
 				{
 					onGround = true;
+					m_HasTouchedGround = true;
 					if (m_Keyboard.isKeyDown(GLFW_KEY_SPACE))
 						m_JumpCoolDown = 0.025;
 				}
@@ -247,7 +249,11 @@ Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_C
 			{
 				AABB blockAABB{ glm::dvec3{ x, y, z }, glm::dvec3{ x + 1, y + 1, z + 1 } };
 				Block block{ m_Manager.getWorldBlock(Vector3i{ x, y, z }) };
-				if (blockAABB.intersects(playerAABB) && (block.getType() != BlockType::Air && block.getType() != BlockType::Water))
+				if (blockAABB.intersects(playerAABB) && 
+					(block.getType() != BlockType::Air &&
+					block.getType() != BlockType::Water &&
+					block.getType() != BlockType::TallGrass &&
+					block.getType() != BlockType::Shrub))
 				{
 					glm::dvec3 blockCenter{ x + 0.5, y + 0.5, z + 0.5 };
 					glm::dvec3 playerToCenter{ blockCenter - playerPos };
@@ -271,7 +277,7 @@ Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_C
 
 void Player::calculateVelocity()
 {
-	constexpr double speed{ constants::walkSpeed };
+	const double speed{ m_Flying ? constants::walkSpeed * 2.5 : constants::walkSpeed };
 	const bool crtl{ m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL) };
 	const bool a{ m_Keyboard.isKeyDown(GLFW_KEY_A) };
 	const bool s{ m_Keyboard.isKeyDown(GLFW_KEY_S) };
@@ -280,12 +286,17 @@ void Player::calculateVelocity()
 	const bool shift{ m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT) };
 	const bool space{ m_Keyboard.isKeyDown(GLFW_KEY_SPACE) };
 
-	m_DecreasingVel.x = (m_Velocity.x > speed || m_Velocity.x < -speed) && (a || d) && !crtl;
+	if (m_Velocity.x < speed && m_Velocity.x > -speed && m_DecreasingVel.x && !m_HasTouchedGround)
+		m_HasTouchedGround = true;
+	if (m_Velocity.z < speed && m_Velocity.z > -speed && m_DecreasingVel.z && !m_HasTouchedGround)
+		m_HasTouchedGround = true;
+
+	m_DecreasingVel.x = (m_Velocity.x > speed || m_Velocity.x < -speed) && (((a || d) && !crtl) || (!m_Flying && !m_HasTouchedGround));
 	m_DecreasingVel.y = (m_Velocity.y > speed || m_Velocity.y < -speed) && (shift || space) && !crtl;
-	m_DecreasingVel.z = (m_Velocity.z > speed || m_Velocity.z < -speed) && (w || s) && !crtl;
+	m_DecreasingVel.z = (m_Velocity.z > speed || m_Velocity.z < -speed) && (((w || s) && !crtl) || (!m_Flying && !m_HasTouchedGround));
 
 	//std::cout << "DecreasingVel: " << m_DecreasingVel.x << ", " << m_DecreasingVel.y << ", " << m_DecreasingVel.z << "\t\t";
-	//std::cout << "Velocity: " << m_Velocity.x << ", " << m_Velocity.y << ", " << m_Velocity.z << "\n";
+	//std::cout << "Velocity: " << m_Velocity.x << ", " << m_Velocity.y << ", " << m_Velocity.z << ", " << speed << "\n";
 
 	if (!a || m_DecreasingVel.x)
 	{
@@ -511,8 +522,6 @@ double Player::getReach() const
 	return m_Reach;
 }
 
-
-
 Camera& Player::getCamera()
 {
 	return m_Camera;
@@ -538,6 +547,11 @@ bool Player::isFlying() const
 	return m_Flying;
 }
 
+bool Player::isHasTouchedGround() const
+{
+	return m_HasTouchedGround;
+}
+
 glm::bvec3& Player::getDecreasingVel()
 {
 	return m_DecreasingVel;
@@ -548,12 +562,17 @@ void Player::setReach(double reach)
 	m_Reach = reach;
 }
 
+void Player::setSprinting(bool sprinting)
+{
+	m_Sprinting = sprinting;
+}
+
 void Player::setFlying(bool flying)
 {
 	m_Flying = flying;
 }
 
-void Player::setSprinting(bool sprinting)
+void Player::setHasTouchedGround(bool hasTouchedGround)
 {
-	m_Sprinting = sprinting;
+	m_HasTouchedGround = hasTouchedGround;
 }

@@ -24,6 +24,8 @@ enum BlockType
 	Water,
 	Cactus,
 	Snow,
+	TallGrass,
+	Shrub,
 
 	NUM_BLOCKS
 };
@@ -31,9 +33,11 @@ enum BlockType
 class Block
 {
 private:
-	BlockType m_Type;
+	//enums use 32 bits, char is only 8. I'll likely never add more than 256 blocks.
+	char m_Type;
 	bool m_Transparent;
 	bool m_Surface;
+	bool m_FoliageMesh;
 
 public:
 	Block(BlockType type, bool surface);
@@ -45,6 +49,8 @@ public:
 	bool isTransparent();
 
 	bool isSurface();
+
+	bool isFoliageMesh();
 
 	std::string getName();
 };

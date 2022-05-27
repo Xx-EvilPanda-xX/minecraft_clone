@@ -31,6 +31,7 @@ OakForestBiome::OakForestBiome(int seed)
 
 	m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.01, constants::waterLevel, constants::waterLevel + 2);
 	m_Foliage.emplace_back(Foliage::FoliageType::OAK_TREE, 0.03, constants::waterLevel + 3, 255);
+	m_Foliage.emplace_back(Foliage::FoliageType::TALL_GRASS, 0.025, constants::waterLevel + 5, 255);
 
 	setNoiseParams(7, 0.00355f);
 }
