@@ -9,7 +9,7 @@
 #include "../Constants.h"
 
 //#define DEBUG
-constexpr int chunkBuildsPerFrame{ static_cast<int>(constants::renderDistance / 1.5) };
+constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
 
 World::World(Shader shader, Keyboard& keyboard)
 	: m_Shader{ shader },

@@ -15,7 +15,7 @@ PlainsBiome::PlainsBiome(int seed)
 	addWaterLayer();
 
 	m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.01, constants::waterLevel, constants::waterLevel + 2);
-	m_Foliage.emplace_back(Foliage::FoliageType::TALL_GRASS, 0.15, constants::waterLevel + 5, 255);
+	m_Foliage.emplace_back(Foliage::FoliageType::TALL_GRASS, 0.5, constants::waterLevel + 5, 255);
 
 	setNoiseParams(7, 0.00255f);
 }

@@ -281,12 +281,11 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 	vertex(floats.x + add, floats.y, floats.z + (1.0f - add));
 	vertex(floats.x + (1.0f - add), floats.y, floats.z + add);
 	vertex(floats.x + add, floats.y + 1.0f, floats.z + (1.0f - add));
-
 	vertex(floats.x + (1.0f - add), floats.y + 1.0f, floats.z + add);
 
 	for (int i{}; i < 4; ++i)
 	{
-		pushLighting(southAmbient);
+		pushLighting(westAmbient);
 	}
 }
 
