@@ -201,10 +201,16 @@ void TerrainGenerator::genFoliage(const Biome* biome, Vector2i pos, double curre
 				genCactus(section, placePos, sectionLocation);
 				break;
 			case Foliage::FoliageType::TALL_GRASS:
-				section->setBlock(placePos, BlockType::TallGrass, false);
+				if (section->getBlock(placePos).getType() == BlockType::Air)
+					section->setBlock(placePos, BlockType::TallGrass, false);
 				break;
 			case Foliage::FoliageType::SHRUB:
-				section->setBlock(placePos, BlockType::Shrub, false);
+				if (section->getBlock(placePos).getType() == BlockType::Air)
+					section->setBlock(placePos, BlockType::Shrub, false);
+				break;
+			case Foliage::FoliageType::ROSE:
+				if (section->getBlock(placePos).getType() == BlockType::Air)
+					section->setBlock(placePos, BlockType::Rose, false);
 				break;
 			default:
 				std::cout << "Undefined foliage type.\n";

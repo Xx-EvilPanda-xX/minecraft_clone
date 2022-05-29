@@ -253,7 +253,8 @@ Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_C
 					(block.getType() != BlockType::Air &&
 					block.getType() != BlockType::Water &&
 					block.getType() != BlockType::TallGrass &&
-					block.getType() != BlockType::Shrub))
+					block.getType() != BlockType::Shrub && 
+					block.getType() != BlockType::Rose))
 				{
 					glm::dvec3 blockCenter{ x + 0.5, y + 0.5, z + 0.5 };
 					glm::dvec3 playerToCenter{ blockCenter - playerPos };

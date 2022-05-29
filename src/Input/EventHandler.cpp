@@ -163,6 +163,8 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 			m_SelectedBlock = Block{ BlockType::TallGrass, false };
 		if (keyboard.isKeyDown(GLFW_KEY_9))
 			m_SelectedBlock = Block{ BlockType::Shrub, false };
+		if (keyboard.isKeyDown(GLFW_KEY_0))
+			m_SelectedBlock = Block{ BlockType::Rose, false };
 	}
 
 	flyToggleCooldown -= Application::s_Dt;

@@ -35,6 +35,9 @@ Block::Block(BlockType type, bool surface)
 		m_Transparent = true;
 		m_FoliageMesh = true;
 		break;
+	case Rose:
+		m_Transparent = true;
+		m_FoliageMesh = true;
 	default:
 		break;
 	}
@@ -111,6 +114,8 @@ std::string Block::getName()
 		return "TallGrass";
 	case Shrub:
 		return "Shrub";
+	case Rose:
+		return "Rose";
 	default:
 		return "Unknown";
 	}

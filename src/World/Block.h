@@ -26,6 +26,7 @@ enum BlockType
 	Snow,
 	TallGrass,
 	Shrub,
+	Rose,
 
 	NUM_BLOCKS
 };

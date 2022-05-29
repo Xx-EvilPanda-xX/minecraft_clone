@@ -13,6 +13,7 @@ GravelPlainsBiome::GravelPlainsBiome(int seed)
 
 	//TODO: add new foliage type for gravel plains
 	m_Foliage.emplace_back(Foliage::FoliageType::BUSH, 0.025, constants::waterLevel + 3, 255);
+	m_Foliage.emplace_back(Foliage::FoliageType::ROSE, 0.01, constants::waterLevel + 5, 255);
 
 	setNoiseParams(7, 0.00355f);
 }

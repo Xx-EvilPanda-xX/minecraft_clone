@@ -11,7 +11,8 @@ public:
 		BUSH,
 		CACTUS,
 		TALL_GRASS,
-		SHRUB
+		SHRUB,
+		ROSE
 	};
 
 private:
