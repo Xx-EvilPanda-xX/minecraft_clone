@@ -34,9 +34,9 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 	{
 		pushSmallFoliage(floats);
 
-		for (int i{}; i < 2; ++i)
+		for (int i{}; i < 4; ++i)
 		{
-			float* tex{ calcTexCoords(block.getType(), static_cast<Face>(i)) };
+			float* tex{ calcTexCoords(block.getType(), static_cast<Face>(i / 2)) };
 			for (int i{}; i < 8; ++i)
 			{
 				m_TexCoords.push_back(tex[i]);
@@ -167,7 +167,7 @@ float* ChunkMesh::getTexCoordsFromStartPos(glm::vec2 startPos)
 
 void ChunkMesh::pushUp(glm::vec3& floats, float height)
 {
-	pushNewIndices();
+	pushCCIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x, floats.y + height, floats.z); //2
@@ -183,7 +183,7 @@ void ChunkMesh::pushUp(glm::vec3& floats, float height)
 
 void ChunkMesh::pushDown(glm::vec3& floats)
 {
-	pushNewIndices();
+	pushCCIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x + add, floats.y, floats.z); //1
@@ -199,7 +199,7 @@ void ChunkMesh::pushDown(glm::vec3& floats)
 
 void ChunkMesh::pushNorth(glm::vec3& floats, float height)
 {
-	pushNewIndices();
+	pushCCIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x + add, floats.y, floats.z); //1
@@ -215,7 +215,7 @@ void ChunkMesh::pushNorth(glm::vec3& floats, float height)
 
 void ChunkMesh::pushSouth(glm::vec3& floats, float height)
 {
-	pushNewIndices();
+	pushCCIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x, floats.y, floats.z + add); //3
@@ -231,7 +231,7 @@ void ChunkMesh::pushSouth(glm::vec3& floats, float height)
 
 void ChunkMesh::pushEast(glm::vec3& floats, float height)
 {
-	pushNewIndices();
+	pushCCIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x + add, floats.y, floats.z + add); //4
@@ -247,7 +247,7 @@ void ChunkMesh::pushEast(glm::vec3& floats, float height)
 
 void ChunkMesh::pushWest(glm::vec3& floats, float height)
 {
-	pushNewIndices();
+	pushCCIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x, floats.y, floats.z); //0
@@ -266,7 +266,7 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 	constexpr float sqrt2{ 1.41421356f };
 	constexpr float add{ (sqrt2 - 1.0f) / (2.0f * sqrt2) };
 
-	pushNewIndices();
+	pushCCIndices();
 	vertex(floats.x + add, floats.y, floats.z + add);
 	vertex(floats.x + (1.0f - add), floats.y, floats.z + (1.0f - add));
 	vertex(floats.x + add, floats.y + 1.0f, floats.z + add);
@@ -277,7 +277,29 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 		pushLighting(northAmbient);
 	}
 
-	pushNewIndices();
+	pushCIndices();
+	vertex(floats.x + add, floats.y, floats.z + add);
+	vertex(floats.x + (1.0f - add), floats.y, floats.z + (1.0f - add));
+	vertex(floats.x + add, floats.y + 1.0f, floats.z + add);
+	vertex(floats.x + (1.0f - add), floats.y + 1.0f, floats.z + (1.0f - add));
+
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(westAmbient);
+	}
+
+	pushCCIndices();
+	vertex(floats.x + add, floats.y, floats.z + (1.0f - add));
+	vertex(floats.x + (1.0f - add), floats.y, floats.z + add);
+	vertex(floats.x + add, floats.y + 1.0f, floats.z + (1.0f - add));
+	vertex(floats.x + (1.0f - add), floats.y + 1.0f, floats.z + add);
+
+	for (int i{}; i < 4; ++i)
+	{
+		pushLighting(westAmbient);
+	}
+
+	pushCIndices();
 	vertex(floats.x + add, floats.y, floats.z + (1.0f - add));
 	vertex(floats.x + (1.0f - add), floats.y, floats.z + add);
 	vertex(floats.x + add, floats.y + 1.0f, floats.z + (1.0f - add));
@@ -289,7 +311,7 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 	}
 }
 
-void ChunkMesh::pushNewIndices()
+void ChunkMesh::pushCCIndices()
 {
 	int size{ static_cast<int>(m_Vertices.size() / 3) };
 	int s0{ size + 0 };
@@ -298,6 +320,17 @@ void ChunkMesh::pushNewIndices()
 	int s3{ size + 3 };
 
 	pushIndex(s1).pushIndex(s2).pushIndex(s3).pushIndex(s0).pushIndex(s2).pushIndex(s1);
+}
+
+void ChunkMesh::pushCIndices()
+{
+	int size{ static_cast<int>(m_Vertices.size() / 3) };
+	int s0{ size + 0 };
+	int s1{ size + 1 };
+	int s2{ size + 2 };
+	int s3{ size + 3 };
+
+	pushIndex(s1).pushIndex(s3).pushIndex(s2).pushIndex(s0).pushIndex(s1).pushIndex(s2);
 }
 
 ChunkMesh& ChunkMesh::pushVertexFloat(float f)

@@ -177,13 +177,15 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 
 void Chunk::tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos)
 {
-	if ((!currentBlock.isTransparent() && testBlock.isTransparent()) ||
-		((currentBlock.isTransparent() && testBlock.isTransparent()) && (currentBlock.getType() != testBlock.getType())))
+	if ((testBlock.getType() == BlockType::Air) || testBlock.isTransparent())
 	{
-		if (currentBlock.getType() == BlockType::Water && constants::useTranslucentWater)
-			m_TranslucentMesh.addFace(pos, currentBlock, face);
-		else
-			m_SolidMesh.addFace(pos, currentBlock, face);
+		if (!(currentBlock.getType() == BlockType::Water && testBlock.getType() == BlockType::Water))
+		{
+			if (currentBlock.getType() == BlockType::Water && constants::useTranslucentWater)
+				m_TranslucentMesh.addFace(pos, currentBlock, face);
+			else
+				m_SolidMesh.addFace(pos, currentBlock, face);
+		}
 	}
 }
 

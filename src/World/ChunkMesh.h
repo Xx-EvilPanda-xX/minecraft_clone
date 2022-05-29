@@ -70,7 +70,9 @@ private:
 
 	void pushSmallFoliage(glm::vec3& floats);
 
-	void pushNewIndices();
+	void pushCCIndices();
+
+	void pushCIndices();
 
 	float* calcTexCoords(BlockType block, Face face);
 
