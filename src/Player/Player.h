@@ -8,7 +8,7 @@
 #include "../Math/Vector3i.h"
 #include "../Input/Keyboard.h"
 
-enum class CollsionType
+enum class CollisionType
 {
 	PlayerUpperHalf,
 	PlayerLowerHalf
@@ -39,9 +39,9 @@ private:
 
 	const double vecPrecision{ 0.001 };
 	const double cameraHeightDiff{ 0.3 };
-	const int collsionSearchRadiusX{ 2 };
-	const int collsionSearchRadiusY{ 3 };
-	const int collsionSearchRadiusZ{ 2 };
+	const int collisionSearchRadiusX{ 2 };
+	const int collisionSearchRadiusY{ 3 };
+	const int collisionSearchRadiusZ{ 2 };
 	const double worldBottom{ -40.0 };
 
 	template <typename T>
@@ -51,9 +51,9 @@ private:
 
 	void calculateVelocity();
 
-	void collsionDetection();
+	void collisionDetection();
 
-	bool collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, const AABB& playerAABB, Vector3i& o_Pos, CollsionType& o_CollisionType);
+	bool collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, const AABB& playerAABB, Vector3i& o_Pos, CollisionType& o_CollisionType);
 
 	Vector3i* test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_ClosestCollision);
 

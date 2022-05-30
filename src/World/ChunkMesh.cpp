@@ -34,9 +34,12 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 	{
 		pushSmallFoliage(floats);
 
+		//used as a toggle from 0 to 1
+		bool face{};
 		for (int i{}; i < 4; ++i)
 		{
-			float* tex{ calcTexCoords(block.getType(), static_cast<Face>(i / 2)) };
+			float* tex{ calcTexCoords(block.getType(), static_cast<Face>(face)) };
+			face = !face;
 			for (int i{}; i < 8; ++i)
 			{
 				m_TexCoords.push_back(tex[i]);

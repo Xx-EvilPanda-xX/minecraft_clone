@@ -36,7 +36,7 @@ namespace constants
 	constexpr glm::dvec3 playerSpawnPos{ 0.0, 96.0, 0.0 };
 
 	constexpr double gravity{ 60.0 };
-	constexpr double jumpHeight{ 1.4 };
+	constexpr double jumpHeight{ 1.31 };
 }
 
 #endif

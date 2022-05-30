@@ -177,7 +177,7 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 
 void Chunk::tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos)
 {
-	if ((testBlock.getType() == BlockType::Air) || testBlock.isTransparent())
+	if ((testBlock.getType() == BlockType::Air) || testBlock.isTransparent() || (face == Face::Up && currentBlock.isSurface()))
 	{
 		if (!(currentBlock.getType() == BlockType::Water && testBlock.getType() == BlockType::Water))
 		{
