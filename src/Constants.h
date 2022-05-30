@@ -30,7 +30,7 @@ namespace constants
 
 	constexpr double walkSpeed{ 3.5 };
 	constexpr double sprintSpeed{ 9.0 };
-	constexpr double playerDrift{ 15.0 };
+	constexpr double playerDrift{ 20.0 };
 	constexpr double playerSize{ 0.45 };
 	constexpr double cameraFov{ 90.0 };
 	constexpr glm::dvec3 playerSpawnPos{ 0.0, 96.0, 0.0 };

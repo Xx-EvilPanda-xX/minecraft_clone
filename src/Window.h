@@ -7,9 +7,6 @@
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
-
 class Window
 {
 private:
@@ -17,6 +14,8 @@ private:
 	int m_Width;
 	int m_Height;
 	const char* m_Title;
+	static Keyboard s_Keyboard;
+	static Mouse s_Mouse;
 
 	void initGlfw();
 	void createWindow();
@@ -35,9 +34,9 @@ public:
 
 	const char* getTitle() const;
 
-	Keyboard& getKeyboard();
+	static Keyboard& getKeyboard();
 
-	Mouse& getMouse();
+	static Mouse& getMouse();
 
 	void setTitle(const char* title);
 };

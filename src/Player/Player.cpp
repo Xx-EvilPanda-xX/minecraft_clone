@@ -278,8 +278,7 @@ Vector3i* Player::test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_C
 
 void Player::calculateVelocity()
 {
-	const double speed{ m_Flying ? constants::walkSpeed * 2.5 : constants::walkSpeed };
-	const bool crtl{ m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL) };
+	const bool ctrl{ m_Keyboard.isKeyDown(GLFW_KEY_LEFT_CONTROL) };
 	const bool a{ m_Keyboard.isKeyDown(GLFW_KEY_A) };
 	const bool s{ m_Keyboard.isKeyDown(GLFW_KEY_S) };
 	const bool w{ m_Keyboard.isKeyDown(GLFW_KEY_W) };
@@ -287,14 +286,17 @@ void Player::calculateVelocity()
 	const bool shift{ m_Keyboard.isKeyDown(GLFW_KEY_LEFT_SHIFT) };
 	const bool space{ m_Keyboard.isKeyDown(GLFW_KEY_SPACE) };
 
+	const double speed{ m_Flying ? (m_Sprinting ? constants::sprintSpeed : constants::walkSpeed) * 2.5 : (m_Sprinting ? constants::sprintSpeed : constants::walkSpeed) };
+	const double drift{ m_Flying ? constants::playerDrift * 2.0 : constants::playerDrift };
+
 	if (m_Velocity.x < speed && m_Velocity.x > -speed && m_DecreasingVel.x && !m_HasTouchedGround)
 		m_HasTouchedGround = true;
 	if (m_Velocity.z < speed && m_Velocity.z > -speed && m_DecreasingVel.z && !m_HasTouchedGround)
 		m_HasTouchedGround = true;
 
-	m_DecreasingVel.x = (m_Velocity.x > speed || m_Velocity.x < -speed) && (((a || d) && !crtl) || (!m_Flying && !m_HasTouchedGround));
-	m_DecreasingVel.y = (m_Velocity.y > speed || m_Velocity.y < -speed) && (shift || space) && !crtl;
-	m_DecreasingVel.z = (m_Velocity.z > speed || m_Velocity.z < -speed) && (((w || s) && !crtl) || (!m_Flying && !m_HasTouchedGround));
+	m_DecreasingVel.x = (m_Velocity.x > speed || m_Velocity.x < -speed) && (((a || d) && !ctrl) || (!m_Flying && !m_HasTouchedGround));
+	m_DecreasingVel.y = (m_Velocity.y > speed || m_Velocity.y < -speed) && (shift || space) && !ctrl;
+	m_DecreasingVel.z = (m_Velocity.z > speed || m_Velocity.z < -speed) && (((w || s) && !ctrl) || (!m_Flying && !m_HasTouchedGround));
 
 	//std::cout << "DecreasingVel: " << m_DecreasingVel.x << ", " << m_DecreasingVel.y << ", " << m_DecreasingVel.z << "\t\t";
 	//std::cout << "Velocity: " << m_Velocity.x << ", " << m_Velocity.y << ", " << m_Velocity.z << ", " << speed << "\n";
@@ -303,7 +305,7 @@ void Player::calculateVelocity()
 	{
 		if (m_Velocity.x < 0.0)
 		{
-			m_Velocity.x += constants::playerDrift * Application::s_Dt;
+			m_Velocity.x += drift * Application::s_Dt;
 			if (m_Velocity.x > 0.0) m_Velocity.x = 0.0;
 		}
 	}
@@ -312,7 +314,7 @@ void Player::calculateVelocity()
 	{
 		if (m_Velocity.x > 0.0)
 		{
-			m_Velocity.x -= constants::playerDrift * Application::s_Dt;
+			m_Velocity.x -= drift * Application::s_Dt;
 			if (m_Velocity.x < 0.0) m_Velocity.x = 0.0;
 		}
 	}
@@ -321,7 +323,7 @@ void Player::calculateVelocity()
 	{
 		if (m_Velocity.y < 0.0)
 		{
-			m_Velocity.y += constants::playerDrift * Application::s_Dt;
+			m_Velocity.y += drift * Application::s_Dt;
 			if (m_Velocity.y > 0.0) m_Velocity.y = 0.0;
 		}
 	}
@@ -330,7 +332,7 @@ void Player::calculateVelocity()
 	{
 		if (m_Velocity.y > 0.0)
 		{
-			m_Velocity.y -= constants::playerDrift * Application::s_Dt;
+			m_Velocity.y -= drift * Application::s_Dt;
 			if (m_Velocity.y < 0.0) m_Velocity.y = 0.0;
 		}
 	}
@@ -339,7 +341,7 @@ void Player::calculateVelocity()
 	{
 		if (m_Velocity.z < 0.0)
 		{
-			m_Velocity.z += constants::playerDrift * Application::s_Dt;
+			m_Velocity.z += drift * Application::s_Dt;
 			if (m_Velocity.z > 0.0) m_Velocity.z = 0.0;
 		}
 	}
@@ -348,7 +350,7 @@ void Player::calculateVelocity()
 	{
 		if (m_Velocity.z > 0.0)
 		{
-			m_Velocity.z -= constants::playerDrift * Application::s_Dt;
+			m_Velocity.z -= drift * Application::s_Dt;
 			if (m_Velocity.z < 0.0) m_Velocity.z = 0.0;
 		}
 	}

@@ -2,8 +2,8 @@
 #include "Window.h"
 #include "Constants.h"
 
-Keyboard g_Keyboard;
-Mouse g_Mouse;
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
 
 Window::Window(int width, int height, const char* title) 
 	: m_Width{ width },
@@ -14,11 +14,14 @@ Window::Window(int width, int height, const char* title)
 	createWindow();
 	loadGL();
 
-	g_Keyboard = Keyboard{ m_GlfwWindow };
-	g_Mouse = Mouse{ m_GlfwWindow };
+	s_Keyboard = Keyboard{ m_GlfwWindow };
+	s_Mouse = Mouse{ m_GlfwWindow };
 }
 
 Window::Window() = default;
+
+Keyboard Window::s_Keyboard{ nullptr };
+Mouse Window::s_Mouse{ nullptr };
 
 void Window::initGlfw()
 {
@@ -94,12 +97,12 @@ const char* Window::getTitle() const
 
 Keyboard& Window::getKeyboard()
 {
-	return g_Keyboard;
+	return s_Keyboard;
 }
 
 Mouse& Window::getMouse()
 {
-	return g_Mouse;
+	return s_Mouse;
 }
 
 void Window::setTitle(const char* title)
@@ -115,6 +118,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	g_Mouse.setXOffset(static_cast<double>(xpos));
-	g_Mouse.setYOffset(static_cast<double>(ypos));
+	Window::getMouse().setXOffset(static_cast<double>(xpos));
+	Window::getMouse().setYOffset(static_cast<double>(ypos));
 }
