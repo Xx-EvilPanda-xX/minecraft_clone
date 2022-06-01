@@ -25,7 +25,7 @@ const std::vector<Layer>& GravelPlainsBiome::getLayers() const
 	return m_Layers;
 }
 
-const double** GravelPlainsBiome::getHeightMap(Vector2i location)
+double** GravelPlainsBiome::getHeightMap(Vector2i location)
 {
 	double** heightMap = new double* [16];
 
@@ -55,7 +55,7 @@ const double** GravelPlainsBiome::getHeightMap(Vector2i location)
 		}
 	}
 
-	return (const double**)heightMap;
+	return heightMap;
 }
 
 const std::vector<Foliage>& GravelPlainsBiome::getFoliage() const

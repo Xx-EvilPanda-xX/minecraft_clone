@@ -36,17 +36,17 @@ private:
 
 	const int m_MaxTreesPerChunk{ 16 };
 
-	void genFoliage(const Biome* biome, Vector2i pos, double currentHeight, ChunkSection* section, const SectionLocation& sectionLocation, const double** heightMap);
+	void genFoliage(const Biome* biome, Vector2i pos, ChunkSection* section, const SectionLocation& sectionLocation, double** heightMap);
 
-	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, const double** heightMap);
+	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, double** heightMap);
 
 	void genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation);
 
 	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& sectionLocation, Block block);
 
-	ChunkSection* genSection(const Biome* biomeMap[chunkSize][chunkSize], const double** heightMap, SectionLocation sectionLocation);
+	ChunkSection* genSection(Biome* biomeMap[chunkSize][chunkSize], double** heightMap, SectionLocation sectionLocation);
 
-	const BiomeMixture** getBiomeMap(Vector2i location);
+	BiomeMixture** getBiomeMap(Vector2i location);
 
 	int setBiomeNoiseParams();
 
@@ -54,7 +54,7 @@ private:
 	T** allocMap();
 
 	template <typename T>
-	void deleteMap(const T** map);
+	void deleteMap(T** map);
 
 public:
 	TerrainGenerator(ChunkManager& manager);

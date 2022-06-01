@@ -25,7 +25,7 @@ public:
 	virtual ~Biome();
 	virtual const std::vector<Layer>& getLayers() const = 0;
 	virtual const std::vector<Foliage>& getFoliage() const = 0;
-	virtual const double** getHeightMap(Vector2i location) = 0;
+	virtual double** getHeightMap(Vector2i location) = 0;
 	void setNoiseParams(int octaves, float freq);
 	int getId();
 };

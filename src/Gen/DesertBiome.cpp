@@ -24,7 +24,7 @@ const std::vector<Layer>& DesertBiome::getLayers() const
 	return m_Layers;
 }
 
-const double** DesertBiome::getHeightMap(Vector2i location)
+double** DesertBiome::getHeightMap(Vector2i location)
 {
 	double** heightMap = new double* [16];
 
@@ -54,7 +54,7 @@ const double** DesertBiome::getHeightMap(Vector2i location)
 		}
 	}
 
-	return (const double**) heightMap;
+	return heightMap;
 }
 
 const std::vector<Foliage>& DesertBiome::getFoliage() const

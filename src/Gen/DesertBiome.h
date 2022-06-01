@@ -14,7 +14,7 @@ public:
 
 	const std::vector<Foliage>& getFoliage() const override;
 
-	const double** getHeightMap(Vector2i location) override;
+	double** getHeightMap(Vector2i location) override;
 };
 
 #endif

@@ -28,7 +28,7 @@ const std::vector<Layer>& PlainsBiome::getLayers() const
 	return m_Layers;
 }
 
-const double** PlainsBiome::getHeightMap(Vector2i location)
+double** PlainsBiome::getHeightMap(Vector2i location)
 {
 	double** heightMap = new double* [16];
 
@@ -58,7 +58,7 @@ const double** PlainsBiome::getHeightMap(Vector2i location)
 		}
 	}
 
-	return (const double**)heightMap;
+	return heightMap;
 }
 
 const std::vector<Foliage>& PlainsBiome::getFoliage() const

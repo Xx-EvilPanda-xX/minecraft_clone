@@ -44,7 +44,7 @@ const std::vector<Layer>& OakForestBiome::getLayers() const
 	return m_Layers;
 }
 
-const double** OakForestBiome::getHeightMap(Vector2i location)
+double** OakForestBiome::getHeightMap(Vector2i location)
 {
 	double** heightMap = new double* [16];
 
@@ -74,7 +74,7 @@ const double** OakForestBiome::getHeightMap(Vector2i location)
 		}
 	}
 
-	return (const double**)heightMap;
+	return heightMap;
 }
 
 const std::vector<Foliage>& OakForestBiome::getFoliage() const

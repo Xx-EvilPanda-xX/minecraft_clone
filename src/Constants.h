@@ -35,7 +35,7 @@ namespace constants
 	constexpr double cameraFov{ 90.0 };
 	constexpr glm::dvec3 playerSpawnPos{ 0.0, 96.0, 0.0 };
 
-	constexpr double gravity{ 60.0 };
+	constexpr double gravity{ 55.0 };
 	constexpr double jumpHeight{ 1.31 };
 }
 
