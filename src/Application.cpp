@@ -50,6 +50,7 @@ void Application::init()
 	}
 
 	startupHelp();
+	std::cout << "size of app: " << sizeof(Application) << "\n";
 }
 
 void Application::run()

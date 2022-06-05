@@ -34,7 +34,7 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 	{
 		pushSmallFoliage(floats);
 
-		//used as a toggle from 0 to 1
+		//used as a toggle from 0 to 1 (Up and North)
 		bool face{};
 		for (int i{}; i < 4; ++i)
 		{
@@ -170,7 +170,7 @@ float* ChunkMesh::getTexCoordsFromStartPos(glm::vec2 startPos)
 
 void ChunkMesh::pushUp(glm::vec3& floats, float height)
 {
-	pushCCIndices();
+	pushCCWIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x, floats.y + height, floats.z); //2
@@ -186,7 +186,7 @@ void ChunkMesh::pushUp(glm::vec3& floats, float height)
 
 void ChunkMesh::pushDown(glm::vec3& floats)
 {
-	pushCCIndices();
+	pushCCWIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x + add, floats.y, floats.z); //1
@@ -202,7 +202,7 @@ void ChunkMesh::pushDown(glm::vec3& floats)
 
 void ChunkMesh::pushNorth(glm::vec3& floats, float height)
 {
-	pushCCIndices();
+	pushCCWIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x + add, floats.y, floats.z); //1
@@ -218,7 +218,7 @@ void ChunkMesh::pushNorth(glm::vec3& floats, float height)
 
 void ChunkMesh::pushSouth(glm::vec3& floats, float height)
 {
-	pushCCIndices();
+	pushCCWIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x, floats.y, floats.z + add); //3
@@ -234,7 +234,7 @@ void ChunkMesh::pushSouth(glm::vec3& floats, float height)
 
 void ChunkMesh::pushEast(glm::vec3& floats, float height)
 {
-	pushCCIndices();
+	pushCCWIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x + add, floats.y, floats.z + add); //4
@@ -250,7 +250,7 @@ void ChunkMesh::pushEast(glm::vec3& floats, float height)
 
 void ChunkMesh::pushWest(glm::vec3& floats, float height)
 {
-	pushCCIndices();
+	pushCCWIndices();
 
 	constexpr float add{ 1.0f };
 	vertex(floats.x, floats.y, floats.z); //0
@@ -269,7 +269,7 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 	constexpr float sqrt2{ 1.41421356f };
 	constexpr float add{ (sqrt2 - 1.0f) / (2.0f * sqrt2) };
 
-	pushCCIndices();
+	pushCCWIndices();
 	vertex(floats.x + add, floats.y, floats.z + add);
 	vertex(floats.x + (1.0f - add), floats.y, floats.z + (1.0f - add));
 	vertex(floats.x + add, floats.y + 1.0f, floats.z + add);
@@ -280,7 +280,7 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 		pushLighting(northAmbient);
 	}
 
-	pushCIndices();
+	pushCWIndices();
 	vertex(floats.x + add, floats.y, floats.z + add);
 	vertex(floats.x + (1.0f - add), floats.y, floats.z + (1.0f - add));
 	vertex(floats.x + add, floats.y + 1.0f, floats.z + add);
@@ -291,7 +291,7 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 		pushLighting(westAmbient);
 	}
 
-	pushCCIndices();
+	pushCCWIndices();
 	vertex(floats.x + add, floats.y, floats.z + (1.0f - add));
 	vertex(floats.x + (1.0f - add), floats.y, floats.z + add);
 	vertex(floats.x + add, floats.y + 1.0f, floats.z + (1.0f - add));
@@ -302,7 +302,7 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 		pushLighting(westAmbient);
 	}
 
-	pushCIndices();
+	pushCWIndices();
 	vertex(floats.x + add, floats.y, floats.z + (1.0f - add));
 	vertex(floats.x + (1.0f - add), floats.y, floats.z + add);
 	vertex(floats.x + add, floats.y + 1.0f, floats.z + (1.0f - add));
@@ -314,7 +314,7 @@ void ChunkMesh::pushSmallFoliage(glm::vec3& floats)
 	}
 }
 
-void ChunkMesh::pushCCIndices()
+void ChunkMesh::pushCCWIndices()
 {
 	int size{ static_cast<int>(m_Vertices.size() / 3) };
 	int s0{ size + 0 };
@@ -325,7 +325,7 @@ void ChunkMesh::pushCCIndices()
 	pushIndex(s1).pushIndex(s2).pushIndex(s3).pushIndex(s0).pushIndex(s2).pushIndex(s1);
 }
 
-void ChunkMesh::pushCIndices()
+void ChunkMesh::pushCWIndices()
 {
 	int size{ static_cast<int>(m_Vertices.size() / 3) };
 	int s0{ size + 0 };

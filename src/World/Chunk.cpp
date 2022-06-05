@@ -115,15 +115,8 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 				int wY{ (section * 16) + y };
 				int wZ{ (m_Location.y * 16) + z };
 
-				Block currentBlock;
-				Block PosX;
-				Block PosY;
-				Block PosZ;
-				Block NegX;
-				Block NegY;
-				Block NegZ;
-
-				currentBlock = chunkSection->getBlock(Vector3i{ x, y, z });
+				Block currentBlock{ chunkSection->getBlock(Vector3i{ x, y, z }) };
+				Block PosX, PosY, PosZ, NegX, NegY, NegZ;
 
 				if (currentBlock.getType() == BlockType::Air)
 					continue;
@@ -134,33 +127,21 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 					continue;
 				}
 
-				if (x == 15 || x == 0 || y == 15 || y == 0 || z == 15 || z == 0)
-				{
-					PosX = (x == 15 ? sectionPosX : chunkSection)->getBlock(Vector3i(x == 15 ? 0 : x + 1, y, z));
-					NegX = (x == 0 ? sectionNegX : chunkSection)->getBlock(Vector3i(x == 0 ? 15 : x - 1, y, z));
+				PosX = (x == 15 ? sectionPosX : chunkSection)->getBlock(Vector3i(x == 15 ? 0 : x + 1, y, z));
+				NegX = (x == 0 ? sectionNegX : chunkSection)->getBlock(Vector3i(x == 0 ? 15 : x - 1, y, z));
 
-					if (sectionPosY)
-						PosY = (y == 15 ? sectionPosY : chunkSection)->getBlock(Vector3i(x, y == 15 ? 0 : y + 1, z));
-					else
-						PosY = manager.getWorldBlock(Vector3i{ wX, wY + 1, wZ });
-
-					if (sectionNegY)
-						NegY = (y == 0 ? sectionNegY : chunkSection)->getBlock(Vector3i(x, y == 0 ? 15 : y - 1, z));
-					else
-						NegY = manager.getWorldBlock(Vector3i{ wX, wY - 1, wZ });
-					
-					PosZ = (z == 15 ? sectionPosZ : chunkSection)->getBlock(Vector3i(x, y, z == 15 ? 0 : z + 1));
-					NegZ = (z == 0 ? sectionNegZ : chunkSection)->getBlock(Vector3i(x, y, z == 0 ? 15 : z - 1));
-				}
+				if (sectionPosY)
+					PosY = (y == 15 ? sectionPosY : chunkSection)->getBlock(Vector3i(x, y == 15 ? 0 : y + 1, z));
 				else
-				{
-					PosX = chunkSection->getBlock(Vector3i{ x + 1, y, z });
-					PosY = chunkSection->getBlock(Vector3i{ x, y + 1, z });
-					PosZ = chunkSection->getBlock(Vector3i{ x, y, z + 1 });
-					NegX = chunkSection->getBlock(Vector3i{ x - 1, y, z });
-					NegY = chunkSection->getBlock(Vector3i{ x, y - 1, z });
-					NegZ = chunkSection->getBlock(Vector3i{ x, y, z - 1 });
-				}
+					PosY = manager.getWorldBlock(Vector3i{ wX, wY + 1, wZ });
+
+				if (sectionNegY)
+					NegY = (y == 0 ? sectionNegY : chunkSection)->getBlock(Vector3i(x, y == 0 ? 15 : y - 1, z));
+				else
+					NegY = manager.getWorldBlock(Vector3i{ wX, wY - 1, wZ });
+					
+				PosZ = (z == 15 ? sectionPosZ : chunkSection)->getBlock(Vector3i(x, y, z == 15 ? 0 : z + 1));
+				NegZ = (z == 0 ? sectionNegZ : chunkSection)->getBlock(Vector3i(x, y, z == 0 ? 15 : z - 1));
 
 				tryAddFace(PosX, currentBlock, Face::North, Vector3i{ x, wY, z });
 				tryAddFace(PosY, currentBlock, Face::Up, Vector3i{ x, wY, z });
