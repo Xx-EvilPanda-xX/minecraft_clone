@@ -59,6 +59,8 @@ private:
 
 	AABB createPlayerAABB(glm::dvec3 playerPos);
 
+	void buildUpdatedMesh(Chunk* chunk);
+
 public:
 	Player(ChunkManager& manager, Keyboard& keyboard, double reach);
 

@@ -15,13 +15,14 @@ World::World(Shader shader, Keyboard& keyboard)
 	: m_Shader{ shader },
 	m_Manager{ this },
 	m_Player{ m_Manager, keyboard, constants::playerReach },
-	m_WorldGen{ m_Manager }
+	m_WorldGen{ m_Manager },
+	m_LastPlayerChunkPos{}
 {
 	m_LastBlockQueueSize = 0;
 	m_MoveCountDown = 100;
 }
 
-void World::worldUpdate(bool deletePass)
+void World::worldUpdate()
 {
 	Vector3i playerPos{ m_Player.getCamera().getLocation()};
 
@@ -40,17 +41,21 @@ void World::worldUpdate(bool deletePass)
 
 	m_Manager.updateQueues(m_Player.getCamera());
 
-	for (int i{}; i < chunkBuildsPerFrame; ++i)
-	{
-		genPass();
-		buildPass();
-	}
+	Vector2i chunkLocation{ playerPos.x / 16, playerPos.z / 16 };
 
-	if (deletePass)
-		destroyPass(Vector2i{ playerPos.x, playerPos.z });
+	if (playerPos.x < 0 && playerPos.x % 16 != 0)
+		--chunkLocation.x;
 
-	placeQueueBlocks();
+	if (playerPos.z < 0 && playerPos.z % 16 != 0)
+		--chunkLocation.y;
+
+	if (chunkLocation != m_LastPlayerChunkPos)
+		destroyPass(chunkLocation);
+	
+	uploadAll();
+
 	--m_MoveCountDown;
+	m_LastPlayerChunkPos = chunkLocation;
 }
 
 void World::worldRender(const Window& window)
@@ -60,42 +65,93 @@ void World::worldRender(const Window& window)
 	m_Shader.setBool("playerUnderWater", m_Manager.getWorldBlock(playerPos).getType() == BlockType::Water);
 	m_Shader.unbind();
 
-	for (int i{}; i < m_Chunks.size(); ++i)
+	std::vector<Chunk*> copy{};
+
 	{
-		if (m_Chunks[i]->isBuilt())
-			Renderer::drawMesh(m_Player.getCamera(), m_Chunks[i]->getSolidMesh(), window);
+		std::lock_guard<std::mutex> lock{ m_ChunksMutex };
+		copy = m_Chunks;
+	}
+
+	for (int i{}; i < copy.size(); ++i)
+	{
+		if (copy[i]->isBuilt())
+			Renderer::drawMesh(m_Player.getCamera(), copy[i]->getSolidMesh(), window);
 	}
 
 	if constexpr (constants::useTranslucentWater)
 	{
-		for (int i{}; i < m_Chunks.size(); ++i)
+		for (int i{}; i < copy.size(); ++i)
 		{
-			if (m_Chunks[i]->isBuilt())
-				Renderer::drawMesh(m_Player.getCamera(), m_Chunks[i]->getTranslucentMesh(), window);
+			if (copy[i]->isBuilt())
+				Renderer::drawMesh(m_Player.getCamera(), copy[i]->getTranslucentMesh(), window);
 		}
+	}
+}
+
+void World::uploadAll()
+{
+	std::vector<Chunk*> copy{};
+
+	{
+		std::lock_guard<std::mutex> lock{ m_UploadPendingMutex };
+		copy = m_UploadPending;
+		m_UploadPending.clear();
+	}
+
+	for (int i{}; i < copy.size(); ++i)
+	{
+		copy[i]->finishBuilding();
 	}
 }
 
 void World::genPass()
 {
-	if (!m_Manager.getGenQueue().empty())
+	bool empty{};
+
 	{
-		Vector2i chunkPos{ m_Manager.getGenQueue().back() };
-		m_Manager.getGenQueue().pop_back();
+		std::lock_guard<std::mutex> lock{ m_Manager.getGenQueueMutex() };
+		empty = m_Manager.getGenQueue().empty();
+	}
+	
+	if (!empty)
+	{
+		Vector2i chunkPos{};
+
+		{
+			std::lock_guard<std::mutex> lock{ m_Manager.getGenQueueMutex() };
+			chunkPos = m_Manager.getGenQueue().back();
+			m_Manager.getGenQueue().pop_back();
+		}
 
 #ifdef DEBUG
 		if (chunkPos.x > 4 || chunkPos.x < -4 || chunkPos.y > 4 || chunkPos.y < -4)
 			return;
 #endif // DEBUG
 
-		m_Chunks.push_back(m_WorldGen.generateChunk(chunkPos, m_Shader));
+		Chunk* chunk{ m_WorldGen.generateChunk(chunkPos, m_Shader) };
+
+		std::lock_guard<std::mutex> lock{ m_ChunksMutex };
+		m_Chunks.push_back(chunk);
 	}
 }
 
 void World::destroyPass(Vector2i playerPos)
 {
-	playerPos.x /= 16;
-	playerPos.y /= 16;
+	std::lock_guard<std::mutex> lock{ m_ChunksMutex };
+
+	auto findChunk{ 
+		[this](Vector2i chunkLoc) {
+			for (int i{}; i < m_Chunks.size(); ++i)
+			{
+				if (m_Chunks[i]->getLocation() == chunkLoc)
+				{
+					return m_Chunks[i];
+				}
+			}
+
+			return (Chunk*) nullptr;
+		}
+	};
 
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
@@ -105,20 +161,36 @@ void World::destroyPass(Vector2i playerPos)
 		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance + 1 || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance + 1)
 		{
 			int index;
+
 			if (m_Manager.isInBuildQueue(m_Chunks[i], index))
+			{
+				std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+			}
 
-			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x + 1, chunkLoc.y }), index))
+			if (m_Manager.isInBuildQueue(findChunk(Vector2i{ chunkLoc.x + 1, chunkLoc.y }), index))
+			{
+				std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+			}
 
-			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x, chunkLoc.y + 1 }), index))
+			if (m_Manager.isInBuildQueue(findChunk(Vector2i{ chunkLoc.x, chunkLoc.y + 1 }), index))
+			{
+				std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+			}
 
-			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x - 1, chunkLoc.y }), index))
+			if (m_Manager.isInBuildQueue(findChunk(Vector2i{ chunkLoc.x - 1, chunkLoc.y }), index))
+			{
+				std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+			}
 
-			if (m_Manager.isInBuildQueue(m_Manager.getChunk(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }), index))
+			if (m_Manager.isInBuildQueue(findChunk(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }), index))
+			{
+				std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
+			}
 
 			delete m_Chunks[i];
 			m_Chunks.erase(m_Chunks.begin() + i);
@@ -143,18 +215,28 @@ void World::buildPass()
 
 	Chunk* currentChunk{ nullptr };
 
-	if (!m_Manager.getBuildQueue().empty())
-		currentChunk = m_Manager.getBuildQueue().back();
+	{
+		std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
+		if (!m_Manager.getBuildQueue().empty())
+			currentChunk = m_Manager.getBuildQueue().back();
+	}
 
 	if (currentChunk != nullptr && shouldGen >= genInterval)
 	{
 		Chunk* adjacentChunks[4];
 		m_Manager.getAdjacentChunks(currentChunk->getLocation(), adjacentChunks);
-		currentChunk->buildMesh(m_Manager, sectionPtr, adjacentChunks);
+
+		if (currentChunk->buildMesh(m_Manager, sectionPtr, adjacentChunks));
+		{
+			std::lock_guard<std::mutex> lock{ m_UploadPendingMutex };
+			m_UploadPending.push_back(currentChunk);
+		}
+
 		++sectionPtr;
 
 		if (sectionPtr == g_ChunkCap)
 		{
+			std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
 			m_Manager.getBuildQueue().pop_back();
 
 			currentChunk = nullptr;
@@ -193,18 +275,28 @@ void World::placeQueueBlocks()
 
 void World::rebuildChunks(const Camera& camera)
 {
-	for (int i{}; i < m_Chunks.size(); ++i)
 	{
-		m_Chunks[i]->clearMesh();
+		std::lock_guard<std::mutex> lock{ m_ChunksMutex };
+
+		for (int i{}; i < m_Chunks.size(); ++i)
+		{
+			m_Chunks[i]->clearMesh();
+		}
 	}
 
-	m_Manager.getBuildQueue().clear();
+	{
+		std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
+		m_Manager.getBuildQueue().clear();
+	}
+	
 	m_Manager.updateQueues(camera);
 	m_ResetBuildVars = true;
 }
 
-int World::getChunkIndex(Vector2i chunkPos) const
+int World::getChunkIndex(Vector2i chunkPos)
 {
+	std::lock_guard<std::mutex> lock{ m_ChunksMutex };
+
 	for (int i{}; i < m_Chunks.size(); ++i)
 	{
 		if (m_Chunks[i]->getLocation() == chunkPos)
@@ -214,9 +306,19 @@ int World::getChunkIndex(Vector2i chunkPos) const
 	return -1;
 }
 
+std::mutex& World::getChunksMutex()
+{
+	return m_ChunksMutex;
+}
+
 std::vector<Chunk*>& World::getChunks()
 {
 	return m_Chunks;
+}
+
+std::vector<Chunk*>& World::getUploadPending()
+{
+	return m_UploadPending;
 }
 
 ChunkManager& World::getManager()

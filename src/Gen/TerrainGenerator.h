@@ -29,6 +29,7 @@ private:
 	Random m_Rand;
 	int m_Seed;
 
+	//no mutex since block queue is push to and popped from in chunking thread
 	std::vector<QueueBlock> m_BlockQueue;
 	ChunkManager& m_Manager;
 	FastNoiseLite m_BiomeNoise1;

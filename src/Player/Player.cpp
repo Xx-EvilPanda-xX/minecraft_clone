@@ -19,7 +19,7 @@ Player::Player(ChunkManager& manager, Keyboard& keyboard, double reach)
 	m_JumpCoolDown = 0.25;
 	m_Sprinting = false;
 	m_Grounded = false;
-	m_Flying = false;
+	m_Flying = true;
 	m_HasTouchedGround = false;
 }
 
@@ -445,9 +445,44 @@ void Player::updateMeshes(Vector3i editPos)
 	if (!chunk->isBuilt())
 		return;
 
+	buildUpdatedMesh(chunk);
+
+	Vector3i local{ m_Manager.toSectionLocal(editPos) };
+
+	if (local.x == 15)
+	{
+		Chunk* chunkPosX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x + 1, chunk->getLocation().y }) };
+		buildUpdatedMesh(chunkPosX);
+	}
+
+	if (local.x == 0)
+	{
+		Chunk* chunkNegX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x - 1, chunk->getLocation().y }) };
+		buildUpdatedMesh(chunkNegX);
+	}
+
+	if (local.z == 15)
+	{
+		Chunk* chunkPosY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y + 1 }) };
+		buildUpdatedMesh(chunkPosY);
+	}
+
+	if (local.z == 0)
+	{
+		Chunk* chunkNegY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y - 1 }) };
+		buildUpdatedMesh(chunkNegY);
+	}
+}
+
+void Player::buildUpdatedMesh(Chunk* chunk)
+{
 	int chunkIndex;
+
 	if (m_Manager.isInBuildQueue(chunk, chunkIndex))
+	{
+		std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
 		m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
+	}
 
 	chunk->clearMesh();
 	Chunk* adjacentChunks[4]{};
@@ -456,68 +491,7 @@ void Player::updateMeshes(Vector3i editPos)
 	{
 		chunk->buildMesh(m_Manager, i, adjacentChunks);
 	}
-
-	Vector3i local{ m_Manager.toSectionLocal(editPos) };
-
-	if (local.x == 15)
-	{
-		Chunk* chunkPosX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x + 1, chunk->getLocation().y }) };
-
-		if (m_Manager.isInBuildQueue(chunkPosX, chunkIndex))
-			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
-
-		chunkPosX->clearMesh();
-		m_Manager.getAdjacentChunks(chunkPosX->getLocation(), adjacentChunks);
-		for (int i{}; i < 16; ++i)
-		{
-			chunkPosX->buildMesh(m_Manager, i, adjacentChunks);
-		}
-	}
-
-	if (local.x == 0)
-	{
-		Chunk* chunkNegX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x - 1, chunk->getLocation().y }) };
-
-		if (m_Manager.isInBuildQueue(chunkNegX, chunkIndex))
-			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
-
-		chunkNegX->clearMesh();
-		m_Manager.getAdjacentChunks(chunkNegX->getLocation(), adjacentChunks);
-		for (int i{}; i < 16; ++i)
-		{
-			chunkNegX->buildMesh(m_Manager, i, adjacentChunks);
-		}
-	}
-
-	if (local.z == 15)
-	{
-		Chunk* chunkPosY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y + 1 }) };
-
-		if (m_Manager.isInBuildQueue(chunkPosY, chunkIndex))
-			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
-
-		chunkPosY->clearMesh();
-		m_Manager.getAdjacentChunks(chunkPosY->getLocation(), adjacentChunks);
-		for (int i{}; i < 16; ++i)
-		{
-			chunkPosY->buildMesh(m_Manager, i, adjacentChunks);
-		}
-	}
-
-	if (local.z == 0)
-	{
-		Chunk* chunkNegY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y - 1 }) };
-
-		if (m_Manager.isInBuildQueue(chunkNegY, chunkIndex))
-			m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + chunkIndex);
-
-		chunkNegY->clearMesh();
-		m_Manager.getAdjacentChunks(chunkNegY->getLocation(), adjacentChunks);
-		for (int i{}; i < 16; ++i)
-		{
-			chunkNegY->buildMesh(m_Manager, i, adjacentChunks);
-		}
-	}
+	m_Manager.pushUploadPending(chunk);
 }
 
 double Player::getReach() const

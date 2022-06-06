@@ -2,6 +2,7 @@
 #define CHUNK_MANAGER_H
 
 #include <vector>
+#include <mutex>
 #include "Block.h"
 #include "../Player/Camera.h"
 #include "../Math/Vector3i.h"
@@ -14,7 +15,9 @@ class ChunkManager
 {
 private:
 	World* m_World;
+	std::mutex m_GenQueueMutex;
 	std::vector<Vector2i> m_GenQueue;
+	std::mutex m_BuildQueueMutex;
 	std::vector<Chunk*> m_BuildQueue;
 
 	void updateGenQueue(const Camera& player);
@@ -48,7 +51,11 @@ public:
 
 	Vector3i toSectionLocal(Vector3i worldPos);
 
+	std::mutex& getGenQueueMutex();
+
 	std::vector<Vector2i>& getGenQueue();
+
+	std::mutex& getBuildQueueMutex();
 
 	std::vector<Chunk*>& getBuildQueue();
 
@@ -57,6 +64,8 @@ public:
 	Chunk* getChunk(Vector2i chunkLoc) const;
 
 	void getAdjacentChunks(Vector2i chunkLoc, Chunk* o_AdjacentChunks[4]) const;
+
+	void pushUploadPending(Chunk* chunk);
 
 	void clearQueues();
 

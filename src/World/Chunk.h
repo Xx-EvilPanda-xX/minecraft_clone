@@ -21,13 +21,14 @@ private:
 	bool m_Complete;
 	bool m_IsBuilt;
 	bool m_Building;
+	std::mutex m_RemainingSectionsMutex;
 	std::vector<int> m_RemainingSections;
 
 	void resetRemaining();
 
-	void finishBuilding();
-
 	void tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos);
+
+	bool threadSafeIsFinished();
 
 public:
 	Chunk(Vector2i loc, Shader& shader);
@@ -36,7 +37,9 @@ public:
 
 	void addSection(ChunkSection* section);
 
-	void buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[4]);
+	bool buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[4]);
+	
+	void finishBuilding();
 
 	int getCurrentSectionIndex() const;
 
@@ -51,6 +54,8 @@ public:
 	ChunkSection* getSection(int index) const;
 
 	bool isBuilt() const;
+
+	std::mutex& getRemainingSectionsMutex();
 
 	void clearMesh();
 };

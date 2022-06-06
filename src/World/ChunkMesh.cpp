@@ -435,7 +435,7 @@ void ChunkMesh::storeFloatBuffer(int index, int size, int buffer, const std::vec
 {
 	glBindVertexArray(m_RenderData.vao);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -444,7 +444,7 @@ void ChunkMesh::storeFloatBuffer(int index, int size, int buffer, const std::vec
 void ChunkMesh::storeIndices(std::vector<int>& data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RenderData.ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), &data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(int), data.data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	m_RenderData.indexCount = static_cast<int>(data.size());
 }

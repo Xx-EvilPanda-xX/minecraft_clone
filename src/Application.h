@@ -2,6 +2,7 @@
 #define APPLICATION_H
 
 #include <glad/glad.h>
+#include <thread>
 #include <GLFW/glfw3.h>
 #include "Window.h"
 #include "World/World.h"
@@ -28,14 +29,15 @@ private:
 
 	TextRenderer m_TextComponents[numTextComponents];
 
+	std::thread m_ChunkThread;
+	bool m_Running;
+
 	double m_LastFrame;
 	double m_GuiUpdateCooldown;
 
 	long long m_Frames;
 	long long m_Time;
 	long long m_CurrentFps;
-
-	long m_DoDeletePass;
 
 	void startupHelp();
 
@@ -63,6 +65,8 @@ public:
 	Window& getWindow();
 
 	World& getWorld();
+
+	bool isRunning();
 
 	void renderCrosshair();
 };

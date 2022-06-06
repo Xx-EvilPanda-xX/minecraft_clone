@@ -9,6 +9,16 @@
 #include "Render/Texture.h"
 #include "Constants.h"
 
+void chunkCreationLoop(Application* app)
+{
+	while (app->isRunning())
+	{
+		app->getWorld().genPass();
+		app->getWorld().placeQueueBlocks();
+		app->getWorld().buildPass();
+	}
+}
+
 Application::Application(int windowWidth, int windowHeight, const char* title)
 	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, m_Window.getKeyboard() },
 	m_Window{ windowWidth, windowHeight, title },
@@ -20,7 +30,7 @@ Application::Application(int windowWidth, int windowHeight, const char* title)
 	m_LastFrame = 0.0;
 	m_GuiUpdateCooldown = 0.0;
 	m_CurrentFps = 0;
-	m_DoDeletePass = false;
+	m_Running = true;
 }
 
 double Application::s_Dt{};
@@ -55,19 +65,14 @@ void Application::init()
 
 void Application::run()
 {
-	while (!glfwWindowShouldClose(m_Window.getGlfwWindow()))
+	m_ChunkThread = std::thread{ chunkCreationLoop, this };
+
+	while (m_Running)
 	{
 		glfwSetCursorPos(m_Window.getGlfwWindow(), 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		bool deletePass{ false };
-		if (getCurrentTimeMillis() > (m_DoDeletePass + 500))
-		{
-			m_DoDeletePass = getCurrentTimeMillis();
-			deletePass = true;
-		}
-
-		m_World.worldUpdate(deletePass);
+		m_World.worldUpdate();
 		m_World.worldRender(m_Window);
 		updateGui();
 		renderGui();
@@ -78,6 +83,8 @@ void Application::run()
 		glfwSwapBuffers(m_Window.getGlfwWindow());
 		glfwPollEvents();
 	}
+
+	m_ChunkThread.join();
 }
 
 void Application::renderGui()
@@ -198,6 +205,8 @@ void Application::handleInput()
 	m_Handler.handleMouse(mouse, m_World.getPlayer());
 
 	m_World.getPlayer().getCamera().handleLook(glm::dvec2{mouse.getXOffset(), mouse.getYOffset()});
+
+	m_Running = !glfwWindowShouldClose(m_Window.getGlfwWindow());
 }
 
 void Application::renderCrosshair()
@@ -246,4 +255,9 @@ Window& Application::getWindow()
 World& Application::getWorld()
 {
 	return m_World;
+}
+
+bool Application::isRunning()
+{
+	return m_Running;
 }

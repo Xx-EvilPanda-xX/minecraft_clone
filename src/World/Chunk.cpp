@@ -54,20 +54,28 @@ void Chunk::addSection(ChunkSection* section)
 	}
 }
 
-void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[4])
+bool Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[4])
 {
+	if (!m_Complete)
+	{
+		return false;
+	}
+
 	if (section < 0 || section > 15)
 	{
 		std::cout << "Invalid section index!\n";
-		return;
+		return false;
 	}
 
-	for (int i{}; i < m_RemainingSections.size(); ++i)
 	{
-		if (m_RemainingSections[i] == section)
+		std::lock_guard<std::mutex> lock{ m_RemainingSectionsMutex };
+		for (int i{}; i < m_RemainingSections.size(); ++i)
 		{
-			m_RemainingSections.erase(m_RemainingSections.begin() + i);
-			break;
+			if (m_RemainingSections[i] == section)
+			{
+				m_RemainingSections.erase(m_RemainingSections.begin() + i);
+				break;
+			}
 		}
 	}
 
@@ -83,16 +91,14 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 
 	if (m_Sections[section]->isEmpty())
 	{
-		finishBuilding();
-		return;
+		return threadSafeIsFinished();
 	}
 
 	if (m_Sections[section]->isFull() && adjacentSectionsFull && !(section == 0 || section == 15))
 	{
 		if (m_Sections[section + 1]->isFull() && m_Sections[section - 1]->isFull())
 		{
-			finishBuilding();
-			return;
+			return threadSafeIsFinished();
 		}
 	}
 
@@ -153,7 +159,19 @@ void Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 		}
 	}
 	
-	finishBuilding();
+	return threadSafeIsFinished();
+}
+
+bool Chunk::threadSafeIsFinished()
+{
+	bool finished{};
+
+	{
+		std::lock_guard<std::mutex> lock{ m_RemainingSectionsMutex };
+		finished = m_RemainingSections.size() == 0;
+	}
+
+	return finished;
 }
 
 void Chunk::tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos)
@@ -172,14 +190,11 @@ void Chunk::tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i 
 
 void Chunk::finishBuilding()
 {
-	if (m_RemainingSections.size() == 0)
-	{
-		m_SolidMesh.toBuffers();
-		m_TranslucentMesh.toBuffers();
-		m_IsBuilt = true;
-		m_Building = false;
-		resetRemaining();
-	}
+	m_SolidMesh.toBuffers();
+	m_TranslucentMesh.toBuffers();
+	m_IsBuilt = true;
+	m_Building = false;
+	resetRemaining();
 }
 
 void Chunk::clearMesh()
@@ -193,6 +208,7 @@ void Chunk::clearMesh()
 
 void Chunk::resetRemaining()
 {
+	std::lock_guard<std::mutex> lock{ m_RemainingSectionsMutex };
 	m_RemainingSections.clear();
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
@@ -233,4 +249,9 @@ ChunkSection* Chunk::getSection(int index) const
 bool Chunk::isBuilt() const
 {
 	return m_IsBuilt;
+}
+
+std::mutex& Chunk::getRemainingSectionsMutex()
+{
+	return m_RemainingSectionsMutex;
 }

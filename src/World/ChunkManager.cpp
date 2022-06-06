@@ -21,7 +21,16 @@ void ChunkManager::setWorldBlock(Vector3i loc, BlockType type, bool surface)
 	Vector3i sectionLocal{};
 
 	if (getBlockAbsoluteIndex(loc, chunkIndex, sectionIndex, sectionLocal))
-		m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->setBlock(sectionLocal, type, surface);
+	{
+		Chunk* chunk{};
+
+		{
+			std::lock_guard<std::mutex> lock{ m_World->getChunksMutex() };
+			chunk = m_World->getChunks()[chunkIndex];
+		}
+
+		chunk->getSection(sectionIndex)->setBlock(sectionLocal, type, surface);
+	}
 }
 
 Block ChunkManager::getWorldBlock(Vector3i loc)
@@ -31,7 +40,16 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 	Vector3i sectionLocal{};
 
 	if (getBlockAbsoluteIndex(loc, chunkIndex, sectionIndex, sectionLocal))
-		return m_World->getChunks()[chunkIndex]->getSection(sectionIndex)->getBlock(sectionLocal);
+	{
+		Chunk* chunk{};
+
+		{
+			std::lock_guard<std::mutex> lock{ m_World->getChunksMutex() };
+			chunk = m_World->getChunks()[chunkIndex];
+		}
+
+		return chunk->getSection(sectionIndex)->getBlock(sectionLocal);
+	}	
 	else
 		return Block{};
 }
@@ -57,13 +75,17 @@ bool ChunkManager::getBlockAbsoluteIndex(Vector3i loc, int& o_ChunkIndex, int& o
 
 	bool foundChunk{ false };
 
-	for (int i{}; i < m_World->getChunks().size(); ++i)
 	{
-		if (m_World->getChunks()[i]->getLocation() == chunkLocation)
+		std::lock_guard<std::mutex> lock{ m_World->getChunksMutex() };
+
+		for (int i{}; i < m_World->getChunks().size(); ++i)
 		{
-			chunkIndex = i;
-			foundChunk = true;
-			break;
+			if (m_World->getChunks()[i]->getLocation() == chunkLocation)
+			{
+				chunkIndex = i;
+				foundChunk = true;
+				break;
+			}
 		}
 	}
 
@@ -116,7 +138,10 @@ void ChunkManager::updateGenQueue(const Camera& player)
 				{
 					Vector2i chunkPos{ x, y };
 					if (!chunkExsists(chunkPos) && !isInGenQueue(chunkPos))
+					{
+						std::lock_guard<std::mutex> lock{ m_GenQueueMutex };
 						m_GenQueue.insert(m_GenQueue.begin(), chunkPos);
+					}
 				}
 			}
 		}
@@ -125,12 +150,19 @@ void ChunkManager::updateGenQueue(const Camera& player)
 
 void ChunkManager::updateBuildQueue()
 {
-	for (int i{}; i < m_World->getChunks().size(); ++i)
+	std::vector<Chunk*> copy{};
+
 	{
-		if (m_World->getChunks()[i]->isBuilt() || isInBuildQueue(m_World->getChunks()[i]))
+		std::lock_guard<std::mutex> lock{ m_World->getChunksMutex() };
+		copy = m_World->getChunks();
+	}
+
+	for (int i{}; i < copy.size(); ++i)
+	{
+		if (copy[i]->isBuilt() || isInBuildQueue(copy[i]))
 			continue;
 
-		Vector2i chunkLoc{ m_World->getChunks()[i]->getLocation() };
+		Vector2i chunkLoc{ copy[i]->getLocation() };
 		if (chunkExsists(Vector2i{ chunkLoc.x + 1, chunkLoc.y }))
 		{
 			if (chunkExsists(Vector2i{ chunkLoc.x - 1, chunkLoc.y }))
@@ -139,7 +171,8 @@ void ChunkManager::updateBuildQueue()
 				{
 					if (chunkExsists(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }))
 					{
-						m_BuildQueue.insert(m_BuildQueue.begin(), m_World->getChunks()[i]);
+						std::lock_guard<std::mutex> lock{ m_BuildQueueMutex };
+						m_BuildQueue.insert(m_BuildQueue.begin(), copy[i]);
 					}
 				}
 			}
@@ -149,15 +182,31 @@ void ChunkManager::updateBuildQueue()
 
 void ChunkManager::updateQueues(const Camera& player)
 {
-	if (m_GenQueue.empty())
+	bool genEmpty{};
+
+	{
+		std::lock_guard<std::mutex> genLock{ m_GenQueueMutex };
+		genEmpty = m_GenQueue.empty();
+	}
+	
+	if (genEmpty)
 		updateGenQueue(player);
 
-	if (m_BuildQueue.empty())
+	bool buildEmpty{};
+
+	{
+		std::lock_guard<std::mutex> buildLock{ m_BuildQueueMutex };
+		buildEmpty = m_BuildQueue.empty();
+	}
+	
+	if (buildEmpty)
 		updateBuildQueue();
 }
 
 bool ChunkManager::isInGenQueue(Vector2i gen, int& o_Index)
 {
+	std::lock_guard<std::mutex> lock{ m_GenQueueMutex };
+
 	for (int i{}; i < m_GenQueue.size(); ++i)
 	{
 		if (m_GenQueue[i] == gen)
@@ -172,6 +221,8 @@ bool ChunkManager::isInGenQueue(Vector2i gen, int& o_Index)
 
 bool ChunkManager::isInBuildQueue(Chunk* build, int& o_Index)
 {
+	std::lock_guard<std::mutex> lock{ m_BuildQueueMutex };
+
 	for (int i{}; i < m_BuildQueue.size(); ++i)
 	{
 		if (m_BuildQueue[i] == build)
@@ -211,9 +262,19 @@ bool ChunkManager::isInBuildQueue(Chunk* build)
 	return isInBuildQueue(build, index);
 }
 
+std::mutex& ChunkManager::getGenQueueMutex()
+{
+	return m_GenQueueMutex;
+}
+
 std::vector<Vector2i>& ChunkManager::getGenQueue()
 {
 	return m_GenQueue;
+}
+
+std::mutex& ChunkManager::getBuildQueueMutex()
+{
+	return m_BuildQueueMutex;
 }
 
 std::vector<Chunk*>& ChunkManager::getBuildQueue()
@@ -236,6 +297,8 @@ Chunk* ChunkManager::getChunk(Vector3i loc) const
 
 Chunk* ChunkManager::getChunk(Vector2i chunkLoc) const
 {
+	std::lock_guard<std::mutex> lock{ m_World->getChunksMutex() };
+
 	for (int i{}; i < m_World->getChunks().size(); ++i)
 	{
 		if (m_World->getChunks()[i]->getLocation() == chunkLoc)
@@ -255,9 +318,16 @@ void ChunkManager::getAdjacentChunks(Vector2i chunkLoc, Chunk* o_AdjacentChunks[
 	o_AdjacentChunks[3] = getChunk(Vector2i{ chunkLoc.x, chunkLoc.y - 1 });
 }
 
+void ChunkManager::pushUploadPending(Chunk* chunk)
+{
+	m_World->getUploadPending().push_back(chunk);
+}
+
 void ChunkManager::clearQueues()
 {
+	std::lock_guard<std::mutex> genLock{ m_GenQueueMutex };
 	m_GenQueue.clear();
+	std::lock_guard<std::mutex> buildLock{ m_BuildQueueMutex };
 	m_BuildQueue.clear();
 }
 

@@ -24,7 +24,7 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 	else
 		player.setSprinting(false);
 
-	if (keyboard.isKeyDown(GLFW_KEY_W) && !decreasingV.z)
+	if (true/*keyboard.isKeyDown(GLFW_KEY_W)*/ && !decreasingV.z)
 	{
 		if (v.z < velocityLimit)
 			v.z += constants::playerDrift * 0.1;
