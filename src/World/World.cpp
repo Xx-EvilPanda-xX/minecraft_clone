@@ -8,6 +8,24 @@
 #include "ChunkManager.h"
 #include "../Constants.h"
 
+void chunker(World* world)
+{
+	static Vector2i lastPlayerChunkPos{};
+
+	while (!world->shouldCloseChunkerThread())
+	{
+		Vector2i playerChunkPos{ Vector3i{ world->getPlayer().getCamera().getLocation() } };
+
+		if (playerChunkPos != lastPlayerChunkPos)
+			world->destroyPass(playerChunkPos);
+
+		world->genPass();
+		world->placeQueueBlocks();
+		world->buildPass();
+		lastPlayerChunkPos = playerChunkPos;
+	}
+}
+
 //#define DEBUG
 constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
 
@@ -15,14 +33,13 @@ World::World(Shader shader, Keyboard& keyboard)
 	: m_Shader{ shader },
 	m_Manager{ this },
 	m_Player{ m_Manager, keyboard, constants::playerReach },
-	m_WorldGen{ m_Manager },
-	m_LastPlayerChunkPos{}
+	m_WorldGen{ m_Manager }
 {
 	m_LastBlockQueueSize = 0;
 	m_MoveCountDown = 100;
 }
 
-void World::worldUpdate()
+void World::update()
 {
 	Vector3i playerPos{ m_Player.getCamera().getLocation()};
 
@@ -40,25 +57,12 @@ void World::worldUpdate()
 		m_Player.move();
 
 	m_Manager.updateQueues(m_Player.getCamera());
-
-	Vector2i chunkLocation{ playerPos.x / 16, playerPos.z / 16 };
-
-	if (playerPos.x < 0 && playerPos.x % 16 != 0)
-		--chunkLocation.x;
-
-	if (playerPos.z < 0 && playerPos.z % 16 != 0)
-		--chunkLocation.y;
-
-	if (chunkLocation != m_LastPlayerChunkPos)
-		destroyPass(chunkLocation);
 	
 	uploadAll();
-
 	--m_MoveCountDown;
-	m_LastPlayerChunkPos = chunkLocation;
 }
 
-void World::worldRender(const Window& window)
+void World::render(const Window& window)
 {
 	Vector3i playerPos{ m_Player.getCamera().getLocation() };
 	m_Shader.bind();
@@ -72,9 +76,24 @@ void World::worldRender(const Window& window)
 		copy = m_Chunks;
 	}
 
+	Vector2i playerChunkPos{ Vector3i{ m_Player.getCamera().getLocation() } };
 	for (int i{}; i < copy.size(); ++i)
 	{
-		if (copy[i]->isBuilt())
+		Vector2i chunkLoc{ copy[i]->getLocation() };
+		if (std::abs(chunkLoc.x - playerChunkPos.x) >= constants::hideDistance
+			|| std::abs(chunkLoc.y - playerChunkPos.y) >= constants::hideDistance)
+		{
+			copy[i]->hide();
+		}
+		else
+		{
+			copy[i]->show();
+		}
+	}
+
+	for (int i{}; i < copy.size(); ++i)
+	{
+		if (copy[i]->isBuilt() && !copy[i]->isHidden())
 			Renderer::drawMesh(m_Player.getCamera(), copy[i]->getSolidMesh(), window);
 	}
 
@@ -82,7 +101,7 @@ void World::worldRender(const Window& window)
 	{
 		for (int i{}; i < copy.size(); ++i)
 		{
-			if (copy[i]->isBuilt())
+			if (copy[i]->isBuilt() && !copy[i]->isHidden())
 				Renderer::drawMesh(m_Player.getCamera(), copy[i]->getTranslucentMesh(), window);
 		}
 	}
@@ -329,4 +348,14 @@ ChunkManager& World::getManager()
 Player& World::getPlayer()
 {
 	return m_Player;
+}
+
+bool World::shouldCloseChunkerThread()
+{
+	return m_ShouldCloseChunkerThread;
+}
+
+void World::setShouldCloseChunkerThread(bool close)
+{
+	m_ShouldCloseChunkerThread = close;
 }

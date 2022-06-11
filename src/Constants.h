@@ -11,14 +11,15 @@ namespace constants
 	constexpr int fullscreenWidth{ 1920 };
 	constexpr int fullscreenHeight{ 1080 };
 
-	constexpr bool fullscreen{ false };
+	constexpr bool fullscreen{ true };
 
 	constexpr double mouse_sensitivity{ 0.025 };
 
 	constexpr bool flatWorld{ false };
 	constexpr int flatWorldHeight{ 64 };
 
-	constexpr int renderDistance{ 12 };
+	constexpr int renderDistance{ 14 };
+	constexpr int hideDistance{ 12 };
 
 	constexpr double playerReach{ 8.0f };
 	constexpr double blockBreakCooldown{ 0.15 };

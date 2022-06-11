@@ -18,6 +18,7 @@ Chunk::Chunk(Vector2i loc, Shader& shader)
 	m_Complete = false;
 	m_IsBuilt = false;
 	m_Building = false;
+	m_Hidden = false;
 
 	resetRemaining();
 }
@@ -249,6 +250,21 @@ ChunkSection* Chunk::getSection(int index) const
 bool Chunk::isBuilt() const
 {
 	return m_IsBuilt;
+}
+
+bool Chunk::isHidden() const
+{
+	return m_Hidden;
+}
+
+void Chunk::hide()
+{
+	m_Hidden = true;
+}
+
+void Chunk::show()
+{
+	m_Hidden = false;
 }
 
 std::mutex& Chunk::getRemainingSectionsMutex()

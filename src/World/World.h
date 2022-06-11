@@ -13,6 +13,8 @@
 
 constexpr int genInterval{ 0 };
 
+void chunker(World* world);
+
 class World
 {
 private:
@@ -22,24 +24,27 @@ private:
 	std::mutex m_UploadPendingMutex;
 	std::vector<Chunk*> m_UploadPending;
 
+	std::mutex m_DestroyQueueMutex;
+	std::vector<Chunk*> m_DestroyQueue;
+
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
 	ChunkManager m_Manager;
 	Player m_Player;
 
-	Vector2i m_LastPlayerChunkPos;
 	int m_LastBlockQueueSize;
 	int m_MoveCountDown;
 	bool m_ResetBuildVars;
+	bool m_ShouldCloseChunkerThread;
 
 	void uploadAll();
 
 public:
 	World(Shader shader, Keyboard& keyboard);
 
-	void worldRender(const Window& window);
+	void render(const Window& window);
 	
-	void worldUpdate();
+	void update();
 
 	void genPass();
 
@@ -60,6 +65,10 @@ public:
 	ChunkManager& getManager();
 
 	Player& getPlayer();
+
+	bool shouldCloseChunkerThread();
+
+	void setShouldCloseChunkerThread(bool close);
 
 	void placeQueueBlocks();
 };

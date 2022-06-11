@@ -6,6 +6,18 @@ Vector2i::Vector2i(int x, int y)
 {
 }
 
+Vector2i::Vector2i(Vector3i vec)
+{
+	x = vec.x / 16;
+	y = vec.z / 16;
+
+	if (vec.x < 0 && vec.x % 16 != 0)
+		--x;
+
+	if (vec.z < 0 && vec.z % 16 != 0)
+		--y;
+}
+
 Vector2i::Vector2i()
 {
 	x = 0;

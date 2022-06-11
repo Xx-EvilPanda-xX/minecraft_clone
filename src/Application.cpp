@@ -9,16 +9,6 @@
 #include "Render/Texture.h"
 #include "Constants.h"
 
-void chunkCreationLoop(Application* app)
-{
-	while (app->isRunning())
-	{
-		app->getWorld().genPass();
-		app->getWorld().placeQueueBlocks();
-		app->getWorld().buildPass();
-	}
-}
-
 Application::Application(int windowWidth, int windowHeight, const char* title)
 	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, m_Window.getKeyboard() },
 	m_Window{ windowWidth, windowHeight, title },
@@ -65,15 +55,15 @@ void Application::init()
 
 void Application::run()
 {
-	m_ChunkThread = std::thread{ chunkCreationLoop, this };
+	m_ChunkThread = std::thread{ chunker, &m_World };
 
 	while (m_Running)
 	{
 		glfwSetCursorPos(m_Window.getGlfwWindow(), 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		m_World.worldUpdate();
-		m_World.worldRender(m_Window);
+		m_World.update();
+		m_World.render(m_Window);
 		updateGui();
 		renderGui();
 
@@ -84,6 +74,7 @@ void Application::run()
 		glfwPollEvents();
 	}
 
+	m_World.setShouldCloseChunkerThread(true);
 	m_ChunkThread.join();
 }
 

@@ -19,7 +19,7 @@ Player::Player(ChunkManager& manager, Keyboard& keyboard, double reach)
 	m_JumpCoolDown = 0.25;
 	m_Sprinting = false;
 	m_Grounded = false;
-	m_Flying = true;
+	m_Flying = false;
 	m_HasTouchedGround = false;
 }
 
@@ -452,24 +452,40 @@ void Player::updateMeshes(Vector3i editPos)
 	if (local.x == 15)
 	{
 		Chunk* chunkPosX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x + 1, chunk->getLocation().y }) };
+
+		if (!chunkPosX->isBuilt())
+			return;
+
 		buildUpdatedMesh(chunkPosX);
 	}
 
 	if (local.x == 0)
 	{
 		Chunk* chunkNegX{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x - 1, chunk->getLocation().y }) };
+		
+		if (!chunkNegX->isBuilt())
+			return;
+
 		buildUpdatedMesh(chunkNegX);
 	}
 
 	if (local.z == 15)
 	{
 		Chunk* chunkPosY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y + 1 }) };
+		
+		if (!chunkPosY->isBuilt())
+			return;
+		
 		buildUpdatedMesh(chunkPosY);
 	}
 
 	if (local.z == 0)
 	{
 		Chunk* chunkNegY{ m_Manager.getChunk(Vector2i{ chunk->getLocation().x, chunk->getLocation().y - 1 }) };
+		
+		if (!chunkNegY->isBuilt())
+			return;
+		
 		buildUpdatedMesh(chunkNegY);
 	}
 }

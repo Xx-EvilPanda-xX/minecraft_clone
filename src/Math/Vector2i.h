@@ -1,6 +1,8 @@
 #ifndef VECTOR2I_H
 #define VECTOR2I_H
 
+#include "Vector3i.h"
+
 class Vector2i
 {
 public:
@@ -8,6 +10,8 @@ public:
 	int y;
 
 	Vector2i(int x, int y);
+
+	Vector2i(Vector3i vec);
 
 	Vector2i();
 

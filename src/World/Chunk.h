@@ -21,6 +21,7 @@ private:
 	bool m_Complete;
 	bool m_IsBuilt;
 	bool m_Building;
+	bool m_Hidden;
 	std::mutex m_RemainingSectionsMutex;
 	std::vector<int> m_RemainingSections;
 
@@ -54,6 +55,12 @@ public:
 	ChunkSection* getSection(int index) const;
 
 	bool isBuilt() const;
+
+	bool isHidden() const;
+
+	void hide();
+
+	void show();
 
 	std::mutex& getRemainingSectionsMutex();
 
