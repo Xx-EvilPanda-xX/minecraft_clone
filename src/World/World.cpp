@@ -42,30 +42,20 @@ World::World(Shader shader, Keyboard& keyboard)
 	m_WorldGen{ m_Manager }
 {
 	m_LastBlockQueueSize = 0;
-	m_MoveCountDown = 100;
 }
 
 void World::update()
 {
 	Vector3i playerPos{ m_Player.getCamera().getLocation() };
 
-	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
-	if (playerPos.y < -5.0)
-		glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
-	if (playerPos.y > 255.0)
-		glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
-	if (playerPos.y > 512.0)
-		glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
-	if (playerPos.y > 1024.0)
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	updateSkyColor(playerPos);
 
-	if (m_Manager.chunkExsists(playerPos) && m_MoveCountDown <= 0)
+	if (m_Manager.chunkExsists(playerPos))
 		m_Player.move();
 
 	m_Manager.updateQueues(m_Player.getCamera());
 	
 	uploadAll();
-	--m_MoveCountDown;
 
 	std::lock_guard<std::mutex> lock{ m_GlobalPlayerLocationMutex };
 	m_GlobalPlayerLocation = m_Player.getCamera().getLocation();
@@ -136,6 +126,19 @@ void World::uploadAll()
 	}
 
 	allowChunkDestruction();
+}
+
+void World::updateSkyColor(Vector3i playerPos)
+{
+	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
+	if (playerPos.y < -5.0)
+		glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
+	if (playerPos.y > 255.0)
+		glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
+	if (playerPos.y > 512.0)
+		glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
+	if (playerPos.y > 1024.0)
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void World::genPass()

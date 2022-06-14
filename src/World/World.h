@@ -33,11 +33,12 @@ private:
 	Player m_Player;
 
 	int m_LastBlockQueueSize;
-	int m_MoveCountDown;
 	bool m_ResetBuildVars;
 	bool m_ShouldCloseChunkerThread;
 
 	void uploadAll();
+
+	void updateSkyColor(Vector3i playerPos);
 
 public:
 	std::mutex m_GlobalPlayerLocationMutex;
