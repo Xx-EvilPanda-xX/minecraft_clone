@@ -40,6 +40,12 @@ private:
 	void uploadAll();
 
 public:
+	std::mutex m_GlobalPlayerLocationMutex;
+	glm::vec3 m_GlobalPlayerLocation;
+
+	std::mutex m_AllowChunkDestructionMutex;
+	bool m_AllowChunkDestruction;
+
 	World(Shader shader, Keyboard& keyboard);
 
 	void render(const Window& window);
@@ -49,6 +55,10 @@ public:
 	void genPass();
 
 	void destroyPass(Vector2i playerPos);
+
+	void disallowChunkDestruction();
+
+	void allowChunkDestruction();
 
 	void buildPass();
 

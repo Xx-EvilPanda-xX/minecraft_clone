@@ -64,7 +64,7 @@ bool Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 
 	if (section < 0 || section > 15)
 	{
-		std::cout << "Invalid section index!\n";
+		std::cout << "Invalid section index! (" << section << ")\n";
 		return false;
 	}
 
@@ -104,12 +104,12 @@ bool Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 	}
 
 	ChunkSection* chunkSection{ m_Sections[section] };
-	ChunkSection* sectionPosX{ manager.getChunk({ m_Location.x + 1, m_Location.y })->m_Sections[section] };
+	ChunkSection* sectionPosX{ adjacentChunks[0]->m_Sections[section]};
 	ChunkSection* sectionPosY{ section != 15 ? m_Sections[section + 1] : nullptr };
-	ChunkSection* sectionPosZ{ manager.getChunk({ m_Location.x, m_Location.y + 1 })->m_Sections[section] };
-	ChunkSection* sectionNegX{ manager.getChunk({ m_Location.x - 1, m_Location.y })->m_Sections[section] };
+	ChunkSection* sectionPosZ{ adjacentChunks[1]->m_Sections[section] };
+	ChunkSection* sectionNegX{ adjacentChunks[2]->m_Sections[section] };
 	ChunkSection* sectionNegY{ section != 0 ? m_Sections[section - 1] : nullptr };
-	ChunkSection* sectionNegZ{ manager.getChunk({ m_Location.x, m_Location.y - 1 })->m_Sections[section] };
+	ChunkSection* sectionNegZ{ adjacentChunks[3]->m_Sections[section] };
 	m_Building = true;
 
 	for (int x{}; x < 16; ++x)
@@ -169,7 +169,7 @@ bool Chunk::threadSafeIsFinished()
 
 	{
 		std::lock_guard<std::mutex> lock{ m_RemainingSectionsMutex };
-		finished = m_RemainingSections.size() == 0;
+		finished = (m_RemainingSections.size() == 0);
 	}
 
 	return finished;
@@ -265,9 +265,4 @@ void Chunk::hide()
 void Chunk::show()
 {
 	m_Hidden = false;
-}
-
-std::mutex& Chunk::getRemainingSectionsMutex()
-{
-	return m_RemainingSectionsMutex;
 }

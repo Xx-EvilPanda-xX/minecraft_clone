@@ -14,9 +14,15 @@ void chunker(World* world)
 
 	while (!world->shouldCloseChunkerThread())
 	{
-		Vector2i playerChunkPos{ Vector3i{ world->getPlayer().getCamera().getLocation() } };
+		world->m_GlobalPlayerLocationMutex.lock();
+		Vector2i playerChunkPos{ Vector3i{ world->m_GlobalPlayerLocation } };
+		world->m_GlobalPlayerLocationMutex.unlock();
 
-		if (playerChunkPos != lastPlayerChunkPos)
+		world->m_AllowChunkDestructionMutex.lock();
+		bool allowDestruction{ world->m_AllowChunkDestruction };
+		world->m_AllowChunkDestructionMutex.unlock();
+
+		if ((playerChunkPos != lastPlayerChunkPos) && allowDestruction)
 			world->destroyPass(playerChunkPos);
 
 		world->genPass();
@@ -27,7 +33,7 @@ void chunker(World* world)
 }
 
 //#define DEBUG
-constexpr int chunkBuildsPerFrame{ constants::renderDistance / 2 };
+constexpr int chunkBuildsPerFrame{ constants::loadDistance / 2 };
 
 World::World(Shader shader, Keyboard& keyboard)
 	: m_Shader{ shader },
@@ -41,7 +47,7 @@ World::World(Shader shader, Keyboard& keyboard)
 
 void World::update()
 {
-	Vector3i playerPos{ m_Player.getCamera().getLocation()};
+	Vector3i playerPos{ m_Player.getCamera().getLocation() };
 
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
 	if (playerPos.y < -5.0)
@@ -60,6 +66,9 @@ void World::update()
 	
 	uploadAll();
 	--m_MoveCountDown;
+
+	std::lock_guard<std::mutex> lock{ m_GlobalPlayerLocationMutex };
+	m_GlobalPlayerLocation = m_Player.getCamera().getLocation();
 }
 
 void World::render(const Window& window)
@@ -69,6 +78,7 @@ void World::render(const Window& window)
 	m_Shader.setBool("playerUnderWater", m_Manager.getWorldBlock(playerPos).getType() == BlockType::Water);
 	m_Shader.unbind();
 
+	disallowChunkDestruction();
 	std::vector<Chunk*> copy{};
 
 	{
@@ -80,8 +90,8 @@ void World::render(const Window& window)
 	for (int i{}; i < copy.size(); ++i)
 	{
 		Vector2i chunkLoc{ copy[i]->getLocation() };
-		if (std::abs(chunkLoc.x - playerChunkPos.x) >= constants::hideDistance
-			|| std::abs(chunkLoc.y - playerChunkPos.y) >= constants::hideDistance)
+		if (std::abs(chunkLoc.x - playerChunkPos.x) >= constants::renderDistance
+			|| std::abs(chunkLoc.y - playerChunkPos.y) >= constants::renderDistance)
 		{
 			copy[i]->hide();
 		}
@@ -105,10 +115,13 @@ void World::render(const Window& window)
 				Renderer::drawMesh(m_Player.getCamera(), copy[i]->getTranslucentMesh(), window);
 		}
 	}
+
+	allowChunkDestruction();
 }
 
 void World::uploadAll()
 {
+	disallowChunkDestruction();
 	std::vector<Chunk*> copy{};
 
 	{
@@ -121,6 +134,8 @@ void World::uploadAll()
 	{
 		copy[i]->finishBuilding();
 	}
+
+	allowChunkDestruction();
 }
 
 void World::genPass()
@@ -177,7 +192,7 @@ void World::destroyPass(Vector2i playerPos)
 		Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
 
 		//+ 1 becuase otherwise chunks that had just been generated got deleted
-		if (std::abs(chunkLoc.x - playerPos.x) > constants::renderDistance + 1 || std::abs(chunkLoc.y - playerPos.y) > constants::renderDistance + 1)
+		if (std::abs(chunkLoc.x - playerPos.x) > constants::loadDistance + 1 || std::abs(chunkLoc.y - playerPos.y) > constants::loadDistance + 1)
 		{
 			int index;
 
@@ -220,15 +235,25 @@ void World::destroyPass(Vector2i playerPos)
 	}
 }
 
+void World::disallowChunkDestruction()
+{
+	std::lock_guard<std::mutex> lock{ m_AllowChunkDestructionMutex };
+	m_AllowChunkDestruction = false;
+}
+
+void World::allowChunkDestruction()
+{
+	std::lock_guard<std::mutex> lock{ m_AllowChunkDestructionMutex };
+	m_AllowChunkDestruction = true;
+}
+
 void World::buildPass()
 {
 	static int sectionPtr{};
-	static int shouldGen{};
 
 	if (m_ResetBuildVars)
 	{
 		sectionPtr = 0;
-		shouldGen = 0;
 		m_ResetBuildVars = false;
 	}
 
@@ -240,32 +265,30 @@ void World::buildPass()
 			currentChunk = m_Manager.getBuildQueue().back();
 	}
 
-	if (currentChunk != nullptr && shouldGen >= genInterval)
+	if (currentChunk)
 	{
 		Chunk* adjacentChunks[4];
 		m_Manager.getAdjacentChunks(currentChunk->getLocation(), adjacentChunks);
 
-		if (currentChunk->buildMesh(m_Manager, sectionPtr, adjacentChunks));
+		if (currentChunk->buildMesh(m_Manager, sectionPtr, adjacentChunks))
 		{
-			std::lock_guard<std::mutex> lock{ m_UploadPendingMutex };
+			std::lock_guard<std::mutex> uploadPendingLock{ m_UploadPendingMutex };
 			m_UploadPending.push_back(currentChunk);
-		}
 
-		++sectionPtr;
-
-		if (sectionPtr == g_ChunkCap)
-		{
-			std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
+			std::lock_guard<std::mutex> queueLock{ m_Manager.getBuildQueueMutex() };
 			m_Manager.getBuildQueue().pop_back();
 
 			currentChunk = nullptr;
-
 			sectionPtr = 0;
 		}
+		else
+		{
+			++sectionPtr;
 
-		shouldGen = 0;
+			if (sectionPtr >= g_ChunkCap)
+				sectionPtr = 0;
+		}
 	}
-	++shouldGen;
 }
 
 void World::placeQueueBlocks()

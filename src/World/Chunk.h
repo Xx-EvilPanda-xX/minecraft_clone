@@ -62,8 +62,6 @@ public:
 
 	void show();
 
-	std::mutex& getRemainingSectionsMutex();
-
 	void clearMesh();
 };
 

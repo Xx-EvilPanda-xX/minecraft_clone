@@ -18,8 +18,8 @@ namespace constants
 	constexpr bool flatWorld{ false };
 	constexpr int flatWorldHeight{ 64 };
 
-	constexpr int renderDistance{ 14 };
-	constexpr int hideDistance{ 12 };
+	constexpr int loadDistance{ 14 };
+	constexpr int renderDistance{ 12 };
 
 	constexpr double playerReach{ 8.0f };
 	constexpr double blockBreakCooldown{ 0.15 };

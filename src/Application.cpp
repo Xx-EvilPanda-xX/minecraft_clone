@@ -27,6 +27,12 @@ double Application::s_Dt{};
 
 void Application::init()
 {
+	if (constants::renderDistance >= constants::loadDistance)
+	{
+		std::cout << "CRITICAL ERROR: render distance must be less than load distance. PROCESS WILL EXIT.\n";
+		std::exit(-1);
+	}
+
 	m_GuiShader = Shader("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl");
 	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_27.png");
 	TextRenderer::createChars();

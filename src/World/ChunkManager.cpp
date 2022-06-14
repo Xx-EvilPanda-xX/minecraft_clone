@@ -128,7 +128,7 @@ void ChunkManager::updateGenQueue(const Camera& player)
 	Vector3i playerPos{ player.getLocation() };
 	Vector2i chunkPlayerPos{ playerPos.x / 16, playerPos.z / 16 };
 	
-	for (int i{}; i <= constants::renderDistance; ++i)
+	for (int i{}; i <= constants::loadDistance; ++i)
 	{
 		for (int x{ chunkPlayerPos.x - i }; x <= chunkPlayerPos.x + i; ++x)
 		{
@@ -150,6 +150,7 @@ void ChunkManager::updateGenQueue(const Camera& player)
 
 void ChunkManager::updateBuildQueue()
 {
+	m_World->disallowChunkDestruction();
 	std::vector<Chunk*> copy{};
 
 	{
@@ -178,6 +179,8 @@ void ChunkManager::updateBuildQueue()
 			}
 		}
 	}
+
+	m_World->allowChunkDestruction();
 }
 
 void ChunkManager::updateQueues(const Camera& player)
