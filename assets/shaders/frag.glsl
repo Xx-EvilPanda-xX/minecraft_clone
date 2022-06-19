@@ -13,7 +13,7 @@ void main(){
     rgb *= passLighting;
     outColor = vec4(rgb, texColor.a);
 
-    if (outColor.a == 0)
+    if (outColor.a == 0.0)
     {
         discard;
     }

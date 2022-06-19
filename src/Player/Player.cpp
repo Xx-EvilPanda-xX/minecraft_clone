@@ -295,7 +295,7 @@ void Player::calculateVelocity()
 		m_HasTouchedGround = true;
 
 	m_DecreasingVel.x = (m_Velocity.x > speed || m_Velocity.x < -speed) && (((a || d) && !ctrl) || (!m_Flying && !m_HasTouchedGround));
-	m_DecreasingVel.y = (m_Velocity.y > speed || m_Velocity.y < -speed) && (shift || space) && !ctrl;
+	m_DecreasingVel.y = (m_Velocity.y > speed || m_Velocity.y < -speed) && ((shift || space) && m_Flying) && !ctrl;
 	m_DecreasingVel.z = (m_Velocity.z > speed || m_Velocity.z < -speed) && (((w || s) && !ctrl) || (!m_Flying && !m_HasTouchedGround));
 
 	//std::cout << "DecreasingVel: " << m_DecreasingVel.x << ", " << m_DecreasingVel.y << ", " << m_DecreasingVel.z << "\t\t";
@@ -507,7 +507,7 @@ void Player::buildUpdatedMesh(Chunk* chunk)
 	{
 		chunk->buildMesh(m_Manager, i, adjacentChunks);
 	}
-	m_Manager.pushUploadPending(chunk);
+	chunk->finishBuilding();
 }
 
 double Player::getReach() const

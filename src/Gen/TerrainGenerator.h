@@ -37,15 +37,15 @@ private:
 
 	const int m_MaxTreesPerChunk{ 16 };
 
-	void genFoliage(const Biome* biome, Vector2i pos, ChunkSection* section, const SectionLocation& sectionLocation, double** heightMap);
+	void genFoliage(const Biome* biome, Vector2i pos, ChunkSection* section, const SectionLocation& sectionLocation, double heightMap[chunkSize][chunkSize]);
 
-	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, double** heightMap);
+	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, double heightMap[chunkSize][chunkSize]);
 
 	void genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation);
 
 	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& sectionLocation, Block block);
 
-	ChunkSection* genSection(Biome* biomeMap[chunkSize][chunkSize], double** heightMap, SectionLocation sectionLocation);
+	ChunkSection* genSection(Biome* biomeMap[chunkSize][chunkSize], double heightMap[chunkSize][chunkSize], SectionLocation sectionLocation);
 
 	BiomeMixture** getBiomeMap(Vector2i location);
 

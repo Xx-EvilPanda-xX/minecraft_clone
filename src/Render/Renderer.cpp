@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Shader.h"
 #include "../World/ChunkMesh.h"
+#include "../Constants.h"
 
 namespace Renderer
 {
@@ -34,7 +35,13 @@ namespace Renderer
 		model = glm::translate(model, chunkPostion);
 
 		int windowWidth, windowHeight;
-		glfwGetWindowSize(window.getGlfwWindow(), &windowWidth, &windowHeight);
+		if constexpr (constants::fullscreen)
+		{
+			windowWidth = constants::fullscreenWidth;
+			windowHeight = constants::fullscreenHeight;
+		}
+		else
+			glfwGetWindowSize(window.getGlfwWindow(), &windowWidth, &windowHeight);
 
 		mesh.getRenderData().shader->setMat4("model", model);
 		mesh.getRenderData().shader->setMat4("view", camera.getViewMat());

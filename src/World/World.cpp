@@ -11,6 +11,7 @@
 void chunker(World* world)
 {
 	static Vector2i lastPlayerChunkPos{};
+	static bool destroyPassRequested{};
 
 	while (!world->shouldCloseChunkerThread())
 	{
@@ -22,9 +23,17 @@ void chunker(World* world)
 		bool allowDestruction{ world->m_AllowChunkDestruction };
 		world->m_AllowChunkDestructionMutex.unlock();
 
-		if ((playerChunkPos != lastPlayerChunkPos) && allowDestruction)
-			world->destroyPass(playerChunkPos);
-
+		if (playerChunkPos != lastPlayerChunkPos || destroyPassRequested)
+		{
+			if (allowDestruction)
+			{
+				world->destroyPass(playerChunkPos);
+				destroyPassRequested = false;
+			}
+			else
+				destroyPassRequested = true;
+		}
+		
 		world->genPass();
 		world->placeQueueBlocks();
 		world->buildPass();
@@ -39,9 +48,13 @@ World::World(Shader shader, Keyboard& keyboard)
 	: m_Shader{ shader },
 	m_Manager{ this },
 	m_Player{ m_Manager, keyboard, constants::playerReach },
-	m_WorldGen{ m_Manager }
+	m_WorldGen{ m_Manager },
+	m_GlobalPlayerLocation{}
 {
 	m_LastBlockQueueSize = 0;
+	m_AllowChunkDestruction = true;
+	m_ResetBuildVars = false;
+	m_ShouldCloseChunkerThread = false;
 }
 
 void World::update()
