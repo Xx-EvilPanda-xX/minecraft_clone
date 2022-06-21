@@ -69,6 +69,7 @@ void World::update()
 	m_Manager.updateQueues(m_Player.getCamera());
 	
 	uploadAll();
+	destroyAllBuffers();
 
 	std::lock_guard<std::mutex> lock{ m_GlobalPlayerLocationMutex };
 	m_GlobalPlayerLocation = m_Player.getCamera().getLocation();
@@ -141,6 +142,32 @@ void World::uploadAll()
 	allowChunkDestruction();
 }
 
+void World::destroyAllBuffers()
+{
+	disallowChunkDestruction();
+	std::vector<unsigned int> copy{};
+
+	{
+		std::lock_guard<std::mutex> lock{ m_BufferDestroyQueueMutex };
+		copy = m_BufferDestroyQueue;
+		m_BufferDestroyQueue.clear();
+	}
+
+	if (copy.size() % 5 != 0)
+		std::cout << "Error: couldn't delete buffers as they weren't formatted correctly.\n";
+
+	for (int i{}; i < copy.size(); ++i)
+	{
+		//when pushing buffers/vaos to queue, every fifth index is a vao
+		if (i % 5 == 0)
+			glDeleteVertexArrays(1, &copy[i]);
+		else
+			glDeleteBuffers(1, &copy[i]);
+	}
+
+	allowChunkDestruction();
+}
+
 void World::updateSkyColor(Vector3i playerPos)
 {
 	glClearColor(0.0f, 0.4f, 0.8f, 1.0f);
@@ -178,14 +205,14 @@ void World::genPass()
 			return;
 #endif // DEBUG
 
-		Chunk* chunk{ m_WorldGen.generateChunk(chunkPos, m_Shader) };
+		Chunk* chunk{ m_WorldGen.generateChunk(chunkPos, m_Shader, { m_BufferDestroyQueueMutex, m_BufferDestroyQueue })};
 
 		std::lock_guard<std::mutex> lock{ m_ChunksMutex };
 		m_Chunks.push_back(chunk);
 	}
 }
 
-void World::destroyPass(Vector2i playerPos)
+void World::destroyPass(Vector2i playerChunkPos)
 {
 	std::lock_guard<std::mutex> lock{ m_ChunksMutex };
 
@@ -208,7 +235,7 @@ void World::destroyPass(Vector2i playerPos)
 		Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
 
 		//+ 1 becuase otherwise chunks that had just been generated got deleted
-		if (std::abs(chunkLoc.x - playerPos.x) > constants::loadDistance + 1 || std::abs(chunkLoc.y - playerPos.y) > constants::loadDistance + 1)
+		if (std::abs(chunkLoc.x - playerChunkPos.x) > constants::loadDistance + 1 || std::abs(chunkLoc.y - playerChunkPos.y) > constants::loadDistance + 1)
 		{
 			int index;
 

@@ -4,10 +4,10 @@
 #include "Block.h"
 #include "../Constants.h"
 
-Chunk::Chunk(Vector2i loc, Shader& shader) 
+Chunk::Chunk(Vector2i loc, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
 	: m_Location{ loc },
-	m_SolidMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader },
-	m_TranslucentMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader }
+	m_SolidMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader, bufferDestroyQueue },
+	m_TranslucentMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader, bufferDestroyQueue }
 {
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
@@ -31,11 +31,8 @@ Chunk::~Chunk()
 		m_Sections[i] = nullptr;
 	}
 
-	if (m_IsBuilt)
-	{
-		m_SolidMesh.clear();
-		m_TranslucentMesh.clear();
-	}
+	m_SolidMesh.clear();
+	m_TranslucentMesh.clear();
 }
 
 void Chunk::addSection(ChunkSection* section)

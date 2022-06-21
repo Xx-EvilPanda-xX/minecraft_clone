@@ -2,6 +2,7 @@
 #define CHUNK_MESH_H
 
 #include <vector>
+#include <mutex>
 #include "../Math/Vector3i.h"
 #include "../Math/Vector2i.h"
 #include "../Render/RenderData.h"
@@ -36,11 +37,14 @@ private:
 	std::vector<float> m_TexCoords;
 	std::vector<float> m_Lighting;
 	std::vector<int> m_Indices;
-	bool hasValidObjects;
+	bool m_HasValidObjects;
 	static Texture s_TexAltas;
 	static BlockType s_AtlasIndices[];
 	const float m_FaceRatio;
 	Vector2i m_Pos;
+
+	std::mutex& m_BufferDestroyQueueMutex;
+	std::vector<unsigned int>& m_BufferDestroyQueue;
 
 	void storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data);
 
@@ -83,7 +87,7 @@ private:
 	void deleteBuffers();
 
 public:
-	ChunkMesh(Vector2i pos, Shader& shader);
+	ChunkMesh(Vector2i pos, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue);
 
 	static void createTextureAtlas(const char* path);
 

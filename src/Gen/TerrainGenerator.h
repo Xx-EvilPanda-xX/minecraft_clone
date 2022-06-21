@@ -60,7 +60,7 @@ private:
 public:
 	TerrainGenerator(ChunkManager& manager);
 
-	Chunk* generateChunk(Vector2i loc, Shader& chunkShader);
+	Chunk* generateChunk(Vector2i loc, Shader& chunkShader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue);
 
 	std::vector<QueueBlock>& getBlockQueue();
 };

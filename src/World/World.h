@@ -27,6 +27,9 @@ private:
 	std::mutex m_DestroyQueueMutex;
 	std::vector<Chunk*> m_DestroyQueue;
 
+	std::mutex m_BufferDestroyQueueMutex;
+	std::vector<unsigned int> m_BufferDestroyQueue;
+
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
 	ChunkManager m_Manager;
@@ -37,6 +40,8 @@ private:
 	bool m_ShouldCloseChunkerThread;
 
 	void uploadAll();
+
+	void destroyAllBuffers();
 
 	void updateSkyColor(Vector3i playerPos);
 
@@ -55,7 +60,7 @@ public:
 
 	void genPass();
 
-	void destroyPass(Vector2i playerPos);
+	void destroyPass(Vector2i playerChunkPos);
 
 	void disallowChunkDestruction();
 

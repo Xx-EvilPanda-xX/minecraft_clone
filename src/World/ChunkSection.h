@@ -5,10 +5,12 @@
 #include "../Math/Vector3i.h"
 #include "../Player/AABB.h"
 
+constexpr int g_ChunkSectionCapacity{ 4096 };
+
 class ChunkSection
 {
 private:
-	Block* m_Blocks;
+	Block m_Blocks[g_ChunkSectionCapacity];
 	int m_OpaqueBlocks;
 	int m_AirBlocks;
 	bool m_Empty;

@@ -55,13 +55,13 @@ int TerrainGenerator::setBiomeNoiseParams()
 	return seed;
 }
 
-Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader)
+Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
 {
 	BiomeMixture** biomeMap{ getBiomeMap(loc) };
 	double heightMap[chunkSize][chunkSize]{};
 	Biome* layerMap[chunkSize][chunkSize]{};
 	
-	Chunk* chunk{ new Chunk(loc, chunkShader) };
+	Chunk* chunk{ new Chunk(loc, chunkShader, bufferDestroyQueue) };
 	double bestPercentage{};
 	std::vector<TerrainMap> usedMaps{};
 

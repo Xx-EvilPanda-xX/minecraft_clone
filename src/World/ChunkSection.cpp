@@ -7,15 +7,12 @@ ChunkSection::ChunkSection()
 	: m_Empty{ true },
 	m_Full{ false },
 	m_OpaqueBlocks{ 0 },
-	m_AirBlocks{ 4096 }
+	m_AirBlocks{ g_ChunkSectionCapacity }
 {
-	m_Blocks = new Block[4096]{};
 }
 
 ChunkSection::~ChunkSection()
 {
-	delete[] m_Blocks;
-	m_Blocks = nullptr;
 }
 
 void ChunkSection::setBlock(Vector3i loc, BlockType type, bool surface)
@@ -44,12 +41,12 @@ void ChunkSection::setBlock(Vector3i loc, BlockType type, bool surface)
 	if (block.isTransparent() && !m_Blocks[index].isTransparent())
 		--m_OpaqueBlocks;
 
-	if (m_AirBlocks == 4096)
+	if (m_AirBlocks == g_ChunkSectionCapacity)
 		m_Empty = true;
 	else
 		m_Empty = false;
 
-	if (m_OpaqueBlocks == 4096)
+	if (m_OpaqueBlocks == g_ChunkSectionCapacity)
 		m_Full = true;
 	else
 		m_Full = false;

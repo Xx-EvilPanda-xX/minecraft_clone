@@ -3,12 +3,14 @@
 #include "ChunkMesh.h"
 #include "Chunk.h"
 
-ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader)
+ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
 	: m_Pos{ pos },
 	m_RenderData{ 0, 0, 0, 0, 0, 0, &shader },
-	m_FaceRatio{ 1.0f / facesPerRow }
+	m_FaceRatio{ 1.0f / facesPerRow },
+	m_BufferDestroyQueueMutex{ bufferDestroyQueue.first },
+	m_BufferDestroyQueue{ bufferDestroyQueue.second }
 {
-	hasValidObjects = false;
+	m_HasValidObjects = false;
 }
 
 Texture ChunkMesh::s_TexAltas{ Texture{} };
@@ -374,9 +376,10 @@ void ChunkMesh::clear()
 	m_Lighting.resize(0);
 	m_Indices.resize(0);
 
-	deleteBuffers();
+	if (m_HasValidObjects)
+		deleteBuffers();
 
-	hasValidObjects = false;
+	m_HasValidObjects = false;
 }
 
 void ChunkMesh::enableAttribs() const
@@ -395,27 +398,25 @@ void ChunkMesh::disableAttribs() const
 
 void ChunkMesh::deleteBuffers()
 {
-	glDeleteVertexArrays(1, &m_RenderData.vao);
-
-	glDeleteBuffers(1, &m_RenderData.vbo);
-	glDeleteBuffers(1, &m_RenderData.tbo);
-	glDeleteBuffers(1, &m_RenderData.ebo);
-	glDeleteBuffers(1, &m_RenderData.lbo);
+	std::lock_guard<std::mutex> lock{ m_BufferDestroyQueueMutex };
+	m_BufferDestroyQueue.push_back(m_RenderData.vao);
+	m_BufferDestroyQueue.push_back(m_RenderData.vbo);
+	m_BufferDestroyQueue.push_back(m_RenderData.tbo);
+	m_BufferDestroyQueue.push_back(m_RenderData.lbo);
+	m_BufferDestroyQueue.push_back(m_RenderData.ebo);
 }
 
 void ChunkMesh::toBuffers()
 {
-	if (hasValidObjects)
-	{
+	if (m_HasValidObjects)
 		deleteBuffers();
-	}
 
 	glGenVertexArrays(1, &m_RenderData.vao);
 
 	glGenBuffers(1, &m_RenderData.vbo);
 	glGenBuffers(1, &m_RenderData.tbo);
-	glGenBuffers(1, &m_RenderData.ebo);
 	glGenBuffers(1, &m_RenderData.lbo);
+	glGenBuffers(1, &m_RenderData.ebo);
 
 	if (!m_Vertices.empty())
 	{
@@ -428,7 +429,13 @@ void ChunkMesh::toBuffers()
 
 	m_RenderData.texture = s_TexAltas.getId();
 
-	hasValidObjects = true;
+	m_HasValidObjects = true;
+
+	//don't waste memory saving vertex buffers in cpu memory
+	m_Vertices.resize(0);
+	m_TexCoords.resize(0);
+	m_Lighting.resize(0);
+	m_Indices.resize(0);
 }
 
 void ChunkMesh::storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data)

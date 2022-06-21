@@ -32,7 +32,7 @@ private:
 	bool threadSafeIsFinished();
 
 public:
-	Chunk(Vector2i loc, Shader& shader);
+	Chunk(Vector2i loc, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue);
 
 	~Chunk();
 
