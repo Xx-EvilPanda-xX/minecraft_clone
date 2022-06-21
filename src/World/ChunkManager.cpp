@@ -150,37 +150,41 @@ void ChunkManager::updateGenQueue(const Camera& player)
 
 void ChunkManager::updateBuildQueue()
 {
-	m_World->disallowChunkDestruction();
-	std::vector<Chunk*> copy{};
+	std::lock_guard<std::mutex> lock{ m_World->getChunksMutex() };
 
+	for (int i{}; i < m_World->getChunks().size(); ++i)
 	{
-		std::lock_guard<std::mutex> lock{ m_World->getChunksMutex() };
-		copy = m_World->getChunks();
-	}
-
-	for (int i{}; i < copy.size(); ++i)
-	{
-		if (copy[i]->isBuilt() || isInBuildQueue(copy[i]))
+		if (m_World->getChunks()[i]->isBuilt() || isInBuildQueue(m_World->getChunks()[i]))
 			continue;
 
-		Vector2i chunkLoc{ copy[i]->getLocation() };
-		if (chunkExsists(Vector2i{ chunkLoc.x + 1, chunkLoc.y }))
-		{
-			if (chunkExsists(Vector2i{ chunkLoc.x - 1, chunkLoc.y }))
+		//chunksExists() that doesn't lock world chunk vector mutex
+		auto checkChunk{ [this](Vector2i chunkPos) {
+			for (int i{}; i < m_World->getChunks().size(); ++i)
 			{
-				if (chunkExsists(Vector2i{ chunkLoc.x, chunkLoc.y + 1}))
+				if (m_World->getChunks()[i]->getLocation() == chunkPos)
 				{
-					if (chunkExsists(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }))
+					return true;
+				}
+			}
+			return false;
+		} };
+
+		Vector2i chunkLoc{ m_World->getChunks()[i]->getLocation() };
+		if (checkChunk(Vector2i{chunkLoc.x + 1, chunkLoc.y}))
+		{
+			if (checkChunk(Vector2i{ chunkLoc.x - 1, chunkLoc.y }))
+			{
+				if (checkChunk(Vector2i{ chunkLoc.x, chunkLoc.y + 1}))
+				{
+					if (checkChunk(Vector2i{ chunkLoc.x, chunkLoc.y - 1 }))
 					{
 						std::lock_guard<std::mutex> lock{ m_BuildQueueMutex };
-						m_BuildQueue.insert(m_BuildQueue.begin(), copy[i]);
+						m_BuildQueue.insert(m_BuildQueue.begin(), m_World->getChunks()[i]);
 					}
 				}
 			}
 		}
 	}
-
-	m_World->allowChunkDestruction();
 }
 
 void ChunkManager::updateQueues(const Camera& player)

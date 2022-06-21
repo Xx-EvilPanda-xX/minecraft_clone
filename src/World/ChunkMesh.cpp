@@ -52,40 +52,49 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 	}
 	else
 	{
+		bool copyBothSides{ block.getType() == BlockType::Water ? true : false };
+
+		pushCCWIndices();
+		if (copyBothSides)
+			pushCWIndices();
+
 		switch (face)
 		{
 		case Face::Up:
-			pushUp(floats, height);
+			pushUp(floats, height, copyBothSides);
 			break;
 
 		case Face::Down:
-			pushDown(floats);
+			pushDown(floats, copyBothSides);
 			break;
 
 		case Face::North:
-			pushNorth(floats, height);
+			pushNorth(floats, height, copyBothSides);
 			break;
 
 		case Face::South:
-			pushSouth(floats, height);
+			pushSouth(floats, height, copyBothSides);
 			break;
 
 		case Face::East:
-			pushEast(floats, height);
+			pushEast(floats, height, copyBothSides);
 			break;
 
 		case Face::West:
-			pushWest(floats, height);
+			pushWest(floats, height, copyBothSides);
 			break;
 		}
 
-		float* tex{ calcTexCoords(block.getType(), face) };
-		for (int i{}; i < 8; ++i)
+		for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 		{
-			m_TexCoords.push_back(tex[i]);
-		}
+			float* tex{ calcTexCoords(block.getType(), face) };
+			for (int i{}; i < 8; ++i)
+			{
+				m_TexCoords.push_back(tex[i]);
+			}
 
-		delete[] tex;
+			delete[] tex;
+		}
 	}
 }
 
@@ -170,99 +179,111 @@ float* ChunkMesh::getTexCoordsFromStartPos(glm::vec2 startPos)
 	return coords;
 }
 
-void ChunkMesh::pushUp(glm::vec3& floats, float height)
+void ChunkMesh::pushUp(glm::vec3& floats, float height, bool copyBothSides)
 {
-	pushCCWIndices();
-
 	constexpr float add{ 1.0f };
-	vertex(floats.x, floats.y + height, floats.z); //2
-	vertex(floats.x + add, floats.y + height, floats.z); //5
-	vertex(floats.x, floats.y + height, floats.z + add); //6
-	vertex(floats.x + add, floats.y + height, floats.z + add); //7
 
-	for (int i{}; i < 4; ++i)
+	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
-		pushLighting(upAmbient);
+		vertex(floats.x, floats.y + height, floats.z); //2
+		vertex(floats.x + add, floats.y + height, floats.z); //5
+		vertex(floats.x, floats.y + height, floats.z + add); //6
+		vertex(floats.x + add, floats.y + height, floats.z + add); //7
+
+		for (int i{}; i < 4; ++i)
+		{
+			pushLighting(upAmbient);
+		}
 	}
 }
 
-void ChunkMesh::pushDown(glm::vec3& floats)
+void ChunkMesh::pushDown(glm::vec3& floats, bool copyBothSides)
 {
-	pushCCWIndices();
-
 	constexpr float add{ 1.0f };
-	vertex(floats.x + add, floats.y, floats.z); //1
-	vertex(floats.x, floats.y, floats.z); //0
-	vertex(floats.x + add, floats.y, floats.z + add); //4
-	vertex(floats.x, floats.y, floats.z + add); //3
 
-	for (int i{}; i < 4; ++i)
+	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
-		pushLighting(downAmbient);
+		vertex(floats.x + add, floats.y, floats.z); //1
+		vertex(floats.x, floats.y, floats.z); //0
+		vertex(floats.x + add, floats.y, floats.z + add); //4
+		vertex(floats.x, floats.y, floats.z + add); //3
+
+		for (int i{}; i < 4; ++i)
+		{
+			pushLighting(downAmbient);
+		}
 	}
 }
 
-void ChunkMesh::pushNorth(glm::vec3& floats, float height)
+void ChunkMesh::pushNorth(glm::vec3& floats, float height, bool copyBothSides)
 {
-	pushCCWIndices();
-
 	constexpr float add{ 1.0f };
-	vertex(floats.x + add, floats.y, floats.z); //1
-	vertex(floats.x + add, floats.y, floats.z + add); //4
-	vertex(floats.x + add, floats.y + height, floats.z); //5
-	vertex(floats.x + add, floats.y + height, floats.z + add); //7
-	
-	for (int i{}; i < 4; ++i)
+
+	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
-		pushLighting(northAmbient);
+		vertex(floats.x + add, floats.y, floats.z); //1
+		vertex(floats.x + add, floats.y, floats.z + add); //4
+		vertex(floats.x + add, floats.y + height, floats.z); //5
+		vertex(floats.x + add, floats.y + height, floats.z + add); //7
+
+		for (int i{}; i < 4; ++i)
+		{
+			pushLighting(northAmbient);
+		}
 	}
 }
 
-void ChunkMesh::pushSouth(glm::vec3& floats, float height)
+void ChunkMesh::pushSouth(glm::vec3& floats, float height, bool copyBothSides)
 {
-	pushCCWIndices();
-
 	constexpr float add{ 1.0f };
-	vertex(floats.x, floats.y, floats.z + add); //3
-	vertex(floats.x, floats.y, floats.z); //0
-	vertex(floats.x, floats.y + height, floats.z + add); //6
-	vertex(floats.x, floats.y + height, floats.z); //2
 
-	for (int i{}; i < 4; ++i)
+	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
-		pushLighting(southAmbient);
+		vertex(floats.x, floats.y, floats.z + add); //3
+		vertex(floats.x, floats.y, floats.z); //0
+		vertex(floats.x, floats.y + height, floats.z + add); //6
+		vertex(floats.x, floats.y + height, floats.z); //2
+
+		for (int i{}; i < 4; ++i)
+		{
+			pushLighting(southAmbient);
+		}
 	}
 }
 
-void ChunkMesh::pushEast(glm::vec3& floats, float height)
+void ChunkMesh::pushEast(glm::vec3& floats, float height, bool copyBothSides)
 {
-	pushCCWIndices();
-
 	constexpr float add{ 1.0f };
-	vertex(floats.x + add, floats.y, floats.z + add); //4
-	vertex(floats.x, floats.y, floats.z + add); //3
-	vertex(floats.x + add, floats.y + height, floats.z + add); //7
-	vertex(floats.x, floats.y + height, floats.z + add); //6
 
-	for (int i{}; i < 4; ++i)
+	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
-		pushLighting(eastAmbient);
+		vertex(floats.x + add, floats.y, floats.z + add); //4
+		vertex(floats.x, floats.y, floats.z + add); //3
+		vertex(floats.x + add, floats.y + height, floats.z + add); //7
+		vertex(floats.x, floats.y + height, floats.z + add); //6
+
+		for (int i{}; i < 4; ++i)
+		{
+			pushLighting(eastAmbient);
+		}
 	}
 }
 
-void ChunkMesh::pushWest(glm::vec3& floats, float height)
+void ChunkMesh::pushWest(glm::vec3& floats, float height, bool copyBothSides)
 {
-	pushCCWIndices();
-
 	constexpr float add{ 1.0f };
-	vertex(floats.x, floats.y, floats.z); //0
-	vertex(floats.x + add, floats.y, floats.z); //1
-	vertex(floats.x, floats.y + height, floats.z); //2
-	vertex(floats.x + add, floats.y + height, floats.z); //5
 
-	for (int i{}; i < 4; ++i)
+	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
-		pushLighting(westAmbient);
+		vertex(floats.x, floats.y, floats.z); //0
+		vertex(floats.x + add, floats.y, floats.z); //1
+		vertex(floats.x, floats.y + height, floats.z); //2
+		vertex(floats.x + add, floats.y + height, floats.z); //5
+
+		for (int i{}; i < 4; ++i)
+		{
+			pushLighting(westAmbient);
+		}
 	}
 }
 

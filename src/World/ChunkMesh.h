@@ -60,17 +60,17 @@ private:
 
 	ChunkMesh& pushIndex(int i);
 
-	void pushUp(glm::vec3& floats, float height);
+	void pushUp(glm::vec3& floats, float height, bool copyBothSides);
 
-	void pushDown(glm::vec3& floats);
+	void pushDown(glm::vec3& floats, bool copyBothSides);
 
-	void pushNorth(glm::vec3& floats, float height);
+	void pushNorth(glm::vec3& floats, float height, bool copyBothSides);
 
-	void pushSouth(glm::vec3& floats, float height);
+	void pushSouth(glm::vec3& floats, float height, bool copyBothSides);
 
-	void pushEast(glm::vec3& floats, float height);
+	void pushEast(glm::vec3& floats, float height, bool copyBothSides);
 
-	void pushWest(glm::vec3& floats, float height);
+	void pushWest(glm::vec3& floats, float height, bool copyBothSides);
 
 	void pushSmallFoliage(glm::vec3& floats);
 

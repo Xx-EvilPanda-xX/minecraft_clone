@@ -216,11 +216,12 @@ void World::destroyPass(Vector2i playerChunkPos)
 {
 	std::lock_guard<std::mutex> lock{ m_ChunksMutex };
 
+	//ChunkManager::getChunk() that doesn't lock world chunk vector mutex
 	auto findChunk{ 
-		[this](Vector2i chunkLoc) {
+		[this](Vector2i chunkPos) {
 			for (int i{}; i < m_Chunks.size(); ++i)
 			{
-				if (m_Chunks[i]->getLocation() == chunkLoc)
+				if (m_Chunks[i]->getLocation() == chunkPos)
 				{
 					return m_Chunks[i];
 				}
