@@ -54,10 +54,6 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 	{
 		bool copyBothSides{ block.getType() == BlockType::Water ? true : false };
 
-		pushCCWIndices();
-		if (copyBothSides)
-			pushCWIndices();
-
 		switch (face)
 		{
 		case Face::Up:
@@ -185,6 +181,11 @@ void ChunkMesh::pushUp(glm::vec3& floats, float height, bool copyBothSides)
 
 	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
+		if (i == 0)
+			pushCCWIndices();
+		else if (i == 1)
+			pushCWIndices();
+
 		vertex(floats.x, floats.y + height, floats.z); //2
 		vertex(floats.x + add, floats.y + height, floats.z); //5
 		vertex(floats.x, floats.y + height, floats.z + add); //6
@@ -203,6 +204,11 @@ void ChunkMesh::pushDown(glm::vec3& floats, bool copyBothSides)
 
 	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
+		if (i == 0)
+			pushCCWIndices();
+		else if (i == 1)
+			pushCWIndices();
+
 		vertex(floats.x + add, floats.y, floats.z); //1
 		vertex(floats.x, floats.y, floats.z); //0
 		vertex(floats.x + add, floats.y, floats.z + add); //4
@@ -221,6 +227,11 @@ void ChunkMesh::pushNorth(glm::vec3& floats, float height, bool copyBothSides)
 
 	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
+		if (i == 0)
+			pushCCWIndices();
+		else if (i == 1)
+			pushCWIndices();
+
 		vertex(floats.x + add, floats.y, floats.z); //1
 		vertex(floats.x + add, floats.y, floats.z + add); //4
 		vertex(floats.x + add, floats.y + height, floats.z); //5
@@ -239,6 +250,11 @@ void ChunkMesh::pushSouth(glm::vec3& floats, float height, bool copyBothSides)
 
 	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
+		if (i == 0)
+			pushCCWIndices();
+		else if (i == 1)
+			pushCWIndices();
+
 		vertex(floats.x, floats.y, floats.z + add); //3
 		vertex(floats.x, floats.y, floats.z); //0
 		vertex(floats.x, floats.y + height, floats.z + add); //6
@@ -257,6 +273,11 @@ void ChunkMesh::pushEast(glm::vec3& floats, float height, bool copyBothSides)
 
 	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
+		if (i == 0)
+			pushCCWIndices();
+		else if (i == 1)
+			pushCWIndices();
+
 		vertex(floats.x + add, floats.y, floats.z + add); //4
 		vertex(floats.x, floats.y, floats.z + add); //3
 		vertex(floats.x + add, floats.y + height, floats.z + add); //7
@@ -275,6 +296,11 @@ void ChunkMesh::pushWest(glm::vec3& floats, float height, bool copyBothSides)
 
 	for (int i{}; i < (copyBothSides ? 2 : 1); ++i)
 	{
+		if (i == 0)
+			pushCCWIndices();
+		else if (i == 1)
+			pushCWIndices();
+
 		vertex(floats.x, floats.y, floats.z); //0
 		vertex(floats.x + add, floats.y, floats.z); //1
 		vertex(floats.x, floats.y + height, floats.z); //2
@@ -453,10 +479,10 @@ void ChunkMesh::toBuffers()
 	m_HasValidObjects = true;
 
 	//don't waste memory saving vertex buffers in cpu memory
-	m_Vertices.resize(0);
-	m_TexCoords.resize(0);
-	m_Lighting.resize(0);
-	m_Indices.resize(0);
+	//m_Vertices.resize(0);
+	//m_TexCoords.resize(0);
+	//m_Lighting.resize(0);
+	//m_Indices.resize(0);
 }
 
 void ChunkMesh::storeFloatBuffer(int index, int size, int buffer, const std::vector<float>& data)
