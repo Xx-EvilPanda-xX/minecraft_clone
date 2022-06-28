@@ -8,6 +8,7 @@
 #include "World/ChunkMesh.h"
 #include "Render/Texture.h"
 #include "Constants.h"
+#include "Config.h"
 
 Application::Application(int windowWidth, int windowHeight, const char* title)
 	: m_World{ Shader{ "assets/shaders/vert.glsl", "assets/shaders/frag.glsl" }, m_Window.getKeyboard() },

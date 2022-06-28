@@ -1,0 +1,72 @@
+#Configurations for Minecraft
+#Each config must be paired with one key of the specified type, followed by a semicolon
+#Assigning a type other than the one specified may produce undefined behaiviour
+
+#32 bit integer
+window_width = 1280;
+
+#32 bit integer
+window_height = 720;
+
+#32 bit integer
+fullscreen_width = 1920;
+
+#32 bit integer
+fullscreen_height = 1080;
+
+#boolean (0/1)
+enable_fullscreen = 1;
+
+#64 bit floating point number
+mouse_sensitivity = 0.025;
+
+#boolean (0/1)
+generate_flat_world = 0;
+
+#32 bit integer
+flat_world_height = 64;
+
+#32 bit integer
+load_distance = 14;
+
+#32 bit integer
+render_distance = 12;
+
+#64 bit floating point number
+player_reach = 8.0;
+
+#64 bit floating point number
+block_break_cooldown = 0.15;
+
+#64 bit floating point number
+block_place_cooldown = 0.15;
+
+#boolean (0/1)
+render_translucent_water = 1;
+
+#32 bit integer
+water_level = 48;
+
+#32 bit integer
+beach_size = 1;
+
+#64 bit floating point number
+walk_speed = 3.5;
+
+#64 bit floating point number
+sprint_speed = 9.0;
+
+#64 bit floating point number
+player_drift = 20.0;
+
+#64 bit floating point number
+player_size = 0.45;
+
+#64 bit floating point number
+camera_fov = 90.0;
+
+#64 bit floating point number
+gravity = 55.0;
+
+#64 bit floating point number
+jump_height = 1.31;

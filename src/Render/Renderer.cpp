@@ -35,7 +35,7 @@ namespace Renderer
 		model = glm::translate(model, chunkPostion);
 
 		int windowWidth, windowHeight;
-		if constexpr (constants::fullscreen)
+		if (constants::fullscreen)
 		{
 			windowWidth = constants::fullscreenWidth;
 			windowHeight = constants::fullscreenHeight;

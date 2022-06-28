@@ -6,7 +6,7 @@
 #include <cmath>
 
 Player::Player(ChunkManager& manager, Keyboard& keyboard, double reach)
-	: m_Camera{ constants::playerSpawnPos, 0.0, 0.0, constants::cameraFov, constants::mouse_sensitivity },
+	: m_Camera{ { 0.0, 96.0, 0.0 }, 0.0, 0.0, constants::cameraFov, constants::mouseSensitivity },
 	m_Manager{ manager },
 	m_Keyboard{ keyboard },
 	m_Reach{ reach },
@@ -163,7 +163,7 @@ void Player::collisionDetection()
 				}
 			}
 
-			constexpr double targetDistance{ 0.5 + constants::playerSize + 0.0000001 };
+			const double targetDistance{ 0.5 + constants::playerSize + 0.0000001 };
 
 			if (collideX)
 				m_Camera.setX(blockCenter.x < lastValidLoc.x ? (blockCenter.x + targetDistance) : (blockCenter.x - targetDistance));

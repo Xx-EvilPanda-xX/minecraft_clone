@@ -41,9 +41,6 @@ void chunker(World* world)
 	}
 }
 
-//#define DEBUG
-constexpr int chunkBuildsPerFrame{ constants::loadDistance / 2 };
-
 World::World(Shader shader, Keyboard& keyboard)
 	: m_Shader{ shader },
 	m_Manager{ this },
@@ -111,7 +108,7 @@ void World::render(const Window& window)
 			Renderer::drawMesh(m_Player.getCamera(), copy[i]->getSolidMesh(), window);
 	}
 
-	if constexpr (constants::useTranslucentWater)
+	if (constants::useTranslucentWater)
 	{
 		for (int i{}; i < copy.size(); ++i)
 		{

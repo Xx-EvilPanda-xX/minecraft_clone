@@ -41,6 +41,8 @@ private:
 
 	void startupHelp();
 
+	void loadConfigFromFile(std::filesystem::path path);
+
 	void handleInput();
 
 	void updateFPS();

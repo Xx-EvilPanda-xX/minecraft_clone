@@ -5,39 +5,38 @@
 
 namespace constants
 {
-	constexpr int windowWidth{ 1280 };
-	constexpr int windowHeight{ 720 };
+	inline int windowWidth{ 1280 };
+	inline int windowHeight{ 720 };
 
-	constexpr int fullscreenWidth{ 1920 };
-	constexpr int fullscreenHeight{ 1080 };
+	inline int fullscreenWidth{ 1920 };
+	inline int fullscreenHeight{ 1080 };
 
-	constexpr bool fullscreen{ true };
+	inline bool fullscreen{ false };
 
-	constexpr double mouse_sensitivity{ 0.025 };
+	inline double mouseSensitivity{ 0.025 };
 
-	constexpr bool flatWorld{ false };
-	constexpr int flatWorldHeight{ 64 };
+	inline bool flatWorld{ false };
+	inline int flatWorldHeight{ 64 };
 
-	constexpr int loadDistance{ 14 };
-	constexpr int renderDistance{ 12 };
+	inline int loadDistance{ 14 };
+	inline int renderDistance{ 12 };
 
-	constexpr double playerReach{ 8.0f };
-	constexpr double blockBreakCooldown{ 0.15 };
-	constexpr double blockPlaceCooldown{ 0.15 };
+	inline double playerReach{ 8.0 };
+	inline double blockBreakCooldown{ 0.15 };
+	inline double blockPlaceCooldown{ 0.15 };
 
-	constexpr bool useTranslucentWater{ true };
-	constexpr int waterLevel{ 48 };
-	constexpr int beachSize{ 1 };
+	inline bool useTranslucentWater{ true };
+	inline int waterLevel{ 48 };
+	inline int beachSize{ 1 };
 
-	constexpr double walkSpeed{ 3.5 };
-	constexpr double sprintSpeed{ 9.0 };
-	constexpr double playerDrift{ 20.0 };
-	constexpr double playerSize{ 0.45 };
-	constexpr double cameraFov{ 90.0 };
-	constexpr glm::dvec3 playerSpawnPos{ 0.0, 96.0, 0.0 };
+	inline double walkSpeed{ 3.5 };
+	inline double sprintSpeed{ 9.0 };
+	inline double playerDrift{ 20.0 };
+	inline double playerSize{ 0.45 };
+	inline double cameraFov{ 90.0 };
 
-	constexpr double gravity{ 55.0 };
-	constexpr double jumpHeight{ 1.31 };
+	inline double gravity{ 55.0 };
+	inline double jumpHeight{ 1.31 };
 }
 
 #endif

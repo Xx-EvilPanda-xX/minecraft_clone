@@ -112,12 +112,12 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_ALT))
 	{
 		cam.setFov(20.0);
-		cam.setMouseSens(constants::mouse_sensitivity / 5.0);
+		cam.setMouseSens(constants::mouseSensitivity / 5.0);
 	}
 	else
 	{
 		cam.setFov(90.0);
-		cam.setMouseSens(constants::mouse_sensitivity);
+		cam.setMouseSens(constants::mouseSensitivity);
 	}
 
 	if (!keyboard.isKeyDown(GLFW_KEY_TAB))
