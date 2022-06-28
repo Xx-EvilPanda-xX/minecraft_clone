@@ -52,7 +52,7 @@ void Config::parse(std::string_view unparsed)
 
     std::string currentToken{};
     std::optional<std::string> tempKey{ std::nullopt };
-    bool error;
+    bool error{ false };
 
     for (int i{}; i < preprocessed.size() - 1; ++i)
     {
@@ -143,15 +143,19 @@ std::optional<T> Config::getValue(std::string key)
         std::string value = m_ConfigMap.at(key);
 
         T val{};
-        auto [_, ec] = std::from_chars(value.c_str(), value.c_str() + value.length(), val);
+        auto [p, ec] = std::from_chars(value.c_str(), value.c_str() + value.length(), val);
 
-        if (ec == std::errc{})
+        if (ec == std::errc{} && *p == '\0')
             return std::optional<T>(val);
         else
+        {
+            std::cerr << "Failed to parse config `" << key << "` (" << value << ") Default hardcoded value will be used.\n";
             return std::nullopt;
+        }
     }
     catch (std::out_of_range& e)
     {
+        std::cerr << "No config definition for `" << key << "`. Default hardcoded value will be used.\n";
         return std::nullopt;
     }
 }
