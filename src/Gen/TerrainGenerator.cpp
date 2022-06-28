@@ -363,6 +363,12 @@ BiomeMixture** TerrainGenerator::getBiomeMap(Vector2i location)
 
 			BiomeMixture& mixture{ map[i][j] };
 			
+			if (constants::flatWorld)
+			{
+				mixture.addElement(new PlainsBiome{ m_Seed }, 1.0);
+				continue;
+			}
+
 			//mountains
 			if (height <= Biomes::s_Mountains.top && height >= Biomes::s_Mountains.bottom)
 				mixture.addElement(new MountainBiome{ m_Seed }, 1.0);

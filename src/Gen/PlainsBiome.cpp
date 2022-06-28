@@ -14,10 +14,12 @@ PlainsBiome::PlainsBiome(int seed)
 	m_Layers.emplace_back(Block{ BlockType::Gravel, false }, 0, 0, true);
 	addWaterLayer();
 
-	m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.01, constants::waterLevel, constants::waterLevel + 2);
-	m_Foliage.emplace_back(Foliage::FoliageType::ROSE, 0.01, constants::waterLevel + 5, 255);
-	m_Foliage.emplace_back(Foliage::FoliageType::TALL_GRASS, 0.5, constants::waterLevel + 5, 255);
-
+	if (!constants::flatWorld)
+	{
+		m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.01, constants::waterLevel, constants::waterLevel + 2);
+		m_Foliage.emplace_back(Foliage::FoliageType::ROSE, 0.01, constants::waterLevel + 5, 255);
+		m_Foliage.emplace_back(Foliage::FoliageType::TALL_GRASS, 0.5, constants::waterLevel + 5, 255);
+	}
 	setNoiseParams(7, 0.00255f);
 }
 
