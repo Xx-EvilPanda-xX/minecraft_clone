@@ -244,6 +244,16 @@ ChunkSection* Chunk::getSection(int index) const
 	return m_Sections[index];
 }
 
+bool Chunk::isModified() const
+{
+	return m_Modified;
+}
+
+void Chunk::setModified(bool modified)
+{
+	m_Modified = modified;
+}
+
 bool Chunk::isBuilt() const
 {
 	return m_IsBuilt;

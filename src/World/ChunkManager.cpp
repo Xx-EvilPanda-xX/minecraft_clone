@@ -14,7 +14,7 @@ ChunkManager::ChunkManager(World* world)
 
 ChunkManager::ChunkManager() = default;
 
-void ChunkManager::setWorldBlock(Vector3i loc, BlockType type, bool surface)
+void ChunkManager::setWorldBlock(Vector3i loc, BlockType type, bool surface, bool wasPlayer)
 {
 	int chunkIndex{};
 	int sectionIndex{};
@@ -30,6 +30,8 @@ void ChunkManager::setWorldBlock(Vector3i loc, BlockType type, bool surface)
 		}
 
 		chunk->getSection(sectionIndex)->setBlock(sectionLocal, type, surface);
+		if (wasPlayer)
+			chunk->setModified(true);
 	}
 }
 

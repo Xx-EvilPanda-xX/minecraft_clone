@@ -15,7 +15,7 @@ fullscreen_width = 1920;
 fullscreen_height = 1080;
 
 #boolean (0/1)
-enable_fullscreen = 1;
+enable_fullscreen = 0;
 
 #64 bit floating point number
 mouse_sensitivity = 0.025;
@@ -24,7 +24,7 @@ mouse_sensitivity = 0.025;
 generate_flat_world = 0;
 
 #32 bit integer
-flat_world_height = 64;
+flat_world_height = 6;
 
 #32 bit integer
 load_distance = 14;

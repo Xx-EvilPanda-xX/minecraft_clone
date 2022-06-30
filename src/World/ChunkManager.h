@@ -31,7 +31,7 @@ public:
 
 	ChunkManager();
 
-	void setWorldBlock(Vector3i loc, BlockType type, bool surface);
+	void setWorldBlock(Vector3i loc, BlockType type, bool surface, bool wasPlayer);
 
 	Block getWorldBlock(Vector3i loc);
 

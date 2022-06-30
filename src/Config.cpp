@@ -149,7 +149,7 @@ std::optional<T> Config::getValue(std::string key)
             return std::optional<T>(val);
         else
         {
-            std::cerr << "Failed to parse config `" << key << "` (" << value << ") Default hardcoded value will be used.\n";
+            std::cerr << "Failed to parse config `" << key << "` (" << value << "). Default hardcoded value will be used.\n";
             return std::nullopt;
         }
     }

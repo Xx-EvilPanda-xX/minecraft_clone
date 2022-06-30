@@ -8,6 +8,7 @@ int main()
 	std::cout << "initializing...\n";
 
 	Config::loadAllConfigurations(std::filesystem::path{ "config.txt" });
+	World::getChunkSaveInput();
 	Application app{ constants::windowWidth, constants::windowHeight, "Minecraft!" };
 	app.init();
 

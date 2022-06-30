@@ -45,7 +45,7 @@ private:
 	const double worldBottom{ -40.0 };
 
 	template <typename T>
-	T* intersect();
+	T* intersect(bool throughFoliage);
 
 	void updateMeshes(Vector3i editPos);
 

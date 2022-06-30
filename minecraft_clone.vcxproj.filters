@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\snappy">
+      <UniqueIdentifier>{4837a4ca-d138-45ce-bbd4-991d1d1b534b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -130,6 +133,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\snappy\snappy.cc">
+      <Filter>Source Files\snappy</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\snappy\snappy-sinksource.cc">
+      <Filter>Source Files\snappy</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\snappy\snappy-stubs-internal.cc">
+      <Filter>Source Files\snappy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World\ChunkSaver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World\ChunkLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -260,6 +278,24 @@
     <ClInclude Include="src\Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\World\ChunkSaver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\snappy\snappy-internal.h">
+      <Filter>Source Files\snappy</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\snappy\snappy-sinksource.h">
+      <Filter>Source Files\snappy</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\snappy\snappy-stubs-internal.h">
+      <Filter>Source Files\snappy</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\snappy\snappy.h">
+      <Filter>Source Files\snappy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\ChunkLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\frag.glsl">
@@ -267,6 +303,9 @@
     </None>
     <None Include="assets\shaders\vert.glsl">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lib\snappy\snappy-stubs-public.h">
+      <Filter>Source Files\snappy</Filter>
     </None>
   </ItemGroup>
 </Project>

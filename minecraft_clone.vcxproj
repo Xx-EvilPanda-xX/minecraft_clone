@@ -20,6 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="lib\snappy\snappy-sinksource.cc" />
+    <ClCompile Include="lib\snappy\snappy-stubs-internal.cc" />
+    <ClCompile Include="lib\snappy\snappy.cc" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Config.cpp" />
     <ClCompile Include="src\Gen\Biome.cpp" />
@@ -54,12 +57,18 @@
     <ClCompile Include="src\Window.cpp" />
     <ClCompile Include="src\World\Block.cpp" />
     <ClCompile Include="src\World\Chunk.cpp" />
+    <ClCompile Include="src\World\ChunkLoader.cpp" />
     <ClCompile Include="src\World\ChunkManager.cpp" />
     <ClCompile Include="src\World\ChunkMesh.cpp" />
+    <ClCompile Include="src\World\ChunkSaver.cpp" />
     <ClCompile Include="src\World\ChunkSection.cpp" />
     <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lib\snappy\snappy-internal.h" />
+    <ClInclude Include="lib\snappy\snappy-sinksource.h" />
+    <ClInclude Include="lib\snappy\snappy-stubs-internal.h" />
+    <ClInclude Include="lib\snappy\snappy.h" />
     <ClInclude Include="noise.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Config.h" />
@@ -97,8 +106,10 @@
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="src\World\Block.h" />
     <ClInclude Include="src\World\Chunk.h" />
+    <ClInclude Include="src\World\ChunkLoader.h" />
     <ClInclude Include="src\World\ChunkManager.h" />
     <ClInclude Include="src\World\ChunkMesh.h" />
+    <ClInclude Include="src\World\ChunkSaver.h" />
     <ClInclude Include="src\World\ChunkSection.h" />
     <ClInclude Include="src\World\World.h" />
     <ClInclude Include="stb_image.h" />
@@ -106,6 +117,7 @@
   <ItemGroup>
     <None Include="assets\shaders\frag.glsl" />
     <None Include="assets\shaders\vert.glsl" />
+    <None Include="lib\snappy\snappy-stubs-public.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -7,6 +7,8 @@
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
 #include "../Constants.h"
+#include "ChunkSaver.h"
+#include "ChunkLoader.h"
 
 void chunker(World* world)
 {
@@ -53,6 +55,23 @@ World::World(Shader shader, Keyboard& keyboard)
 	m_ResetBuildVars = false;
 	m_ShouldCloseChunkerThread = false;
 }
+
+World::~World()
+{
+	for (int i{}; i < m_Chunks.size(); ++i)
+	{
+		if (s_ShouldSaveChunks && m_Chunks[i]->isModified())
+			m_ChunkSaverThreads.push_back(ChunkSaver::saveChunk(m_Chunks[i], s_WorldSaveDir));
+	}
+
+	for (int i{}; i < m_ChunkSaverThreads.size(); ++i)
+	{
+		m_ChunkSaverThreads[i].join();
+	}
+}
+
+std::string World::s_WorldSaveDir{};
+bool World::s_ShouldSaveChunks{};
 
 void World::update()
 {
@@ -202,7 +221,13 @@ void World::genPass()
 			return;
 #endif // DEBUG
 
-		Chunk* chunk{ m_WorldGen.generateChunk(chunkPos, m_Shader, { m_BufferDestroyQueueMutex, m_BufferDestroyQueue })};
+		Chunk* chunk{ nullptr };
+
+		if (s_ShouldSaveChunks)
+			chunk = ChunkLoader::loadChunk(chunkPos, s_WorldSaveDir, m_Shader, { m_BufferDestroyQueueMutex, m_BufferDestroyQueue });
+
+		if (!chunk)
+			chunk = m_WorldGen.generateChunk(chunkPos, m_Shader, { m_BufferDestroyQueueMutex, m_BufferDestroyQueue });
 
 		std::lock_guard<std::mutex> lock{ m_ChunksMutex };
 		m_Chunks.push_back(chunk);
@@ -266,6 +291,9 @@ void World::destroyPass(Vector2i playerChunkPos)
 				std::lock_guard<std::mutex> lock{ m_Manager.getBuildQueueMutex() };
 				m_Manager.getBuildQueue().erase(m_Manager.getBuildQueue().begin() + index);
 			}
+
+			if (s_ShouldSaveChunks && m_Chunks[i]->isModified())
+				m_ChunkSaverThreads.push_back(ChunkSaver::saveChunk(m_Chunks[i], s_WorldSaveDir));
 
 			delete m_Chunks[i];
 			m_Chunks.erase(m_Chunks.begin() + i);
@@ -334,19 +362,34 @@ void World::buildPass()
 
 void World::placeQueueBlocks()
 {
+	auto findChunk{
+		[this](Vector2i chunkPos) {
+			for (int i{}; i < m_Chunks.size(); ++i)
+			{
+				if (m_Chunks[i]->getLocation() == chunkPos)
+				{
+					return m_Chunks[i];
+				}
+			}
+
+			return (Chunk*) nullptr;
+		}
+	};
+
 	std::vector<QueueBlock>& blockQueue{ m_WorldGen.getBlockQueue() };
 	if (m_LastBlockQueueSize != blockQueue.size())
 	{
 		for (int i{}; i < blockQueue.size(); ++i)
 		{
 			QueueBlock queueBlock{ blockQueue.at(i) };
-			Chunk* chunk{ m_Manager.getChunk(queueBlock.loc.worldPos) };
+			std::lock_guard<std::mutex> lock{ m_ChunksMutex };
+			Chunk* chunk{ findChunk(queueBlock.loc.worldPos) };
 
 			if (!chunk)
 				continue;
 			else
 			{
-				m_Manager.getChunk(queueBlock.loc.worldPos)->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
+				chunk->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
 				blockQueue.erase(blockQueue.begin() + i);
 				--i;
 			}
@@ -354,6 +397,36 @@ void World::placeQueueBlocks()
 	}
 
 	m_LastBlockQueueSize = blockQueue.size();
+}
+
+void World::getChunkSaveInput()
+{
+	while (true)
+	{
+		std::string input{};
+		std::cout << "Do you want to save to and load from a world during this session? (y/n)\n";
+		std::cin >> input;
+		std::cin.clear();
+
+		if (input == "y" || input == "yes")
+		{
+			std::cout << "What is the name of the world?\n";
+			std::cin >> input;
+			std::cin.clear();
+			s_WorldSaveDir = input;
+			s_ShouldSaveChunks = true;
+			break;
+		}
+		else if (input == "n" || input == "no")
+		{
+			s_ShouldSaveChunks = false;
+			break;
+		}
+		else
+		{
+			std::cout << "Invalid input. Please try again.\n";
+		}
+	}
 }
 
 void World::rebuildChunks(const Camera& camera)

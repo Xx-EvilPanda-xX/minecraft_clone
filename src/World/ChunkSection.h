@@ -28,6 +28,9 @@ public:
 	bool isEmpty() const;
 
 	bool isFull() const;
+
+	friend class ChunkSaver;
+	friend class ChunkLoader;
 };
 
 #endif

@@ -22,6 +22,7 @@ private:
 	bool m_IsBuilt;
 	bool m_Building;
 	bool m_Hidden;
+	bool m_Modified;
 	std::mutex m_RemainingSectionsMutex;
 	std::vector<int> m_RemainingSections;
 
@@ -58,11 +59,17 @@ public:
 
 	bool isHidden() const;
 
+	bool isModified() const;
+
+	void setModified(bool modified);
+
 	void hide();
 
 	void show();
 
 	void clearMesh();
+
+	friend class ChunkSaver;
 };
 
 #endif

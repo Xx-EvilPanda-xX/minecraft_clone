@@ -54,6 +54,9 @@ public:
 	bool isFoliageMesh();
 
 	std::string getName();
+
+	friend class ChunkSaver;
+	friend class ChunkLoader;
 };
 
 #endif

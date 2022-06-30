@@ -7,7 +7,8 @@ ChunkSection::ChunkSection()
 	: m_Empty{ true },
 	m_Full{ false },
 	m_OpaqueBlocks{ 0 },
-	m_AirBlocks{ g_ChunkSectionCapacity }
+	m_AirBlocks{ g_ChunkSectionCapacity },
+	m_Blocks{}
 {
 }
 

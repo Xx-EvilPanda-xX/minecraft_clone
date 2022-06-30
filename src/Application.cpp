@@ -6,6 +6,8 @@
 
 #include "Application.h"
 #include "World/ChunkMesh.h"
+#include "World/ChunkSaver.h"
+#include "World/ChunkLoader.h"
 #include "Render/Texture.h"
 #include "Constants.h"
 #include "Config.h"
@@ -56,7 +58,9 @@ void Application::init()
 	}
 
 	startupHelp();
-	std::cout << "size of app: " << sizeof(Application) << "\n";
+
+	ChunkSaver::setSaveDir({ "saves/" });
+	ChunkLoader::setLoadDir({ "saves/" });
 }
 
 void Application::run()

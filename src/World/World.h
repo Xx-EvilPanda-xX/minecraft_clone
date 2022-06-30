@@ -30,6 +30,8 @@ private:
 	std::mutex m_BufferDestroyQueueMutex;
 	std::vector<unsigned int> m_BufferDestroyQueue;
 
+	std::vector<std::thread> m_ChunkSaverThreads;
+
 	TerrainGenerator m_WorldGen;
 	Shader m_Shader;
 	ChunkManager m_Manager;
@@ -52,7 +54,14 @@ public:
 	std::mutex m_AllowChunkDestructionMutex;
 	bool m_AllowChunkDestruction;
 
+	static std::string s_WorldSaveDir;
+	static bool s_ShouldSaveChunks;
+
+	static void getChunkSaveInput();
+
 	World(Shader shader, Keyboard& keyboard);
+
+	~World();
 
 	void render(const Window& window);
 	
@@ -71,6 +80,7 @@ public:
 	void rebuildChunks(const Camera& camera);
 
 	int getChunkIndex(Vector2i chunkPos);
+
 
 	std::mutex& getChunksMutex();
 

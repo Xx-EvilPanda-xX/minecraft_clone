@@ -8,14 +8,15 @@ PlainsBiome::PlainsBiome(int seed)
 	: Biome(ID, seed)
 {
 	m_Layers.emplace_back(Block{ BlockType::Stone, false }, -6, 0, true);
-	m_Layers.emplace_back(Block{ BlockType::Dirt, false }, -1, constants::waterLevel + 2, true);
-	m_Layers.emplace_back(Block{ BlockType::Grass, false }, 0, constants::waterLevel + 2, true);
-	m_Layers.emplace_back(Block{ BlockType::Sand, false }, 0, constants::waterLevel - 5, true);
-	m_Layers.emplace_back(Block{ BlockType::Gravel, false }, 0, 0, true);
-	addWaterLayer();
-
+	m_Layers.emplace_back(Block{ BlockType::Dirt, false }, -1, constants::flatWorld ? 0 : constants::waterLevel + 2, true);
+	m_Layers.emplace_back(Block{ BlockType::Grass, false }, 0, constants::flatWorld ? 0 : constants::waterLevel + 2, true);
+	
 	if (!constants::flatWorld)
 	{
+		m_Layers.emplace_back(Block{ BlockType::Sand, false }, 0, constants::waterLevel - 5, true);
+		m_Layers.emplace_back(Block{ BlockType::Gravel, false }, 0, 0, true);
+		addWaterLayer();
+
 		m_Foliage.emplace_back(Foliage::FoliageType::PALM_TREE, 0.01, constants::waterLevel, constants::waterLevel + 2);
 		m_Foliage.emplace_back(Foliage::FoliageType::ROSE, 0.01, constants::waterLevel + 5, 255);
 		m_Foliage.emplace_back(Foliage::FoliageType::TALL_GRASS, 0.5, constants::waterLevel + 5, 255);

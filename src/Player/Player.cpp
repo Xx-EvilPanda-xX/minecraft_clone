@@ -365,7 +365,7 @@ void Player::calculateVelocity()
 
 void Player::breakBlock()
 {
-	Vector3i* breakPos{ intersect<Vector3i>() };
+	Vector3i* breakPos{ intersect<Vector3i>(false) };
 
 	if (breakPos != nullptr)
 	{
@@ -374,7 +374,7 @@ void Player::breakBlock()
 		if (!m_Manager.chunkExsists(pos))
 			return;
 
-		m_Manager.setWorldBlock(pos, BlockType::Air, false);
+		m_Manager.setWorldBlock(pos, BlockType::Air, false, true);
 
 		updateMeshes(pos);
 
@@ -385,7 +385,7 @@ void Player::breakBlock()
 void Player::placeBlock(BlockType type)
 {
 	glm::dvec3 camFront{ m_Camera.getFront() * vecPrecision };
-	glm::dvec3* inter{ intersect<glm::dvec3>() };
+	glm::dvec3* inter{ intersect<glm::dvec3>(type != BlockType::TallGrass && type != BlockType::Rose && type != BlockType::Shrub) };
 
 	if (inter != nullptr)
 	{
@@ -408,7 +408,7 @@ void Player::placeBlock(BlockType type)
 		if (m_Aabb.intersects(blockAABB))
 			return;
 
-		m_Manager.setWorldBlock(placePos, type, false);
+		m_Manager.setWorldBlock(placePos, type, false, true);
 
 		updateMeshes(placePos);
 
@@ -417,7 +417,7 @@ void Player::placeBlock(BlockType type)
 }
 
 template <typename T>
-T* Player::intersect()
+T* Player::intersect(bool throughFoliage)
 {
 	glm::dvec3 camFront{ m_Camera.getFront() * vecPrecision };
 	glm::dvec3 currentPos{ m_Camera.getLocation() };
@@ -426,7 +426,12 @@ T* Player::intersect()
 	while (glm::length((m_Camera.getLocation() - currentPos)) < m_Reach)
 	{
 		Vector3i blockPos{ currentPos };
-		if (m_Manager.getWorldBlock(blockPos).getType() != BlockType::Air && m_Manager.getWorldBlock(blockPos).getType() != BlockType::Water)
+		Block block{ m_Manager.getWorldBlock(blockPos) };
+		if (block.getType() != BlockType::Air &&
+			block.getType() != BlockType::Water && 
+			(block.getType() != BlockType::TallGrass || !throughFoliage) &&
+			(block.getType() != BlockType::Rose || !throughFoliage) &&
+			(block.getType() != BlockType::Shrub || !throughFoliage))
 		{
 			intersectPos = new T{ currentPos };
 			break;
