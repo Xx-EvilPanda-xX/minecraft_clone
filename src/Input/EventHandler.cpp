@@ -201,3 +201,8 @@ Block& EventHandler::getSelectedBlock()
 {
 	return m_SelectedBlock;
 }
+
+void EventHandler::setSelectedBlock(Block newBlock)
+{
+	m_SelectedBlock = newBlock;
+}

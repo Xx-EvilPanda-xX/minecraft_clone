@@ -31,24 +31,28 @@ TerrainGenerator::TerrainGenerator(ChunkManager& manager)
 	m_Rand{ 0, 256 }
 {
 	
-	m_Seed = setBiomeNoiseParams();
+	m_Seed = setBiomeNoiseParams(nullptr);
 	std::cout << "Seed: " << m_Seed << "\n";
 }
 
-int TerrainGenerator::setBiomeNoiseParams()
+int TerrainGenerator::setBiomeNoiseParams(const int* s)
 {
-	Random seedRand{ -2147483648, 2147483647 };
-	int seed{ seedRand.get() };
+	Random seedRand1{ -2147483648, 2147483647 };
+	Random seedRand2{ -2147483648, 2147483647 };
+
+	int seed{ s ? *s : seedRand2.get() };
+
+	seedRand1.setSeed(seed);
 
 	m_BiomeNoise1.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_BiomeNoise1.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
-	m_BiomeNoise1.SetSeed(seedRand.get());
+	m_BiomeNoise1.SetSeed(seedRand1.get());
 	m_BiomeNoise1.SetFractalOctaves(7);
 	m_BiomeNoise1.SetFrequency(0.009f);
 
 	m_BiomeNoise2.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_OpenSimplex2S);
 	m_BiomeNoise2.SetFractalType(FastNoiseLite::FractalType::FractalType_FBm);
-	m_BiomeNoise2.SetSeed(seedRand.get());
+	m_BiomeNoise2.SetSeed(seedRand1.get());
 	m_BiomeNoise2.SetFractalOctaves(1);
 	m_BiomeNoise2.SetFrequency(0.0015f);
 
@@ -61,7 +65,7 @@ Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader, std::p
 	double heightMap[chunkSize][chunkSize]{};
 	Biome* layerMap[chunkSize][chunkSize]{};
 	
-	Chunk* chunk{ new Chunk(loc, chunkShader, bufferDestroyQueue) };
+	Chunk* chunk{ new Chunk(loc, chunkShader, bufferDestroyQueue, false) };
 	double bestPercentage{};
 	std::vector<TerrainMap> usedMaps{};
 
@@ -121,7 +125,7 @@ Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader, std::p
 ChunkSection* TerrainGenerator::genSection(Biome* biomeMap[chunkSize][chunkSize], double heightMap[chunkSize][chunkSize], SectionLocation sectionLocation)
 {
 	ChunkSection* chunkSection{ new ChunkSection{} };
-	m_Rand.setSeed(std::hash<int>{}(sectionLocation.worldPos.x) ^ std::hash<int>{}(sectionLocation.worldPos.y));
+	m_Rand.setSeed(std::hash<int>{}(sectionLocation.worldPos.x) ^ std::hash<int>{}(sectionLocation.worldPos.y) ^ m_Seed);
 
 	for (int x{}; x < chunkSize; ++x)
 	{
@@ -437,4 +441,14 @@ void TerrainGenerator::deleteMap(T** map)
 std::vector<QueueBlock>& TerrainGenerator::getBlockQueue()
 {
 	return m_BlockQueue;
+}
+
+int TerrainGenerator::getSeed() const
+{
+	return m_Seed;
+}
+
+void TerrainGenerator::setSeed(int newSeed)
+{
+	m_Seed = setBiomeNoiseParams(&newSeed);
 }

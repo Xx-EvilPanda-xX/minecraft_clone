@@ -21,6 +21,7 @@ Player::Player(ChunkManager& manager, Keyboard& keyboard, double reach)
 	m_Grounded = false;
 	m_Flying = false;
 	m_HasTouchedGround = false;
+	m_FirstFrame = false;
 }
 
 void Player::move()
@@ -28,19 +29,21 @@ void Player::move()
 	calculateVelocity();
 
 	//gravity
-	if (!m_Flying && !m_Grounded)
+	if (!m_Flying && !m_Grounded && m_FirstFrame)
 		m_Velocity.y -= constants::gravity * Application::s_Dt;
 	
 	m_Camera.handleMove(m_Velocity, Application::s_Dt);
 	m_Aabb = createPlayerAABB(m_Camera.getLocation());
 	
-	collisionDetection();
+	if (m_FirstFrame)
+	{
+		collisionDetection();
+		m_LastMoved.x = m_LastValidLoc.x != m_Camera.getLocation().x;
+		m_LastMoved.y = m_LastValidLoc.y != m_Camera.getLocation().y;
+		m_LastMoved.z = m_LastValidLoc.z != m_Camera.getLocation().z;
+	}
 
 	m_JumpCoolDown -= Application::s_Dt;
-
-	m_LastMoved.x = m_LastValidLoc.x != m_Camera.getLocation().x;
-	m_LastMoved.y = m_LastValidLoc.y != m_Camera.getLocation().y;
-	m_LastMoved.z = m_LastValidLoc.z != m_Camera.getLocation().z;
 
 	m_LastValidLoc = m_Camera.getLocation();
 	m_LastValidAABB = m_Aabb;
@@ -51,6 +54,8 @@ void Player::move()
 		m_Velocity.y = 0.0;
 		m_Grounded = true;
 	}
+
+	m_FirstFrame = true;
 }
 
 void Player::collisionDetection()

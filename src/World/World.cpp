@@ -197,6 +197,64 @@ void World::updateSkyColor(Vector3i playerPos)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+void World::saveLevelData(EventHandler& handler)
+{
+	const std::string path{ "saves/" + s_WorldSaveDir + "/level.dat" };
+
+	if (!std::filesystem::exists("saves/"))
+		std::filesystem::create_directory("saves/");
+
+	if (!std::filesystem::exists("saves/" + s_WorldSaveDir))
+		std::filesystem::create_directory("saves/" + s_WorldSaveDir);
+
+	std::ofstream outStream{};
+	outStream.open(path, std::ofstream::binary | std::ofstream::out);
+	int seed{ m_WorldGen.getSeed() };
+	outStream.write((const char*)&seed, sizeof(int));
+
+	double x{ m_Player.getCamera().getLocation().x };
+	double y{ m_Player.getCamera().getLocation().y };
+	double z{ m_Player.getCamera().getLocation().z };
+	double yaw{ m_Player.getCamera().getYaw() };
+	double pitch{ m_Player.getCamera().getPitch() };
+	outStream.write((const char*)&x, sizeof(double));
+	outStream.write((const char*)&y, sizeof(double));
+	outStream.write((const char*)&z, sizeof(double));
+	outStream.write((const char*)&yaw, sizeof(double));
+	outStream.write((const char*)&pitch, sizeof(double));
+	
+	char selected{ (char)handler.getSelectedBlock().getType() };
+	bool flying{ m_Player.isFlying() };
+	outStream.write((const char*)&selected, sizeof(char));
+	outStream.write((const char*)&flying, sizeof(bool));
+
+	outStream.close();
+}
+
+void World::loadLevelData(EventHandler& handler)
+{
+	const std::string path{ "saves/" + s_WorldSaveDir + "/level.dat" };
+
+	if (!std::filesystem::exists(path))
+		return;
+
+	std::ifstream inStream{};
+	inStream.open(path, std::ifstream::binary | std::ifstream::in);
+	size_t fileSize{ std::filesystem::file_size(path) };
+	char* data{ new char[fileSize] };
+	inStream.read(data, fileSize);
+	m_WorldGen.setSeed(*(int*)(data));
+	std::cout << "Loaded seed from level data: " << m_WorldGen.getSeed() << "\n";
+	m_Player.getCamera().setX(*(double*)(data + 4));
+	m_Player.getCamera().setY(*(double*)(data + 12));
+	m_Player.getCamera().setZ(*(double*)(data + 20));
+
+	m_Player.getCamera().setYaw(*(double*)(data + 28));
+	m_Player.getCamera().setPitch(*(double*)(data + 36));
+	handler.setSelectedBlock(Block{ (BlockType)*(data + 44), false});
+	m_Player.setFlying(*(bool*)(data + 45));
+}
+
 void World::genPass()
 {
 	bool empty{};
@@ -387,7 +445,7 @@ void World::placeQueueBlocks()
 
 			if (!chunk)
 				continue;
-			else
+			else if (!chunk->wasLoaded())
 			{
 				chunk->getSection(queueBlock.loc.sectionIndex)->setBlock(queueBlock.sectionRelativePos, queueBlock.block.getType(), queueBlock.block.isSurface());
 				blockQueue.erase(blockQueue.begin() + i);

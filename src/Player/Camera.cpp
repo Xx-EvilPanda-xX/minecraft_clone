@@ -96,6 +96,26 @@ double Camera::getMouseSens() const
 	return m_MouseSens;
 }
 
+double Camera::getYaw() const
+{
+	return m_Yaw;
+}
+
+double Camera::getPitch() const
+{
+	return m_Pitch;
+}
+
+void Camera::setYaw(double yaw)
+{
+	m_Yaw = yaw;
+}
+
+void Camera::setPitch(double pitch)
+{
+	m_Pitch = pitch;
+}
+
 void Camera::setLocation(glm::dvec3 loc)
 {
 	m_Location = loc;

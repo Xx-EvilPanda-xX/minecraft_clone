@@ -4,10 +4,11 @@
 #include "Block.h"
 #include "../Constants.h"
 
-Chunk::Chunk(Vector2i loc, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
+Chunk::Chunk(Vector2i loc, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue, bool wasLoaded)
 	: m_Location{ loc },
 	m_SolidMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader, bufferDestroyQueue },
-	m_TranslucentMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader, bufferDestroyQueue }
+	m_TranslucentMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader, bufferDestroyQueue },
+	m_WasLoaded{ wasLoaded }
 {
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
@@ -242,6 +243,11 @@ const Vector2i Chunk::getLocation() const
 ChunkSection* Chunk::getSection(int index) const
 {
 	return m_Sections[index];
+}
+
+bool Chunk::wasLoaded() const
+{
+	return m_WasLoaded;
 }
 
 bool Chunk::isModified() const

@@ -27,6 +27,8 @@ public:
 	void handleMouse(Mouse& mouse, Player& player);
 
 	Block& getSelectedBlock();
+
+	void setSelectedBlock(Block newBlock);
 };
 
 #endif

@@ -65,6 +65,7 @@ void Application::init()
 
 void Application::run()
 {
+	m_World.loadLevelData(m_Handler);
 	m_ChunkThread = std::thread{ chunker, &m_World };
 
 	while (m_Running)
@@ -86,6 +87,8 @@ void Application::run()
 
 	m_World.setShouldCloseChunkerThread(true);
 	m_ChunkThread.join();
+
+	m_World.saveLevelData(m_Handler);
 }
 
 void Application::renderGui()

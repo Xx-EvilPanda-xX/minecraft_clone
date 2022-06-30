@@ -49,7 +49,7 @@ private:
 
 	BiomeMixture** getBiomeMap(Vector2i location);
 
-	int setBiomeNoiseParams();
+	int setBiomeNoiseParams(const int* s);
 
 	template <typename T>
 	T** allocMap();
@@ -63,6 +63,10 @@ public:
 	Chunk* generateChunk(Vector2i loc, Shader& chunkShader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue);
 
 	std::vector<QueueBlock>& getBlockQueue();
+
+	int getSeed() const;
+
+	void setSeed(int newSeed);
 };
 
 #endif

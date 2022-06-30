@@ -13,7 +13,7 @@ Chunk* ChunkSaver::makeDeepCopy(const Chunk* chunk)
 	std::vector<unsigned int> vec{};
 	std::pair<std::mutex&, std::vector<unsigned int>&> pair{ m, vec };
 
-	Chunk* newChunk{ new Chunk{ chunk->m_Location, shader, pair } };
+	Chunk* newChunk{ new Chunk{ chunk->m_Location, shader, pair, false } }; 
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
 		ChunkSection* newSection{ new ChunkSection{} };
@@ -88,9 +88,9 @@ void ChunkSaver::encode(uint8_t* buffer, const Chunk* chunk)
 
 void ChunkSaver::writeToFile(uint8_t* buffer, size_t size, std::string fileName, std::string worldName)
 {
-	//char* compressed{ new char[snappy::MaxCompressedLength(size)] };
-	//size_t compressedLen{};
-	//snappy::RawCompress((const char*) buffer, size, compressed, &compressedLen);
+	char* compressed{ new char[snappy::MaxCompressedLength(size)] };
+	size_t compressedLen{};
+	snappy::RawCompress((const char*) buffer, size, compressed, &compressedLen);
 
 	std::ofstream outStream{};
 	std::string filePath{ s_SaveDir.generic_string() + worldName + "/" + fileName};
@@ -102,10 +102,10 @@ void ChunkSaver::writeToFile(uint8_t* buffer, size_t size, std::string fileName,
 	if (!std::filesystem::exists(worldPath))
 		std::filesystem::create_directory(worldPath);
 
-	outStream.open(filePath);
-	outStream.write((const char*)buffer, size);
-	outStream.flush();
+	outStream.open(filePath, std::fstream::out | std::fstream::binary);
+	outStream.write((const char*)compressed, compressedLen);
 	outStream.close();
+	delete[] compressed;
 }
 
 std::string ChunkSaver::calculateName(Vector2i loc)

@@ -10,18 +10,12 @@ uint8_t* ChunkLoader::readFromFile(std::string fileName, std::string worldName, 
 	if (!std::filesystem::exists(filePath))
 		return nullptr;
 
-	std::string worldPath{ s_LoadDir.generic_string() + worldName + "/" };
-
-	if (!std::filesystem::exists(s_LoadDir))
-		std::filesystem::create_directory(s_LoadDir);
-	if (!std::filesystem::exists(worldPath))
-		std::filesystem::create_directory(worldPath);
-
 	std::ifstream inStream{};
-	inStream.open(filePath);
+	inStream.open(filePath, std::fstream::in | std::fstream::binary);
 	size_t fileSize{ std::filesystem::file_size(filePath) };
 	char* buffer{ new char[fileSize]{} };
 	inStream.read(buffer, fileSize);
+	inStream.close();
 
 	*outFileSize = fileSize;
 	return (uint8_t*)buffer;
@@ -39,7 +33,7 @@ std::string ChunkLoader::calculateName(Vector2i loc)
 
 Chunk* ChunkLoader::decode(uint8_t* buffer, Vector2i chunkLoc, Shader& chunkShader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
 {
-	Chunk* chunk{ new Chunk{ chunkLoc, chunkShader, bufferDestroyQueue } };
+	Chunk* chunk{ new Chunk{ chunkLoc, chunkShader, bufferDestroyQueue, true } };
 
 	size_t index{ 16 };
 	for (int i{}; i < g_ChunkCap; ++i)
@@ -89,13 +83,18 @@ Chunk* ChunkLoader::loadChunk(Vector2i loc, std::string worldName, Shader& chunk
 	if (!buffer)
 		return nullptr;
 
-	//size_t uncompressedSize{};
-	//snappy::GetUncompressedLength((const char*)buffer, fileSize, &uncompressedSize );
+	size_t uncompressedSize{};
+	snappy::GetUncompressedLength((const char*)buffer, fileSize, &uncompressedSize);
 	
-	//char* uncompressed{ new char[uncompressedSize]{} };
-	//snappy::RawUncompress((const char*)buffer, fileSize, uncompressed);
+	char* uncompressed{ new char[uncompressedSize]{} };
+	bool result{ snappy::RawUncompress((const char*)buffer, fileSize, uncompressed) };
 
-	return decode((uint8_t*)buffer, loc, chunkShader, bufferDestroyQueue);
+	if (!result)
+		std::cout << "Couldn't decompress\n";
+
+	Chunk* chunk{ decode((uint8_t*)uncompressed, loc, chunkShader, bufferDestroyQueue) };
+	delete[] buffer;
+	return chunk;
 }
 
 void ChunkLoader::setLoadDir(std::filesystem::path newPath)

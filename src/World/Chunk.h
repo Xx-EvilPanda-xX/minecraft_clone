@@ -23,6 +23,7 @@ private:
 	bool m_Building;
 	bool m_Hidden;
 	bool m_Modified;
+	bool m_WasLoaded;
 	std::mutex m_RemainingSectionsMutex;
 	std::vector<int> m_RemainingSections;
 
@@ -33,7 +34,7 @@ private:
 	bool threadSafeIsFinished();
 
 public:
-	Chunk(Vector2i loc, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue);
+	Chunk(Vector2i loc, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue, bool wasLoaded);
 
 	~Chunk();
 
@@ -58,6 +59,8 @@ public:
 	bool isBuilt() const;
 
 	bool isHidden() const;
+
+	bool wasLoaded() const;
 
 	bool isModified() const;
 

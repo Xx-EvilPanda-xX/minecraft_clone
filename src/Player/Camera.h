@@ -45,6 +45,14 @@ public:
 
 	double getMouseSens() const;
 
+	double getYaw() const;
+
+	double getPitch() const;
+
+	void setYaw(double yaw);
+
+	void setPitch(double pitch);
+
 	void setLocation(glm::dvec3 loc);
 
 	void setX(double x);

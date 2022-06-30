@@ -10,6 +10,7 @@
 #include "../Render/Shader.h"
 #include "ChunkManager.h"
 #include "../Player/Player.h"
+#include "../Input/EventHandler.h"
 
 constexpr int genInterval{ 0 };
 
@@ -81,6 +82,9 @@ public:
 
 	int getChunkIndex(Vector2i chunkPos);
 
+	void saveLevelData(EventHandler& handler);
+
+	void loadLevelData(EventHandler& handler);
 
 	std::mutex& getChunksMutex();
 

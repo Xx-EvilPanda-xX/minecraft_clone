@@ -34,6 +34,7 @@ private:
 	bool m_Grounded;
 	bool m_Flying;
 	bool m_HasTouchedGround;
+	bool m_FirstFrame;
 	double m_Reach;
 	double m_JumpCoolDown;
 
