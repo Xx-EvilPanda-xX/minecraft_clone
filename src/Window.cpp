@@ -42,7 +42,10 @@ void Window::createWindow()
 {
 	if (constants::fullscreen)
 	{
-		m_GlfwWindow = glfwCreateWindow(constants::fullscreenWidth, constants::fullscreenHeight, m_Title, glfwGetPrimaryMonitor(), NULL);
+		m_GlfwWindow = glfwCreateWindow(constants::fullscreenWidth,
+										constants::fullscreenHeight,
+										m_Title, glfwGetPrimaryMonitor(),
+										NULL);
 	}
 	else
 	{

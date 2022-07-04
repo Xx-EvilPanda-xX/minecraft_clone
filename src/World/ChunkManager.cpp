@@ -56,7 +56,10 @@ Block ChunkManager::getWorldBlock(Vector3i loc)
 		return Block{};
 }
 
-bool ChunkManager::getBlockAbsoluteIndex(Vector3i loc, int& o_ChunkIndex, int& o_SectionIndex, Vector3i& o_SectionLocal)
+bool ChunkManager::getBlockAbsoluteIndex(Vector3i loc,
+										int& o_ChunkIndex,
+										int& o_SectionIndex,
+										Vector3i& o_SectionLocal)
 {
 	bool success{ true };
 

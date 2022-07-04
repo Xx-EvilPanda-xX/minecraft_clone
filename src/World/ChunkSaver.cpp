@@ -28,6 +28,8 @@ Chunk* ChunkSaver::makeDeepCopy(const Chunk* chunk)
 		newSection->m_Full = oldSection->m_Empty;
 		newChunk->m_Sections[i] = newSection;
 	}
+
+	newChunk->m_OwnQueueBlocks = chunk->m_OwnQueueBlocks;
 	
 	return newChunk;
 }
@@ -35,7 +37,7 @@ Chunk* ChunkSaver::makeDeepCopy(const Chunk* chunk)
 size_t ChunkSaver::calculateFileSize(const Chunk* chunk)
 {
 	//header
-	size_t size{ 16 };
+	size_t size{ 20 };
 
 	//payload
 	for (int i{}; i < g_ChunkCap; ++i)
@@ -47,6 +49,9 @@ size_t ChunkSaver::calculateFileSize(const Chunk* chunk)
 			size += 8200; //8192 (4092 * 2 bytes per block) plus two 4 byte ints
 	}
 
+	//Blocks to be placed in other chunks after loading
+	size += chunk->getQueueBlocks().size() * sizeof(QueueBlock);
+
 	return size;
 }
 
@@ -56,19 +61,19 @@ void ChunkSaver::encode(uint8_t* buffer, const Chunk* chunk)
 
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
-		buffer[index] = (uint8_t)chunk->m_Sections[i]->m_Empty;
-		++index;
+		put<bool>(buffer, chunk->m_Sections[i]->m_Empty, index);
 	}
-	
+
+	put<uint32_t>(buffer, chunk->getQueueBlocks().size(), index);
+
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
 		ChunkSection* section{ chunk->m_Sections[i] };
 		if (section->m_Empty)
 			continue;
 
-		((int*)buffer)[index / 4] = section->m_OpaqueBlocks;
-		((int*)buffer)[(index / 4) + 1] = section->m_AirBlocks;
-		index += 8;
+		put<int>(buffer, section->m_OpaqueBlocks, index);
+		put<int>(buffer, section->m_AirBlocks, index);
 
 		for (int j{}; j < g_ChunkSectionCapacity; ++j)
 		{
@@ -79,11 +84,24 @@ void ChunkSaver::encode(uint8_t* buffer, const Chunk* chunk)
 			uint8_t bit2{ (uint8_t)(((uint8_t)block.m_Surface) << 1) };
 			uint8_t bit3{ (uint8_t)(((uint8_t)block.m_FoliageMesh) << 2) };
 
-			buffer[index] = id;
-			buffer[index + 1] = bit1 | bit2 | bit3;
-			index += 2;
+			put<char>(buffer, id, index);
+			put<char>(buffer, bit1 | bit2 | bit3, index);
 		}
 	}
+
+	auto blocks{ chunk->getQueueBlocks() };
+
+	for (int i{}; i < blocks.size(); ++i)
+	{
+		put<QueueBlock>(buffer, blocks.at(i), index);
+	}
+}
+
+template <typename T>
+void ChunkSaver::put(uint8_t* buffer, T val, size_t& index)
+{
+	*((T*)(buffer + index)) = val;
+	index += sizeof(T);
 }
 
 void ChunkSaver::writeToFile(uint8_t* buffer, size_t size, std::string fileName, std::string worldName)

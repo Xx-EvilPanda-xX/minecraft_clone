@@ -6,6 +6,7 @@
 #include "../Math/Vector2i.h"
 #include "ChunkManager.h"
 #include "../Render/Shader.h"
+#include "../Gen/QueueBlock.h"
 
 extern constexpr int g_ChunkCap{ 16 };
 
@@ -17,24 +18,28 @@ private:
 	ChunkMesh m_TranslucentMesh;
 	Vector2i m_Location;
 
+	std::vector<QueueBlock> m_OwnQueueBlocks;
+
 	int m_CurrentSectionIndex;
-	bool m_Complete;
-	bool m_IsBuilt;
-	bool m_Building;
-	bool m_Hidden;
-	bool m_Modified;
-	bool m_WasLoaded;
+
+	bool m_Complete, m_IsBuilt, 
+		m_Building, m_Hidden,
+		m_Modified, m_WasLoaded;
+
 	std::mutex m_RemainingSectionsMutex;
 	std::vector<int> m_RemainingSections;
 
 	void resetRemaining();
 
-	void tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos);
+	void tryAddFace(Block testBlock, Block currentBlock,
+					Face face, Vector3i pos);
 
 	bool threadSafeIsFinished();
 
 public:
-	Chunk(Vector2i loc, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue, bool wasLoaded);
+	Chunk(Vector2i loc, Shader& shader, 
+		std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue,
+		bool wasLoaded);
 
 	~Chunk();
 
@@ -69,6 +74,10 @@ public:
 	void hide();
 
 	void show();
+
+	const std::vector<QueueBlock>& getQueueBlocks() const;
+
+	void addQueueBlock(QueueBlock queueBlock);
 
 	void clearMesh();
 

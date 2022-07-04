@@ -4,11 +4,14 @@
 #include "Block.h"
 #include "../Constants.h"
 
-Chunk::Chunk(Vector2i loc, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue, bool wasLoaded)
+Chunk::Chunk(Vector2i loc, Shader& shader,
+			std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue,
+			bool wasLoaded)
 	: m_Location{ loc },
 	m_SolidMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader, bufferDestroyQueue },
 	m_TranslucentMesh{ Vector2i{ loc.x * 16, loc.y * 16 }, shader, bufferDestroyQueue },
-	m_WasLoaded{ wasLoaded }
+	m_WasLoaded{ wasLoaded },
+	m_OwnQueueBlocks{}
 {
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
@@ -175,7 +178,9 @@ bool Chunk::threadSafeIsFinished()
 
 void Chunk::tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos)
 {
-	if ((testBlock.getType() == BlockType::Air) || testBlock.isTransparent() || (face == Face::Up && currentBlock.isSurface()))
+	if ((testBlock.getType() == BlockType::Air) ||
+		testBlock.isTransparent() ||
+		(face == Face::Up && currentBlock.isSurface()))
 	{
 		if (!(currentBlock.getType() == BlockType::Water && testBlock.getType() == BlockType::Water))
 		{
@@ -278,4 +283,14 @@ void Chunk::hide()
 void Chunk::show()
 {
 	m_Hidden = false;
+}
+
+const std::vector<QueueBlock>& Chunk::getQueueBlocks() const
+{
+	return m_OwnQueueBlocks;
+}
+
+void Chunk::addQueueBlock(QueueBlock queueBlock)
+{
+	m_OwnQueueBlocks.push_back(queueBlock);
 }

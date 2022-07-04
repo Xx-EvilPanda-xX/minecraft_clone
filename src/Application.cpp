@@ -88,7 +88,8 @@ void Application::run()
 	m_World.setShouldCloseChunkerThread(true);
 	m_ChunkThread.join();
 
-	m_World.saveLevelData(m_Handler);
+	if (World::s_ShouldSaveChunks)
+		m_World.saveLevelData(m_Handler);
 }
 
 void Application::renderGui()
@@ -108,10 +109,17 @@ void Application::updateGui()
 		Vector3i iVecCamLoc{ camLoc };
 		Vector2i chunkPos{ iVecCamLoc };
 
-		m_TextComponents[0].update(std::string{ "FPS: " } + std::to_string(m_CurrentFps), -1.0, 1.0, 0.1, 0.15);
-		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(camLoc.x) + ", " + std::to_string(camLoc.y) + ", " + std::to_string(camLoc.z), -1.0, 0.975, 0.1, 0.15);
-		m_TextComponents[2].update(std::string{ "Chunk index: " } + std::to_string(m_World.getChunkIndex(chunkPos)), -1.0, 0.95, 0.1, 0.15);
-		m_TextComponents[3].update(std::string{ "Selected block: " } + m_Handler.getSelectedBlock().getName(), -1.0, 0.75, 0.1, 0.15);
+		m_TextComponents[0].update(std::string{ "FPS: " } + std::to_string(m_CurrentFps),
+								-1.0, 1.0, 0.1, 0.15);
+
+		m_TextComponents[1].update(std::string{ "XYZ: " } + std::to_string(camLoc.x) + ", " + std::to_string(camLoc.y) + ", " + std::to_string(camLoc.z),
+								-1.0, 0.975, 0.1, 0.15);
+
+		m_TextComponents[2].update(std::string{ "Chunk index: " } + std::to_string(m_World.getChunkIndex(chunkPos)),
+								-1.0, 0.95, 0.1, 0.15);
+
+		m_TextComponents[3].update(std::string{ "Selected block: " } + m_Handler.getSelectedBlock().getName(),
+								-1.0, 0.75, 0.1, 0.15);
 
 		m_GuiUpdateCooldown = 0.05;
 	}

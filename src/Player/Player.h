@@ -54,7 +54,9 @@ private:
 
 	void collisionDetection();
 
-	bool collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, const AABB& playerAABB, Vector3i& o_Pos, CollisionType& o_CollisionType);
+	bool collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf,
+				const AABB& playerAABB, Vector3i& o_Pos,
+				CollisionType& o_CollisionType);
 
 	Vector3i* test(glm::dvec3 playerPos, const AABB& playerAABB, double& o_ClosestCollision);
 

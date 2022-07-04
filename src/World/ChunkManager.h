@@ -24,7 +24,10 @@ private:
 
 	void updateBuildQueue();
 
-	bool getBlockAbsoluteIndex(Vector3i loc, int& o_ChunkIndex, int& o_SectionIndex, Vector3i& o_SectionLocal);
+	bool getBlockAbsoluteIndex(Vector3i loc, 
+							int& o_ChunkIndex,
+							int& o_SectionIndex,
+							Vector3i& o_SectionLocal);
 
 public:
 	ChunkManager(World* world);

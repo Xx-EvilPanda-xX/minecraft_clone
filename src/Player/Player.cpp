@@ -60,8 +60,13 @@ void Player::move()
 
 void Player::collisionDetection()
 {
-	glm::dvec3 lowerPlayerHalf{ m_Camera.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Camera.getLocation().z };
-	glm::dvec3 upperPlayerHalf{ m_Camera.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Camera.getLocation().z };
+	glm::dvec3 lowerPlayerHalf{ m_Camera.getLocation().x,
+								m_Aabb.min().y + constants::playerSize,
+								m_Camera.getLocation().z };
+
+	glm::dvec3 upperPlayerHalf{ m_Camera.getLocation().x,
+								m_Aabb.max().y - constants::playerSize,
+								m_Camera.getLocation().z };
 
 	bool onGround{ false };
 	CollisionType collisionType{};
@@ -78,10 +83,14 @@ void Player::collisionDetection()
 			switch (collisionType)
 			{
 			case CollisionType::PlayerUpperHalf:
-				lastValidLoc = { m_LastValidLoc.x, m_LastValidAABB.max().y - constants::playerSize, m_LastValidLoc.z };
+				lastValidLoc = { m_LastValidLoc.x,
+								m_LastValidAABB.max().y - constants::playerSize,
+								m_LastValidLoc.z };
 				break;
 			case CollisionType::PlayerLowerHalf:
-				lastValidLoc = { m_LastValidLoc.x, m_LastValidAABB.min().y + constants::playerSize, m_LastValidLoc.z };
+				lastValidLoc = { m_LastValidLoc.x,
+								m_LastValidAABB.min().y + constants::playerSize,
+								m_LastValidLoc.z };
 				break;
 			}
 
@@ -171,11 +180,16 @@ void Player::collisionDetection()
 			const double targetDistance{ 0.5 + constants::playerSize + 0.0000001 };
 
 			if (collideX)
-				m_Camera.setX(blockCenter.x < lastValidLoc.x ? (blockCenter.x + targetDistance) : (blockCenter.x - targetDistance));
+				m_Camera.setX(blockCenter.x < lastValidLoc.x ?
+							(blockCenter.x + targetDistance) :
+							(blockCenter.x - targetDistance));
 
 			if (collideY)
 			{
-				m_Camera.setY(blockCenter.y < lastValidLoc.y ? (blockCenter.y + targetDistance) + (constants::playerSize * 2.0) + cameraHeightDiff : (blockCenter.y - targetDistance) + cameraHeightDiff);
+				m_Camera.setY(blockCenter.y < lastValidLoc.y ?
+							(blockCenter.y + targetDistance) + (constants::playerSize * 2.0) + cameraHeightDiff :
+							(blockCenter.y - targetDistance) + cameraHeightDiff);
+
 				m_Velocity.y = 0.0;
 
 				if (collisionType == CollisionType::PlayerLowerHalf && m_JumpCoolDown <= 0.0)
@@ -188,12 +202,19 @@ void Player::collisionDetection()
 			}
 
 			if (collideZ)
-				m_Camera.setZ(blockCenter.z < lastValidLoc.z ? (blockCenter.z + targetDistance) : (blockCenter.z - targetDistance));
+				m_Camera.setZ(blockCenter.z < lastValidLoc.z ?
+							(blockCenter.z + targetDistance) :
+							(blockCenter.z - targetDistance));
 
 			m_Aabb = createPlayerAABB(m_Camera.getLocation());
 
-			lowerPlayerHalf = { m_Camera.getLocation().x, m_Aabb.min().y + constants::playerSize, m_Camera.getLocation().z };
-			upperPlayerHalf = { m_Camera.getLocation().x, m_Aabb.max().y - constants::playerSize, m_Camera.getLocation().z };
+			lowerPlayerHalf = { m_Camera.getLocation().x,
+								m_Aabb.min().y + constants::playerSize,
+								m_Camera.getLocation().z };
+
+			upperPlayerHalf = { m_Camera.getLocation().x,
+								m_Aabb.max().y - constants::playerSize,
+								m_Camera.getLocation().z };
 		}
 	}
 
@@ -204,12 +225,19 @@ AABB Player::createPlayerAABB(glm::dvec3 playerPos)
 {
 	AABB aabb{};
 	// - 0.35f to make player's head appear higher
-	aabb.min(glm::dvec3{ playerPos.x - constants::playerSize, playerPos.y - (3.0 * constants::playerSize) - cameraHeightDiff, playerPos.z - constants::playerSize });
-	aabb.max(glm::dvec3{ playerPos.x + constants::playerSize, playerPos.y + constants::playerSize - cameraHeightDiff, playerPos.z + constants::playerSize });
+	aabb.min(glm::dvec3{ playerPos.x - constants::playerSize,
+						playerPos.y - (3.0 * constants::playerSize) - cameraHeightDiff,
+						playerPos.z - constants::playerSize });
+
+	aabb.max(glm::dvec3{ playerPos.x + constants::playerSize,
+						playerPos.y + constants::playerSize - cameraHeightDiff,
+						playerPos.z + constants::playerSize });
 	return aabb;
 }
 
-bool Player::collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf, const AABB& playerAABB, Vector3i& o_Pos, CollisionType& o_CollisionType)
+bool Player::collide(glm::dvec3 playerLowerHalf, glm::dvec3 playerUpperHalf,
+					const AABB& playerAABB, Vector3i& o_Pos,
+					CollisionType& o_CollisionType)
 {
 	double lowerClosestCollision{};
 	Vector3i* lowerCollisionPos{ test(playerLowerHalf, playerAABB, lowerClosestCollision) };
@@ -409,7 +437,9 @@ void Player::placeBlock(BlockType type)
 		if (!m_Manager.chunkExsists(placePos))
 			return;
 
-		AABB blockAABB{ glm::dvec3{ placePos.x, placePos.y, placePos.z }, glm::dvec3{ placePos.x + 1, placePos.y + 1, placePos.z + 1 } };
+		AABB blockAABB{ glm::dvec3{ placePos.x, placePos.y, placePos.z },
+						glm::dvec3{ placePos.x + 1, placePos.y + 1, placePos.z + 1 } };
+
 		if (m_Aabb.intersects(blockAABB))
 			return;
 

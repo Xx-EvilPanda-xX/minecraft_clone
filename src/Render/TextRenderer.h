@@ -28,13 +28,16 @@ private:
 	static unsigned int getCharTex(const char* p);
 
 public:
-	TextRenderer(std::string text, double x, double y, double fontSize, double charSpacing, Shader& shader);
+	TextRenderer(std::string text, double x, double y,
+				double fontSize, double charSpacing,
+				Shader& shader);
 
 	TextRenderer();
 
 	void render(EventHandler& handler, Window& window);
 
-	void update(std::string text, double x, double y, double fontSize, double charSpacing);
+	void update(std::string text, double x, double y,
+				double fontSize, double charSpacing);
 
 	static void createChars();
 };

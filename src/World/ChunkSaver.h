@@ -21,6 +21,10 @@ private:
 	static void writeToFile(uint8_t* buffer, size_t size, std::string fileName, std::string worldName);
 
 	static std::string calculateName(Vector2i loc);
+
+	template <typename T>
+	static void put(uint8_t* buffer, T val, size_t& index);
+
 public:
 	static std::thread saveChunk(const Chunk* chunk, std::string worldName);
 

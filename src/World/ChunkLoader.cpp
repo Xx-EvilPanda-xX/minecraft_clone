@@ -31,50 +31,78 @@ std::string ChunkLoader::calculateName(Vector2i loc)
 	return name;
 }
 
-Chunk* ChunkLoader::decode(uint8_t* buffer, Vector2i chunkLoc, Shader& chunkShader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
+Chunk* ChunkLoader::decode(uint8_t* buffer, size_t bufLen, Vector2i chunkLoc,
+						Shader& chunkShader,
+						std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue,
+						std::vector<QueueBlock>& globalBlockQueue)
 {
 	Chunk* chunk{ new Chunk{ chunkLoc, chunkShader, bufferDestroyQueue, true } };
-
 	size_t index{ 16 };
-	for (int i{}; i < g_ChunkCap; ++i)
+
+	try
 	{
-		ChunkSection* section{ new ChunkSection{} };
+		uint32_t numBlocksInQueue{ get<uint32_t>(buffer, bufLen, index) };
 
-		if (!buffer[i])
+		for (int i{}; i < g_ChunkCap; ++i)
 		{
-			section->m_OpaqueBlocks = ((int*)buffer)[index / 4];
-			section->m_AirBlocks = ((int*)buffer)[(index / 4) + 1];
-			section->m_Empty = false;
+			ChunkSection* section{ new ChunkSection{} };
 
-			if (section->m_OpaqueBlocks == g_ChunkSectionCapacity)
-				section->m_Full = true;	
-			
-
-			index += 8;
-
-			for (int j{}; j < g_ChunkSectionCapacity; ++j)
+			if (!buffer[i])
 			{
-				Block block{};
+				section->m_OpaqueBlocks = get<int>(buffer, bufLen, index);
+				section->m_AirBlocks = get<int>(buffer, bufLen, index);
+				section->m_Empty = false;
 
-				block.m_Type = (char)buffer[index];
-				uint8_t flags{ buffer[index + 1] };
+				if (section->m_OpaqueBlocks == g_ChunkSectionCapacity)
+					section->m_Full = true;
 
-				block.m_Transparent = flags & 1;
-				block.m_Surface = (flags >> 1) & 1;
-				block.m_FoliageMesh = (flags >> 2) & 1;
+				for (int j{}; j < g_ChunkSectionCapacity; ++j)
+				{
+					Block block{};
 
-				section->m_Blocks[j] = block;
-				index += 2;
+					block.m_Type = get<char>(buffer, bufLen, index);
+					uint8_t flags{ get<uint8_t>(buffer, bufLen, index) };
+
+					block.m_Transparent = flags & 1;
+					block.m_Surface = (flags >> 1) & 1;
+					block.m_FoliageMesh = (flags >> 2) & 1;
+
+					section->m_Blocks[j] = block;
+				}
 			}
+
+			chunk->addSection(section);
 		}
 
-		chunk->addSection(section);
+		for (uint32_t i{}; i < numBlocksInQueue; ++i)
+		{
+			globalBlockQueue.push_back(get<QueueBlock>(buffer, bufLen, index));
+		}
+	}
+	catch (std::string e)
+	{
+		std::cout << e;
+		return nullptr;
 	}
 
 	return chunk;
 }
 
-Chunk* ChunkLoader::loadChunk(Vector2i loc, std::string worldName, Shader& chunkShader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
+template <typename T>
+T ChunkLoader::get(uint8_t* buffer, size_t bufLen, size_t& index)
+{
+	if (index >= bufLen)
+		throw std::string{ "Buffer access exception: index was greater than size\n" };
+
+	T val{ *((T*)(buffer + index)) };
+	index += sizeof(T);
+	return val;
+}
+
+Chunk* ChunkLoader::loadChunk(Vector2i loc, std::string worldName,
+							Shader& chunkShader,
+							std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue,
+							std::vector<QueueBlock>& globalBlockQueue)
 {
 	std::string name{ calculateName(loc) };
 	size_t fileSize{};
@@ -92,8 +120,13 @@ Chunk* ChunkLoader::loadChunk(Vector2i loc, std::string worldName, Shader& chunk
 	if (!result)
 		std::cout << "Couldn't decompress\n";
 
-	Chunk* chunk{ decode((uint8_t*)uncompressed, loc, chunkShader, bufferDestroyQueue) };
+	Chunk* chunk{ decode((uint8_t*)uncompressed, uncompressedSize, loc, chunkShader, bufferDestroyQueue, globalBlockQueue) };
+
+	if (!chunk)
+		std::cout << "Chunk at " << loc.x << ", " << loc.y << " may be corrupt and will not be loaded\n";
+
 	delete[] buffer;
+	delete[] uncompressed;
 	return chunk;
 }
 

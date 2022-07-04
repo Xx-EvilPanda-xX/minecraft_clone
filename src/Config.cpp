@@ -47,7 +47,7 @@ void Config::parse(std::string_view unparsed)
             continue;
         }
 
-        preprocessed.append(&unparsed.at(i), 1);
+        preprocessed.push_back(unparsed.at(i));
     }
 
     std::string currentToken{};
@@ -56,7 +56,7 @@ void Config::parse(std::string_view unparsed)
 
     for (int i{}; i < preprocessed.size() - 1; ++i)
     {
-        currentToken.append(&preprocessed.at(i), 1);
+        currentToken.push_back(preprocessed.at(i));
 
         switch (processToken(std::string{ preprocessed.at(i + 1) }))
         {

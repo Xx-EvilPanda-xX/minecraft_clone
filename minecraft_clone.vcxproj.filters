@@ -296,6 +296,9 @@
     <ClInclude Include="src\World\ChunkLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Gen\QueueBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\frag.glsl">

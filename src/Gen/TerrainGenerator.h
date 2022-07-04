@@ -13,15 +13,9 @@
 #include "BiomeMixture.h"
 #include "../noise.h"
 #include "Random.h"
+#include "QueueBlock.h"
 
 constexpr int chunkSize{ 16 };
-
-struct QueueBlock
-{
-	Block block;
-	Vector3i sectionRelativePos;
-	SectionLocation loc;
-};
 
 class TerrainGenerator
 {
@@ -37,15 +31,21 @@ private:
 
 	const int m_MaxTreesPerChunk{ 16 };
 
-	void genFoliage(const Biome* biome, Vector2i pos, ChunkSection* section, const SectionLocation& sectionLocation, double heightMap[chunkSize][chunkSize]);
+	void genFoliage(const Biome* biome, Vector2i pos,
+				ChunkSection* section, const SectionLocation& sectionLocation,
+				double heightMap[chunkSize][chunkSize]);
 
-	void genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, double heightMap[chunkSize][chunkSize]);
+	void genTree(const Tree& tree, ChunkSection* section,
+				Vector3i pos, const SectionLocation& sectionLocation,
+				double heightMap[chunkSize][chunkSize]);
 
 	void genCactus(ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation);
 
 	bool structureShouldBeInQueue(Vector3i pos, const SectionLocation& sectionLocation, Block block);
 
-	ChunkSection* genSection(Biome* biomeMap[chunkSize][chunkSize], double heightMap[chunkSize][chunkSize], SectionLocation sectionLocation);
+	ChunkSection* genSection(Biome* biomeMap[chunkSize][chunkSize],
+				double heightMap[chunkSize][chunkSize],
+				SectionLocation sectionLocation);
 
 	BiomeMixture** getBiomeMap(Vector2i location);
 
@@ -60,7 +60,9 @@ private:
 public:
 	TerrainGenerator(ChunkManager& manager);
 
-	Chunk* generateChunk(Vector2i loc, Shader& chunkShader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue);
+	Chunk* generateChunk(Vector2i loc, Shader& chunkShader,
+					std::pair<std::mutex&,
+					std::vector<unsigned int>&> bufferDestroyQueue);
 
 	std::vector<QueueBlock>& getBlockQueue();
 

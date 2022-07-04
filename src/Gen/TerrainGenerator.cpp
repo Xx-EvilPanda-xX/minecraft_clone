@@ -59,7 +59,9 @@ int TerrainGenerator::setBiomeNoiseParams(const int* s)
 	return seed;
 }
 
-Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
+Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader,
+									std::pair<std::mutex&,
+									std::vector<unsigned int>&> bufferDestroyQueue)
 {
 	BiomeMixture** biomeMap{ getBiomeMap(loc) };
 	double heightMap[chunkSize][chunkSize]{};
@@ -108,7 +110,7 @@ Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader, std::p
 
 	for (int i{}; i < g_ChunkCap; ++i)
 	{
-		SectionLocation sectionLocation{ i, loc };
+		SectionLocation sectionLocation{ i, loc, chunk };
 		chunk->addSection(genSection(layerMap, heightMap, sectionLocation));
 	}
 
@@ -122,7 +124,9 @@ Chunk* TerrainGenerator::generateChunk(Vector2i loc, Shader& chunkShader, std::p
 	return chunk;
 }
 
-ChunkSection* TerrainGenerator::genSection(Biome* biomeMap[chunkSize][chunkSize], double heightMap[chunkSize][chunkSize], SectionLocation sectionLocation)
+ChunkSection* TerrainGenerator::genSection(Biome* biomeMap[chunkSize][chunkSize],
+										double heightMap[chunkSize][chunkSize],
+										SectionLocation sectionLocation)
 {
 	ChunkSection* chunkSection{ new ChunkSection{} };
 	m_Rand.setSeed(std::hash<int>{}(sectionLocation.worldPos.x) ^ std::hash<int>{}(sectionLocation.worldPos.y) ^ m_Seed);
@@ -179,7 +183,9 @@ ChunkSection* TerrainGenerator::genSection(Biome* biomeMap[chunkSize][chunkSize]
 	return chunkSection;
 }
 
-void TerrainGenerator::genFoliage(const Biome* biome, Vector2i pos, ChunkSection* section, const SectionLocation& sectionLocation, double heightMap[chunkSize][chunkSize])
+void TerrainGenerator::genFoliage(const Biome* biome, Vector2i pos,
+								ChunkSection* section, const SectionLocation& sectionLocation,
+								double heightMap[chunkSize][chunkSize])
 {
 	static const Tree& oakTree{ OakTree{} };
 	static const Tree& palmTree{ PalmTree{} };
@@ -227,7 +233,9 @@ void TerrainGenerator::genFoliage(const Biome* biome, Vector2i pos, ChunkSection
 }
 
 
-void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section, Vector3i pos, const SectionLocation& sectionLocation, double heightMap[chunkSize][chunkSize])
+void TerrainGenerator::genTree(const Tree& tree, ChunkSection* section,
+							Vector3i pos, const SectionLocation& sectionLocation,
+							double heightMap[chunkSize][chunkSize])
 {
 	//check if tree collides with world or another tree (not perfect because its not possible to use getWorldBlock())
 	for (int i{}; i < tree.getNumLeaves(); ++i)
@@ -284,7 +292,7 @@ void TerrainGenerator::genCactus(ChunkSection* section, Vector3i pos, const Sect
 
 bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocation& sectionLocation, Block block)
 {
-	SectionLocation sectionForQueue{ sectionLocation };
+	SectionLocation sectionForQueue{ sectionLocation.sectionIndex, sectionLocation.worldPos, nullptr };
 	Vector3i blockForQueuePos{ pos };
 	bool isOutsideSection{ false };
 	bool isOutsideWorld{ false };
@@ -330,9 +338,12 @@ bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocat
 
 	if (isOutsideSection && !isOutsideWorld)
 	{
-		m_BlockQueue.push_back(QueueBlock{ block,
-										   blockForQueuePos,
-										   sectionForQueue });
+		QueueBlock queueBlock{ block,
+							blockForQueuePos,
+							sectionForQueue };
+
+		m_BlockQueue.push_back(queueBlock);
+		sectionLocation.containingChunk->addQueueBlock(queueBlock);
 	}
 
 	return isOutsideSection;

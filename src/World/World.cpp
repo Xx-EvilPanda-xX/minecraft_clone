@@ -282,10 +282,13 @@ void World::genPass()
 		Chunk* chunk{ nullptr };
 
 		if (s_ShouldSaveChunks)
-			chunk = ChunkLoader::loadChunk(chunkPos, s_WorldSaveDir, m_Shader, { m_BufferDestroyQueueMutex, m_BufferDestroyQueue });
+			chunk = ChunkLoader::loadChunk(chunkPos, s_WorldSaveDir, m_Shader,
+										{ m_BufferDestroyQueueMutex, m_BufferDestroyQueue },
+										m_WorldGen.getBlockQueue());
 
 		if (!chunk)
-			chunk = m_WorldGen.generateChunk(chunkPos, m_Shader, { m_BufferDestroyQueueMutex, m_BufferDestroyQueue });
+			chunk = m_WorldGen.generateChunk(chunkPos, m_Shader,
+										{ m_BufferDestroyQueueMutex, m_BufferDestroyQueue });
 
 		std::lock_guard<std::mutex> lock{ m_ChunksMutex };
 		m_Chunks.push_back(chunk);
@@ -316,7 +319,8 @@ void World::destroyPass(Vector2i playerChunkPos)
 		Vector2i chunkLoc{ m_Chunks[i]->getLocation() };
 
 		//+ 1 becuase otherwise chunks that had just been generated got deleted
-		if (std::abs(chunkLoc.x - playerChunkPos.x) > constants::loadDistance + 1 || std::abs(chunkLoc.y - playerChunkPos.y) > constants::loadDistance + 1)
+		if (std::abs(chunkLoc.x - playerChunkPos.x) > constants::loadDistance + 1 ||
+			std::abs(chunkLoc.y - playerChunkPos.y) > constants::loadDistance + 1)
 		{
 			int index;
 

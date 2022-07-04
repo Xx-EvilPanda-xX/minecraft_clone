@@ -3,7 +3,8 @@
 #include "ChunkMesh.h"
 #include "Chunk.h"
 
-ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader, std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
+ChunkMesh::ChunkMesh(Vector2i pos, Shader& shader,
+					std::pair<std::mutex&, std::vector<unsigned int>&> bufferDestroyQueue)
 	: m_Pos{ pos },
 	m_RenderData{ 0, 0, 0, 0, 0, 0, &shader },
 	m_FaceRatio{ 1.0f / facesPerRow },

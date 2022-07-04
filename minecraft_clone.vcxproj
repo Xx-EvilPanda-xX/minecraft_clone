@@ -86,6 +86,7 @@
     <ClInclude Include="src\Gen\OakTree.h" />
     <ClInclude Include="src\Gen\PalmTree.h" />
     <ClInclude Include="src\Gen\PlainsBiome.h" />
+    <ClInclude Include="src\Gen\QueueBlock.h" />
     <ClInclude Include="src\Gen\Random.h" />
     <ClInclude Include="src\Gen\SectionLocation.h" />
     <ClInclude Include="src\Gen\TerrainGenerator.h" />
