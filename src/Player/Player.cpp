@@ -443,7 +443,8 @@ void Player::placeBlock(BlockType type)
 		if (m_Aabb.intersects(blockAABB))
 			return;
 
-		m_Manager.setWorldBlock(placePos, type, false, true);
+		bool surface{ m_Manager.getWorldBlock({placePos.x, placePos.y + 1, placePos.z}).getType() == BlockType::Air && type == BlockType::Water };
+		m_Manager.setWorldBlock(placePos, type, surface, true);
 
 		updateMeshes(placePos);
 

@@ -131,7 +131,7 @@ bool Chunk::buildMesh(ChunkManager& manager, int section, Chunk* adjacentChunks[
 
 				if (currentBlock.isFoliageMesh())
 				{
-					m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North);
+					m_SolidMesh.addFace(Vector3i{ x, wY, z }, currentBlock, Face::North, false);
 					continue;
 				}
 
@@ -178,16 +178,23 @@ bool Chunk::threadSafeIsFinished()
 
 void Chunk::tryAddFace(Block testBlock, Block currentBlock, Face face, Vector3i pos)
 {
-	if ((testBlock.getType() == BlockType::Air) ||
-		testBlock.isTransparent() ||
-		(face == Face::Up && currentBlock.isSurface()))
+	constexpr BlockType water{ BlockType::Water };
+	constexpr BlockType air{ BlockType::Air };
+
+	if ((testBlock.getType() == air) ||
+			testBlock.isTransparent() ||
+			(face == Face::Up && currentBlock.isSurface()))
 	{
-		if (!(currentBlock.getType() == BlockType::Water && testBlock.getType() == BlockType::Water))
+		if (!(currentBlock.getType() == water && testBlock.getType() == water && 
+			(currentBlock.isSurface() == testBlock.isSurface() || face == Face::Up || face == Face::Down)))
 		{
-			if (currentBlock.getType() == BlockType::Water && constants::useTranslucentWater)
-				m_TranslucentMesh.addFace(pos, currentBlock, face);
+			if (currentBlock.getType() == water && constants::useTranslucentWater)
+				m_TranslucentMesh.addFace(pos, currentBlock, face, 
+					!(currentBlock.getType() == water &&
+						testBlock.isTransparent() &&
+						testBlock.getType() != air));
 			else
-				m_SolidMesh.addFace(pos, currentBlock, face);
+				m_SolidMesh.addFace(pos, currentBlock, face, false);
 		}
 	}
 }

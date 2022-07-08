@@ -91,7 +91,7 @@ public:
 
 	static void createTextureAtlas(const char* path);
 
-	void addFace(Vector3i loc, Block block, Face face);
+	void addFace(Vector3i loc, Block block, Face face, bool copyBothSides);
 
 	void toBuffers();
 

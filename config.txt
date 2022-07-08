@@ -15,7 +15,7 @@ fullscreen_width = 1920;
 fullscreen_height = 1080;
 
 #boolean (0/1)
-enable_fullscreen = 1;
+enable_fullscreen = 0;
 
 #64 bit floating point number
 mouse_sensitivity = 0.025;

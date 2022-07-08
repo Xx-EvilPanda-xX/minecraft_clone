@@ -28,7 +28,7 @@ void ChunkMesh::createTextureAtlas(const char* path)
 	s_TexAltas = Texture{ path, false };
 }
 
-void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
+void ChunkMesh::addFace(Vector3i loc, Block block, Face face, bool copyBothSides)
 {
 	glm::vec3 floats{ static_cast<float>(loc.x), static_cast<float>(loc.y) , static_cast<float>(loc.z) };
 	float height{ block.isSurface() ? 0.9f : 1.0f };
@@ -53,8 +53,6 @@ void ChunkMesh::addFace(Vector3i loc, Block block, Face face)
 	}
 	else
 	{
-		bool copyBothSides{ block.getType() == BlockType::Water ? true : false };
-
 		switch (face)
 		{
 		case Face::Up:
