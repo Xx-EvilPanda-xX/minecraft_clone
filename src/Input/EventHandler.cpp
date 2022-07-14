@@ -12,6 +12,11 @@ EventHandler::EventHandler()
 void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 {
 	static double flyToggleCooldown{};
+	// for some fucking reason it crashes when there are too many consequtive
+	// rebuilds but im sick and tired of debugging race conditions and memory 
+	// bugs so imma just give it a cooldown. Come find me in the ocean with 
+	// the rest of the rustaceans. f u cpp
+	static double chunkRebuildCooldown{};
 	Player& player{ app.getWorld().getPlayer() };
 	glm::dvec3& v{ player.getVelocity() };
 	glm::bvec3& decreasingV{ player.getDecreasingVel() };
@@ -106,8 +111,10 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 		flyToggleCooldown = 0.15f;
 	}
 
-	if (keyboard.isKeyDown(GLFW_KEY_R))
+	if (keyboard.isKeyDown(GLFW_KEY_R) && chunkRebuildCooldown <= 0.0) {
 		app.getWorld().rebuildChunks(cam);
+		chunkRebuildCooldown = 1.0f;
+	}
 
 	if (keyboard.isKeyDown(GLFW_KEY_LEFT_ALT))
 	{
@@ -168,6 +175,7 @@ void EventHandler::handleKeyboard(Keyboard& keyboard, Application& app)
 	}
 
 	flyToggleCooldown -= Application::s_Dt;
+	chunkRebuildCooldown -= Application::s_Dt;
 }
 
 void EventHandler::handleMouse(Mouse& mouse, Player& player)

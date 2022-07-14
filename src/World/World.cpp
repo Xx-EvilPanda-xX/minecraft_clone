@@ -23,7 +23,7 @@ void chunker(World* world)
 
 		world->m_AllowChunkDestructionMutex.lock();
 		bool allowDestruction{ world->m_AllowChunkDestruction };
-		world->m_AllowChunkDestructionMutex.unlock();
+		
 
 		if (playerChunkPos != lastPlayerChunkPos || destroyPassRequested)
 		{
@@ -36,6 +36,8 @@ void chunker(World* world)
 				destroyPassRequested = true;
 		}
 		
+		world->m_AllowChunkDestructionMutex.unlock();
+
 		world->genPass();
 		world->placeQueueBlocks();
 		world->buildPass();
