@@ -116,6 +116,26 @@ std::string Block::getName()
 		return "Shrub";
 	case Rose:
 		return "Rose";
+	case RedWool:
+		return "RedWool";
+	case OrangeWool:
+		return "OrangeWool";
+	case YellowWool:
+		return "YellowWool";
+	case GreenWool:
+		return "GreenWool";
+	case SkyBlueWool:
+		return "SkyBlueWool";
+	case BlueWool:
+		return "BlueWool";
+	case PurpleWool:
+		return "PurpleWool";
+	case PinkWool:
+		return "PinkWool";
+	case BrownWool:
+		return "BrownWool";
+	case BlackWool:
+		return "BlackWool";
 	default:
 		return "Unknown";
 	}

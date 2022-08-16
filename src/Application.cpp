@@ -37,7 +37,7 @@ void Application::init()
 	}
 
 	m_GuiShader = Shader("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl");
-	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_27.png");
+	ChunkMesh::createTextureAtlas("assets/textures/tex-atlas_28.png");
 	TextRenderer::createChars();
 	createCrosshair();
 	m_TextComponents[0] = TextRenderer{ "FPS: ", -1.0, 1.0, 0.1, 0.15, m_GuiShader };

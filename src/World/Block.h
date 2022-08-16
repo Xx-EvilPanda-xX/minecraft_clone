@@ -27,6 +27,16 @@ enum BlockType
 	TallGrass,
 	Shrub,
 	Rose,
+	RedWool,
+	OrangeWool,
+	YellowWool,
+	GreenWool,
+	SkyBlueWool,
+	BlueWool,
+	PurpleWool,
+	PinkWool,
+	BrownWool,
+	BlackWool,
 
 	NUM_BLOCKS
 };
