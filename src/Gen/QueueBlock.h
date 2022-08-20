@@ -12,4 +12,5 @@ struct QueueBlock
 	SectionLocation loc;
 };
 
+bool operator== (const QueueBlock& qb1, const QueueBlock& qb2);
 #endif

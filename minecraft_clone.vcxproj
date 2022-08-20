@@ -38,6 +38,7 @@
     <ClCompile Include="src\Gen\OakForestBiome.cpp" />
     <ClCompile Include="src\Gen\DesertBiome.cpp" />
     <ClCompile Include="src\Gen\PlainsBiome.cpp" />
+    <ClCompile Include="src\Gen\QueueBlock.cpp" />
     <ClCompile Include="src\Gen\Random.cpp" />
     <ClCompile Include="src\Gen\TerrainGenerator.cpp" />
     <ClCompile Include="src\Gen\Tree.cpp" />

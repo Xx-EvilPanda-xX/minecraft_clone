@@ -342,8 +342,11 @@ bool TerrainGenerator::structureShouldBeInQueue(Vector3i pos, const SectionLocat
 							blockForQueuePos,
 							sectionForQueue };
 
-		m_BlockQueue.push_back(queueBlock);
-		sectionLocation.containingChunk->addQueueBlock(queueBlock);
+		if (!std::count(m_BlockQueue.begin(), m_BlockQueue.end(), queueBlock))
+		{
+			m_BlockQueue.push_back(queueBlock);
+			sectionLocation.containingChunk->addQueueBlock(queueBlock);
+		}
 	}
 
 	return isOutsideSection;

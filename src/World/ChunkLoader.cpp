@@ -76,7 +76,9 @@ Chunk* ChunkLoader::decode(uint8_t* buffer, size_t bufLen, Vector2i chunkLoc,
 
 		for (uint32_t i{}; i < numBlocksInQueue; ++i)
 		{
-			globalBlockQueue.push_back(get<QueueBlock>(buffer, bufLen, index));
+			auto queueBlock = get<QueueBlock>(buffer, bufLen, index);
+			if (!std::count(globalBlockQueue.begin(), globalBlockQueue.end(), queueBlock))
+				globalBlockQueue.push_back(queueBlock);
 		}
 	}
 	catch (std::string e)

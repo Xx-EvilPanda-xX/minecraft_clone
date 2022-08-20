@@ -52,10 +52,10 @@ World::World(Shader shader, Keyboard& keyboard)
 	m_WorldGen{ m_Manager },
 	m_GlobalPlayerLocation{}
 {
-	m_LastBlockQueueSize = 0;
 	m_AllowChunkDestruction = true;
 	m_ResetBuildVars = false;
 	m_ShouldCloseChunkerThread = false;
+	m_QueueBlockPlaceNeeded = false;
 }
 
 World::~World()
@@ -294,6 +294,7 @@ void World::genPass()
 
 		std::lock_guard<std::mutex> lock{ m_ChunksMutex };
 		m_Chunks.push_back(chunk);
+		m_QueueBlockPlaceNeeded = true;
 	}
 }
 
@@ -441,8 +442,9 @@ void World::placeQueueBlocks()
 	};
 
 	std::vector<QueueBlock>& blockQueue{ m_WorldGen.getBlockQueue() };
-	if (m_LastBlockQueueSize != blockQueue.size())
+	if (m_QueueBlockPlaceNeeded)
 	{
+		m_QueueBlockPlaceNeeded = false;
 		for (int i{}; i < blockQueue.size(); ++i)
 		{
 			QueueBlock queueBlock{ blockQueue.at(i) };
@@ -457,10 +459,13 @@ void World::placeQueueBlocks()
 				blockQueue.erase(blockQueue.begin() + i);
 				--i;
 			}
+			else
+			{
+				blockQueue.erase(blockQueue.begin() + i);
+				--i;
+			}
 		}
 	}
-
-	m_LastBlockQueueSize = blockQueue.size();
 }
 
 void World::getChunkSaveInput()

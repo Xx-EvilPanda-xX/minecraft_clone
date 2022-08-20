@@ -38,9 +38,9 @@ private:
 	ChunkManager m_Manager;
 	Player m_Player;
 
-	size_t m_LastBlockQueueSize;
 	bool m_ResetBuildVars;
 	bool m_ShouldCloseChunkerThread;
+	bool m_QueueBlockPlaceNeeded;
 
 	void uploadAll();
 

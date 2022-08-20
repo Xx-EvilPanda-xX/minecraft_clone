@@ -21,7 +21,7 @@ enable_fullscreen = 0;
 mouse_sensitivity = 0.025;
 
 #boolean (0/1)
-generate_flat_world = 0;
+generate_flat_world = 1;
 
 #32 bit integer
 flat_world_height = 6;
